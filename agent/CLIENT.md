@@ -1,93 +1,46 @@
-# Windows Client — Sözleşme Özeti
+# Windows Client — sözleşme indeksi
 
-> **Canonical home:** `honeypot-contract` (bu dosya: `agent/CLIENT.md`)  
-> **Contract VERSION:** root `VERSION`  
-> **API:** `https://honeypot.yesnext.com.tr` / `wss://…`  
-> **Client fleet:** ≥ **4.5.65** (threat-intel ≥4.5.61; remote input ≥4.5.55; …)  
-> Detay: [`../api/`](../api/) · INDEX: [`../INDEX.md`](../INDEX.md)
+> **Repo:** [cevdetaksac/honeypot-contract](https://github.com/cevdetaksac/honeypot-contract)  
+> **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md)  
+> **API:** `https://honeypot.yesnext.com.tr`
 
----
-
-## Auth
-
-- Client varsayılan: sadece `Authorization: Bearer <token>` (`api.legacy_token_query=false`)
-- Query `?token=` agent tarafında **gönderilmez** (log sızıntısı); cloud dual-read → reject fazlı olabilir
-- Control / RD WS: Bearer header (legacy flag açıksa query fallback)
+Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalama.
 
 ---
 
-## Control WebSocket
+## Okuma sırası (yeni agent / sprint)
 
-```
-wss://honeypot.yesnext.com.tr/ws/agent/control
-```
-
-1. Bağlan → agent `hello`  
-   `{ v, t:"hello", role:"agent", version, hostname, pid, mode:"daemon" }`  
-   (`machine_id` yok; register/heartbeat’te ayrı)
-2. `ping` her ~25s → `pong` (+ sunucu alanları)
-3. Cloud `command` push → **hemen** mevcut command handler (HTTP poll ile aynı path)
-4. Sonuç asıl: `POST /api/commands/result` (WS `command_result` / ack opsiyonel)
-5. WS kopunca reconnect (backoff); HTTP `GET /api/commands/pending` **sürekli safety net**  
-   (WS sağlıklıyken aralık seyreltilir — tek-shot değil)
-6. HTTP heartbeat / attack / health **HTTP** kalır (control WS app-heartbeat göndermez)
-7. RD ayrı: `/ws/remote/agent`
+1. [`polling.md`](./polling.md) — cadence  
+2. [`../api/01-auth.md`](../api/01-auth.md) — register / heartbeat / Bearer  
+3. [`register-protection.md`](./register-protection.md) — `protection.block_rules`  
+4. [`attacks-and-services.md`](./attacks-and-services.md) — bait + attack POST  
+5. [`../api/03-control-websocket.md`](../api/03-control-websocket.md) — WS + **komut kataloğu**  
+6. [`threat-engine.md`](./threat-engine.md) — v4 alerts/health/config  
+7. [`../api/09-threat-intel.md`](../api/09-threat-intel.md) — cloud IoC bundle  
+8. [`remote-input.md`](./remote-input.md) + [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
+9. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
 
 ---
 
-## Self-update
+## Auth (tek satır)
 
-| Sinyal | Anlam |
-|--------|--------|
-| `result` `running` / `update_accepted` | Erken ACK |
-| `result` `completed` / `update_started` + lifecycle `self_update_ok` | Helper launch (**bitmedi**) |
-| Yeni process + heartbeat `version` | Gerçek başarı |
-
-Cloud UI bitişi version eşleşmesiyle yapar; ikinci `install_complete` zorunlu değil.
-
-**GUI (≥4.5.39):** daemon → `%ProgramData%\YesNext\CloudHoneypotClient\update_ui_status.json`  
-→ üst banner: accepted → downloading% → installing → done/failed.
+Bearer only. Token ProgramData, immutable. Query `?token=` gönderme.
 
 ---
 
-## IR / hesap komutları
+## Control WS (tek satır)
 
-| Type | Not |
-|------|-----|
-| `logoff_user` | username / session_id |
-| `contain_user` | logoff + zorunlu `new_password` (+ opsiyonel disable) |
-| `disable_account` / `enable_account` | |
-| `reset_password` | Dashboard `new_password` (≥8); agent uydurmasın |
-| `disable_all_users` | Administrator **dahil**; `logoff`, `exclude`; priority critical |
-| `kill_process` | Agent kendi PID / self-image kill yok |
+`wss://…/ws/agent/control` → `command` push; result HTTP; `threat_intel_updated` → anında intel GET.
 
 ---
 
-## Firewall / Engellenen
+## IR notu
 
-- Envanter SoT: Windows Firewall `HP-BLOCK-*` / `HONEYPOT_*`  
-  → canlı `netsh … name=all` → ProgramData `blocked_ips.json` → GUI + `POST /api/agent/sync-rules`
-- Komut `clear_firewall` (control WS / poll):
-  - Params: `wipe_all_honeypot_rules` (default true), `ips[]` (yedek per-IP), `reason`
-  - Önce honeypot kural wipe, sonra `ips[]` name-template silme
-  - Ardından `sync-rules` `blocks:[]` + `clear-data` `scopes:["blocks"]`
-- **GUI Engellenen → Tümünü temizle** / tek IP engelle:  
-  unelevated GUI → IPC (`CLEAR_FIREWALL` / `BLOCK_IP` / `UNBLOCK_IP`) → Session-0 daemon.  
-  Periyodik liste: ProgramData + throttled scan (`force` sadece 🔄 / mutate).
+`contain_user` cloud whitelist’te **yok** → `logoff_user` + `reset_password` (+ `disable_account`).  
+Tam liste: [`../api/03-control-websocket.md`](../api/03-control-websocket.md).
 
 ---
 
-## Mimari (kısa)
+## Mimari (tek satır)
 
-- Motor: SYSTEM `--mode=daemon` (command poll, control WS, firewall, self_update)
-- GUI/tray: frontend; motor sağlıklıyken `:58632` çalmaz
-- Token immutable (ProgramData); multi-server account link UX
-
----
-
-## Diğer
-
-- Threat / health / lifecycle / sessions+processes — v4 HTTP
-- Remote: session_id seçimi, klavye Unicode, SYSTEM ≠ oturum masaüstü
-
-Detay: [api/01-auth.md](api/01-auth.md) … [api/08-architecture.md](api/08-architecture.md), [CHANGELOG.md](CHANGELOG.md).
+SYSTEM daemon = motor (WS, FW, update, intel). GUI = tray/UI + IPC. Detay: `api/08-architecture.md`.

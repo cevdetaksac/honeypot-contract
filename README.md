@@ -27,12 +27,13 @@
 
 ## Clone
 
-```text
-# Önerilen: client workspace yanında veya içinde
-git clone <REMOTE_URL> honeypot-contract
-
-# Client repo içinde pointer:
-#   cloud-client/contract/README.md  → CONTRACT_ROOT
+```bash
+git clone https://github.com/cevdetaksac/honeypot-contract.git
+cd honeypot-contract
+# pin: git checkout v1.1.0   # tag publish sonrası
 ```
 
-`CONTRACT_ROOT` = bu dizinin yolu.
+`CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.
+
+HTTPS mirror (cloud): `https://honeypot.yesnext.com.tr/static/shared-contract.zip`  
+Meta: `GET /api/public/contract`

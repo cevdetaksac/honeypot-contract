@@ -4,7 +4,8 @@
 > **Client:** ≥ **4.5.61** · Daemon only (frontend does not poll)  
 > **API base:** `https://honeypot.yesnext.com.tr`  
 > **Auth:** `Authorization: Bearer <token>` (agent API’de `?token=` yok)  
-> **Cloud ingest (SoT production):** [`../cloud/threat-intel-ingest.md`](../cloud/threat-intel-ingest.md)  
+> **Cloud ingest:** [`../cloud/threat-intel-ingest.md`](../cloud/threat-intel-ingest.md)  
+> **≠ local threat engine:** EventLog/skor/auto-block → [`../agent/threat-engine.md`](../agent/threat-engine.md) (`GET /api/threats/config`)  
 > **Kural:** Client harici feed (Abuse.ch / CISA) **çekmez** — sadece bu bundle.
 
 ---
