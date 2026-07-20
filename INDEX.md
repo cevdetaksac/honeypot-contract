@@ -1,15 +1,17 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.1.0** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> **VERSION 1.1.1** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.66**
 
 ## agent/
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
-| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | 4.5.44+ |
+| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | ≥ **4.5.66** |
 | [agent/polling.md](agent/polling.md) | Cadence tablosu | — |
 | [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | ≥ **4.5.66** |
+| [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
 | [agent/remote-input.md](agent/remote-input.md) | Frame `inputs[]` | ≥ 4.5.55 |
@@ -20,13 +22,13 @@
 |-------|------|------------|
 | [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, status | 4.4.33+ |
 | [api/02-account.md](api/02-account.md) | Account link / multi-server | — |
-| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + **VALID_COMMAND_TYPES** | 4.5.x |
+| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komut kataloğu + `threat_intel_updated` | 4.5.x / intel push ≥4.5.66 |
 | [api/04-self-update.md](api/04-self-update.md) | Self-update ACK | 4.5.39+ |
 | [api/05-remote-desktop.md](api/05-remote-desktop.md) | Remote stream / prepare | — |
 | [api/06-firewall-blocks.md](api/06-firewall-blocks.md) | HP-BLOCK / sync / clear | 4.5.40+ |
 | [api/07-lifecycle-sessions.md](api/07-lifecycle-sessions.md) | Lifecycle / sessions / processes | — |
-| [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI | 4.5.58+ |
-| [api/09-threat-intel.md](api/09-threat-intel.md) | Intel bundle ETag/ACK/WS | ≥ **4.5.61** |
+| [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI IPC (`RS_*`) | ≥ **4.5.66** |
+| [api/09-threat-intel.md](api/09-threat-intel.md) | Intel bundle ETag/ACK/WS | ≥ **4.5.61** / push ≥4.5.66 |
 
 ## cloud/
 
@@ -38,6 +40,8 @@
 ## Sprint checklist
 
 - [x] Register body → `update_block_rules(protection.block_rules)` (client ≥4.5.66)
-- [ ] WS `threat_intel_updated` handler
-- [ ] Cadence `polling.md` ile uyum
-- [ ] Komut kataloğu `03` ↔ client executor
+- [x] WS `threat_intel_updated` handler (client ≥4.5.66)
+- [x] `agent/ransomware-shield.md` + architecture `RS_STATUS` / `RS_UNLOCK`
+- [x] `FLEET.md` version matrix
+- [ ] Cadence `polling.md` ile canlı host doğrulama (opsiyonel)
+- [ ] Live host: 3 fail → `HP-BLOCK-*` (unit covered)

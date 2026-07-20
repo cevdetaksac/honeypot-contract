@@ -1,8 +1,9 @@
 # Windows Client — sözleşme indeksi
 
 > **Repo:** [cevdetaksac/honeypot-contract](https://github.com/cevdetaksac/honeypot-contract)  
-> **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md)  
-> **API:** `https://honeypot.yesnext.com.tr`
+> **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md) · fleet: [`FLEET.md`](../FLEET.md)  
+> **API:** `https://honeypot.yesnext.com.tr`  
+> **Production floor:** client ≥ **4.5.66**
 
 Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalama.
 
@@ -10,15 +11,17 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 
 ## Okuma sırası (yeni agent / sprint)
 
-1. [`polling.md`](./polling.md) — cadence  
-2. [`../api/01-auth.md`](../api/01-auth.md) — register / heartbeat / Bearer  
-3. [`register-protection.md`](./register-protection.md) — `protection.block_rules`  
-4. [`attacks-and-services.md`](./attacks-and-services.md) — bait + attack POST  
-5. [`../api/03-control-websocket.md`](../api/03-control-websocket.md) — WS + **komut kataloğu**  
-6. [`threat-engine.md`](./threat-engine.md) — v4 alerts/health/config  
-7. [`../api/09-threat-intel.md`](../api/09-threat-intel.md) — cloud IoC bundle  
-8. [`remote-input.md`](./remote-input.md) + [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
-9. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
+1. [`../FLEET.md`](../FLEET.md) — min sürüm matrisi  
+2. [`polling.md`](./polling.md) — cadence  
+3. [`../api/01-auth.md`](../api/01-auth.md) — register / heartbeat / Bearer  
+4. [`register-protection.md`](./register-protection.md) — `protection.block_rules`  
+5. [`attacks-and-services.md`](./attacks-and-services.md) — bait + attack POST  
+6. [`../api/03-control-websocket.md`](../api/03-control-websocket.md) — WS + **komut kataloğu**  
+7. [`threat-engine.md`](./threat-engine.md) — v4 alerts/health/config  
+8. [`../api/09-threat-intel.md`](../api/09-threat-intel.md) — cloud IoC bundle  
+9. [`ransomware-shield.md`](./ransomware-shield.md) — canary / quarantine / unlock  
+10. [`remote-input.md`](./remote-input.md) + [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
+11. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
 
 ---
 
@@ -41,6 +44,12 @@ Tam liste: [`../api/03-control-websocket.md`](../api/03-control-websocket.md).
 
 ---
 
+## Ransomware (tek satır)
+
+Canary Hidden+System; yerel scare yok; unlock = GUI / `RS_UNLOCK` / `unlock_ransomware_quarantine`. Detay: [`ransomware-shield.md`](./ransomware-shield.md).
+
+---
+
 ## Mimari (tek satır)
 
-SYSTEM daemon = motor (WS, FW, update, intel). GUI = tray/UI + IPC. Detay: `api/08-architecture.md`.
+SYSTEM daemon = motor (WS, FW, update, intel, ransomware). GUI = tray/UI + IPC (`RS_*`). Detay: `api/08-architecture.md`.

@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.1.1 — 2026-07-21
+
+- `FLEET.md`: feature → min-client matrix; production floor **4.5.66**
+- `agent/ransomware-shield.md`: canary UX, quarantine, unlock paths
+- `api/08-architecture.md`: `RS_STATUS` / `RS_UNLOCK`, ProgramData, STATUS `rs_quarantine`
+- `api/03-control-websocket.md`: `unlock_ransomware_quarantine`; WS intel acceptance closed
+- INDEX / CLIENT: ransomware + fleet; sprint WS handler closed
+- register-protection: unit acceptance for 3-fail threshold
+
 ## 1.1.0
 
 - Mimari / core loop contract’a taşındı (client referans paketi).

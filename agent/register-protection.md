@@ -70,4 +70,5 @@ Register ekstra alanlar (bilgi): `defaults_applied`, `created`, `skipped`, `thre
 - [x] Cloud register 200 → `protection.block_rules` (`rdp-fail-3`, threshold 3)  
 - [x] Client ≥4.5.66: register body → ProgramData + ThreatEngine; threats/config overlay  
 - [x] `protection` yok → client defaults  
-- [ ] 3 fail window → `HP-BLOCK-*` + alert (test host)
+- [x] 3 fail window → block + alert (unit: client `tests/test_protection_block_rules.py`)
+- [ ] Live host smoke: 3 fail → `HP-BLOCK-*` (opsiyonel)

@@ -81,6 +81,7 @@ Result: **`POST /api/commands/result`** asıl SoT; WS `command_result` opsiyonel
 | `tunnel_start` / `tunnel_stop` | `service`, port? | Bait listen |
 | `self_update` | `force`, `tag`, `download_url` | Installer |
 | `check_update` | — | Sürüm kontrol |
+| `unlock_ransomware_quarantine` | — | IFEO / quarantine temizle ([`../agent/ransomware-shield.md`](../agent/ransomware-shield.md)) |
 
 Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md).
 
@@ -99,4 +100,4 @@ Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`
 - [ ] Daemon WS bağlanır; send → &lt;500ms execute  
 - [ ] WS kopunca poll kaçırmaz; reconnect drain  
 - [ ] Bilinmeyen `command_type` reddedilir (cloud 400)  
-- [ ] `threat_intel_updated` → ETag GET
+- [x] `threat_intel_updated` → ETag GET (client ≥4.5.66)

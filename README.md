@@ -6,6 +6,7 @@
 |--|--|
 | **VERSION** | See [`VERSION`](VERSION) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
+| **Fleet** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.5.66** |
 | **API base** | `https://honeypot.yesnext.com.tr` |
 | **Auth** | `Authorization: Bearer <token>` — agent API’de `?token=` **yok** (geçiş dual-read cloud’da olabilir; client göndermez) |
 
@@ -30,10 +31,17 @@
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: git checkout v1.1.0   # tag publish sonrası
+# pin: git checkout v1.1.1
 ```
 
-`CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.
+`CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.  
+`docs/api/*` client tarafında stub — SoT yalnızca bu repo.
+
+Cloud sunucu:
+
+```bash
+cd /data/honeypot.yesnext.com.tr/contract && git pull && ../scripts/publish_contract.sh
+```
 
 HTTPS mirror (cloud): `https://honeypot.yesnext.com.tr/static/shared-contract.zip`  
 Meta: `GET /api/public/contract`
