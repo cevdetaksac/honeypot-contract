@@ -31,7 +31,7 @@
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: git checkout v1.1.1
+# pin: git checkout v1.1.2
 ```
 
 `CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.  

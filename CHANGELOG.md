@@ -1,5 +1,11 @@
 # Changelog — honeypot-contract
 
+## 1.1.2 — 2026-07-21
+
+- `api/03-control-websocket.md`: HMAC command signing (`security.command_signing`) + result signature
+- Destructive IR: dashboard confirmation gate (cloud) documented
+- `agent/threat-engine.md`: note optional local `notifications.webhook_url` SIEM forward
+
 ## 1.1.1 — 2026-07-21
 
 - `FLEET.md`: feature → min-client matrix; production floor **4.5.66**

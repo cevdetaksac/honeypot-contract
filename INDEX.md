@@ -1,7 +1,7 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.1.1** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> **VERSION 1.1.2** · Repo: https://github.com/cevdetaksac/honeypot-contract  
 > Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.66**
 
 ## agent/
@@ -22,7 +22,7 @@
 |-------|------|------------|
 | [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, status | 4.4.33+ |
 | [api/02-account.md](api/02-account.md) | Account link / multi-server | — |
-| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komut kataloğu + `threat_intel_updated` | 4.5.x / intel push ≥4.5.66 |
+| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komut kataloğu + HMAC + `threat_intel_updated` | 4.5.x / intel push ≥4.5.66 |
 | [api/04-self-update.md](api/04-self-update.md) | Self-update ACK | 4.5.39+ |
 | [api/05-remote-desktop.md](api/05-remote-desktop.md) | Remote stream / prepare | — |
 | [api/06-firewall-blocks.md](api/06-firewall-blocks.md) | HP-BLOCK / sync / clear | 4.5.40+ |

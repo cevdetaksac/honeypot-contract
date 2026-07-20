@@ -62,6 +62,8 @@ Cloud curated IoC → ayrı poll (`09`).
 
 Nested `alert: { … }` de kabul (cloud flatten eder).
 
+Opsiyonel client SIEM: `notifications.webhook_url` (local `client_config.json`) — cloud alert path’ine ek olarak local forward; API sözleşmesi değil.
+
 ---
 
 ## POST /api/events/batch

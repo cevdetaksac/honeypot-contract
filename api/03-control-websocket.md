@@ -56,6 +56,42 @@ Result: **`POST /api/commands/result`** asıl SoT; WS `command_result` opsiyonel
 
 ---
 
+## Command integrity (HMAC)
+
+Client config: `security.command_signing` (default **true**).
+
+| Yön | Ne zaman | Davranış |
+|-----|----------|----------|
+| Cloud → agent | `signature` alanı **varsa** | Agent `HMAC` doğrular; fail → reject (`Invalid command signature`) |
+| Cloud → agent | `signature` **yok** | Geçiş: kabul (unsigned soft-allow); fleet hedefi signed |
+| Agent → cloud | `POST /api/commands/result` | Result payload’a opsiyonel `signature` eklenir |
+
+**İmza mesajı** (UTF-8):
+
+```text
+{command_id}|{command_type}|{issued_at}
+```
+
+- Algoritma: `HMAC-SHA256` → hex digest  
+- Anahtar türetimi (client): `SHA256("{token}|{COMPUTERNAME}|yesnext-chp-v1")`  
+- Cloud imza üretirken aynı token + kayıtlı hostname (`COMPUTERNAME`) kullanır  
+- Self-process proof (`api/07-lifecycle-sessions.md`) **farklı** HMAC’tir; karıştırma
+
+---
+
+## Destructive commands — server confirmation
+
+Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz / push edilmez:
+
+- `reset_password`
+- `disable_account` / `disable_all_users`
+- `enable_lockdown` (emergency lockdown)
+- `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
+
+Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zorunluluğudur.
+
+---
+
 ## Canonical command catalog
 
 | Type | Params (özet) | Amaç |
@@ -100,4 +136,6 @@ Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`
 - [ ] Daemon WS bağlanır; send → &lt;500ms execute  
 - [ ] WS kopunca poll kaçırmaz; reconnect drain  
 - [ ] Bilinmeyen `command_type` reddedilir (cloud 400)  
-- [x] `threat_intel_updated` → ETag GET (client ≥4.5.66)
+- [x] `threat_intel_updated` → ETag GET (client ≥4.5.66)  
+- [x] HMAC: signed command fail → reject; unsigned transition soft-allow  
+- [x] Destructive IR: dashboard confirmation (cloud gate)
