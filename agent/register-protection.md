@@ -1,8 +1,8 @@
 # Register → protection.block_rules
 
 > **Contract VERSION:** root `VERSION`  
-> **API:** `POST /api/register` (public) + `GET /api/threats/config` (Bearer)  
-> **Min client:** register body apply — sprint (TBD fleet); config poll zaten var
+> **API:** `https://honeypot.yesnext.com.tr` — `POST /api/register` (public) + `GET /api/threats/config` (Bearer)  
+> **Status:** Cloud aligned (register + threats/config). Client apply ≥ **4.5.66**.
 
 ---
 
@@ -55,18 +55,19 @@ Register ekstra alanlar (bilgi): `defaults_applied`, `created`, `skipped`, `thre
 
 ---
 
-## Client
+## Client (≥ 4.5.66)
 
-1. Register 200 → `ThreatEngine.update_block_rules(protection.block_rules)` (varsa).  
+1. Register 200 → `ThreatEngine.update_block_rules(protection.block_rules)` (varsa); ProgramData’ya yaz.  
 2. Yoksa / boş → local defaults; regressiyon yok.  
 3. `GET /api/threats/config` → aynı şema ile üzerine yaz (SoT).  
-4. Bait honeypot capture ≠ `failed_auth` sayacı ([`attacks-and-services.md`](./attacks-and-services.md)).
+4. Aynı `service` + `failed_auth` sayacı `threshold` → `action` + alert.  
+5. Bait honeypot capture ≠ `failed_auth` ([`attacks-and-services.md`](./attacks-and-services.md)).
 
 ---
 
 ## Acceptance
 
-- [ ] Register → en az `rdp-fail-3` threshold 3 / 1800s / `block_ip`  
-- [ ] Reuse → kurallar hâlâ dolu (`skipped`≥0)  
-- [ ] Client runtime’da cloud `id`’leri görünür  
-- [ ] 3 fail window → HP-BLOCK + alert
+- [x] Cloud register 200 → `protection.block_rules` (`rdp-fail-3`, threshold 3)  
+- [x] Client ≥4.5.66: register body → ProgramData + ThreatEngine; threats/config overlay  
+- [x] `protection` yok → client defaults  
+- [ ] 3 fail window → `HP-BLOCK-*` + alert (test host)

@@ -7,9 +7,9 @@
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
-| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | — |
+| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | 4.5.44+ |
 | [agent/polling.md](agent/polling.md) | Cadence tablosu | — |
-| [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | sprint |
+| [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | ≥ **4.5.66** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
 | [agent/remote-input.md](agent/remote-input.md) | Frame `inputs[]` | ≥ 4.5.55 |
@@ -37,7 +37,7 @@
 
 ## Sprint checklist
 
-- [ ] Register body → `update_block_rules(protection.block_rules)`
+- [x] Register body → `update_block_rules(protection.block_rules)` (client ≥4.5.66)
 - [ ] WS `threat_intel_updated` handler
 - [ ] Cadence `polling.md` ile uyum
 - [ ] Komut kataloğu `03` ↔ client executor
