@@ -3,7 +3,7 @@
 > **Contract VERSION:** see root `VERSION`  
 > **API:** `https://honeypot.yesnext.com.tr`  
 > **Auth (register):** public — no Bearer (token mint)  
-> **Status:** Contract defined — client apply path may still use `GET` block-rules; align to this payload.
+> **Status:** Cloud aligned (register + threats/config). Client apply ≥ **4.5.66**.
 
 ---
 
@@ -82,14 +82,14 @@ Mevcut alanlara ek:
 
 ## Open questions
 
-- [ ] Register her çağrıda mı yoksa sadece mint’te mi `protection` döner? (öneri: her 200 register/upsert)
-- [ ] `protection` ayrıca `GET /api/agent/threats/config` altında da mı gelir? (öneri: evet, tek SoT)
+- [x] Register her çağrıda mı? → Cloud: her 200 register/upsert (fleet)
+- [x] `protection` ayrıca threats/config’te mi? → Evet (`GET /api/threats/config`)
 
 ---
 
 ## Acceptance
 
-- [ ] Cloud register 200 body’sinde `protection.block_rules` en az bir RDP kuralı (`threshold: 3`)
-- [ ] Yeni client register sonrası ProgramData / runtime’da kural listesi defaults’tan farklıysa cloud id’leri görünür
+- [x] Cloud register 200 body’sinde `protection.block_rules` (rdp-fail-3, threshold 3)
+- [x] Client ≥4.5.66: register body → ProgramData + ThreatEngine; threats/config overlay
 - [ ] 3 fail (window içinde) → `HP-BLOCK-*` + alert (test host)
-- [ ] `protection` yok → client regressiyon yok (defaults)
+- [x] `protection` yok → client regressiyon yok (defaults)

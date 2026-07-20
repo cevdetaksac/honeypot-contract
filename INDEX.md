@@ -1,14 +1,14 @@
 # Contract INDEX
 
 > Oku sırası: [`VERSION`](VERSION) → bu dosya → ilgili satırdaki MD.  
-> Contract VERSION: **1.0.0** (dosya `VERSION` ile aynı tut)
+> Contract VERSION: **1.0.1** (dosya `VERSION` ile aynı tut)
 
 ## agent/ — Windows agent davranışı
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
 | [agent/CLIENT.md](agent/CLIENT.md) | Auth, Control WS, Self-update, IR, Remote özet | 4.5.44+ |
-| [agent/register-protection.md](agent/register-protection.md) | `POST /register` yanıtı `protection.block_rules` (örn. 3 fail→block) | TBD |
+| [agent/register-protection.md](agent/register-protection.md) | `POST /register` yanıtı `protection.block_rules` (örn. 3 fail→block) | ≥ **4.5.66** |
 | [agent/remote-input.md](agent/remote-input.md) | Frame / frame-json ACK `inputs[]` anında uygula | ≥ 4.5.55 |
 
 ## api/ — HTTP/WS endpoint sözleşmeleri

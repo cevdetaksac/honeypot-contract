@@ -1,5 +1,10 @@
 # Contract changelog
 
+## 1.0.1 — 2026-07-21
+
+- `agent/register-protection.md`: cloud+client apply path closed (client ≥4.5.66); open questions resolved
+- INDEX: note client 4.5.66 for register-protection + WS threat_intel_updated
+
 ## 1.0.0 — 2026-07-21
 
 - Initial shared contract repo (`honeypot-contract`)
