@@ -242,17 +242,17 @@ Lockdown = canary hit / VSS wipe / kritik local process (mevcut shield).
 
 ### MVP (1. sprint)
 
-- [ ] Tablo: `threat_intel_sources`, `threat_intel_iocs`, `threat_intel_bundles`
-- [ ] Ingest worker: CISA KEV + ThreatFox (IP) + curated ransomware extensions
-- [ ] `GET /api/agent/threat-intel` + ETag / 304
-- [ ] Allowlist (honeypot.yesnext.com.tr, GitHub releases, Windows Update ranges opsiyonel)
-- [ ] Bundle `policy.auto_block_firewall` flag
-- [ ] Admin UI: son sync zamanı + kural sayısı
-- [ ] Metrik: ingest errors, bundle size, agent ack rate
+- [x] Tablo: `threat_intel_sources`, `threat_intel_iocs`, `threat_intel_bundles`
+- [x] Ingest worker: CISA KEV + ThreatFox (IP) + curated ransomware extensions (bg_worker ~30 dk)
+- [x] `GET /api/agent/threat-intel` + ETag / 304
+- [x] Allowlist (GET/POST/DELETE `/api/threat-intel/allowlist`)
+- [x] Bundle `policy.auto_block_firewall` flag
+- [x] Admin UI: son sync zamanı + kural sayısı (`dashboard_threat_intel.html` + summary API)
+- [x] Metrik: source `last_error` / `item_count`, bundle boyut/summary (ack rate: ack kayıtları var, oran hesaplama basit sorgu)
 
 ### Sprint 2
 
-- [ ] `POST .../ack`
+- [x] `POST .../ack`
 - [ ] URLhaus host list (opsiyonel)
 - [ ] Tenant-specific IoC upload
 - [ ] Bundle signing (Ed25519) + agent verify (public key embedded)
@@ -261,7 +261,7 @@ Lockdown = canary hit / VSS wipe / kritik local process (mevcut shield).
 ### Sprint 3
 
 - [ ] Hash IoC (MalwareBazaar) — agent’ta opsiyonel hash scan
-- [ ] WS push: `threat_intel_updated` (poll’a ek)
+- [x] WS push: `threat_intel_updated` (poll’a ek)
 - [ ] A/B severity policies per plan (free/pro)
 
 ---

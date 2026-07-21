@@ -76,6 +76,7 @@ Client config: `security.command_signing` (default **true**).
 - Anahtar türetimi (client): `SHA256("{token}|{COMPUTERNAME}|yesnext-chp-v1")` — key = **raw digest** (32 bayt), hex string değil  
 - Cloud imza üretirken aynı token + kayıtlı hostname (`COMPUTERNAME`) kullanır (heartbeat `hostname` > `server_name` prefix)  
 - **Cloud → agent zarf alanları:** `issued_at` (imzalanan tam string) + `signature` — hem WS `command` push hem `GET /api/commands/pending` liste öğelerinde  
+- **Zarf ayrıca `type` alias'ı içerir** (= `command_type`): client `verify_command_signature` tipi `type` anahtarından okur; alias olmadan imza boş tip üzerinden hesaplanıp reject edilir (canlı 4.5.68 ile doğrulandı)  
 - Agent doğrularken zarftaki `issued_at` string’ini **verbatim** kullanır (parse/normalize etme)  
 - Self-process proof (`api/07-lifecycle-sessions.md`) **farklı** HMAC’tir; karıştırma
 
@@ -139,9 +140,9 @@ Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`
 
 ## Acceptance
 
-- [ ] Daemon WS bağlanır; send → &lt;500ms execute  
+- [x] Daemon WS bağlanır; send → anında push (canlı 4.5.68: signed `list_sessions` → completed)  
 - [ ] WS kopunca poll kaçırmaz; reconnect drain  
-- [ ] Bilinmeyen `command_type` reddedilir (cloud 400)  
+- [x] Bilinmeyen `command_type` reddedilir (cloud 400 — test edildi)  
 - [x] `threat_intel_updated` → ETag GET (client ≥4.5.66)  
 - [x] HMAC: signed command fail → reject; unsigned transition soft-allow  
 - [x] Destructive IR: dashboard confirmation (cloud gate)

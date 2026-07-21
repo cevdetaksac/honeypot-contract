@@ -1,5 +1,11 @@
 # Changelog — honeypot-contract
 
+## 1.1.6 — 2026-07-21
+
+- **Fix (cloud):** Komut zarfına `type` alias'ı eklendi (= `command_type`) — client `verify_command_signature` tipi `type`/`command` anahtarından okuduğu için alias'sız imza doğrulaması reject ediyordu ("Invalid command signature"). Canlı 4.5.68 ile signed `list_sessions` → completed doğrulandı.
+- Threat-intel cloud checklist güncellendi: MVP + ack + WS push maddeleri implemented olarak işaretlendi (ingest bg_worker'da ~30 dk, 3 kaynak senkron, 30 bundle).
+- api/03 acceptance: WS push + unknown-command-400 kapatıldı.
+
 ## 1.1.5 — 2026-07-21
 
 - **Cloud implemented:** HMAC command signing canlı — WS `command` push + `GET /api/commands/pending` artık `issued_at` + `signature` içeriyor (key = raw SHA256 digest; hostname kaynağı: heartbeat `hostname`)
