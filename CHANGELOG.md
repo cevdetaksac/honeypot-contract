@@ -1,10 +1,21 @@
 # Changelog — honeypot-contract
 
-## 1.1.6 — 2026-07-21
+## 1.1.7 — 2026-07-21
 
 - **Fix (cloud):** Komut zarfına `type` alias'ı eklendi (= `command_type`) — client `verify_command_signature` tipi `type`/`command` anahtarından okuduğu için alias'sız imza doğrulaması reject ediyordu ("Invalid command signature"). Canlı 4.5.68 ile signed `list_sessions` → completed doğrulandı.
 - Threat-intel cloud checklist güncellendi: MVP + ack + WS push maddeleri implemented olarak işaretlendi (ingest bg_worker'da ~30 dk, 3 kaynak senkron, 30 bundle).
 - api/03 acceptance: WS push + unknown-command-400 kapatıldı.
+
+## 1.1.6 — 2026-07-21
+
+- Client **4.5.68** hotfix: canary tetiğinde **tek** zengin urgent yolu —
+  4.5.67'deki ince `handle_alert` + zengin `send_urgent` yarışı kaldırıldı
+  (canlı smoke boş-alanlı payload'ı yakaladı).
+- Kural: canary urgent **her zaman** `system_context.ransomware` + `raw_events` +
+  `target_service=SYSTEM` + `recommended_action=isolate_host` taşır.
+- Fleet production floor → **4.5.68**.
+- Canlı doğrulama (DESKTOP-F5SCL3G): canary MODIFIED → quarantine arm →
+  urgent 200 `received` (dashboard+email), `RS_UNLOCK` OK.
 
 ## 1.1.5 — 2026-07-21
 

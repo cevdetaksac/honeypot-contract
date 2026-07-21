@@ -101,7 +101,12 @@ en fazla fallback olarak, urgent gelmemişse.
 
 Snapshot’ta dosya yolu / suspect süreç **yok** (≤4.5.66).
 
-### 3) Zengin şema (≥ **4.5.67** — implemented)
+### 3) Zengin şema (≥ **4.5.67**; tek-yol garantisi ≥ **4.5.68** — implemented)
+
+> **4.5.68 hotfix:** 4.5.67'de canary hem ince `on_alert` (threat-engine) hem
+> zengin `send_urgent` çağırıyordu; canlıda ince payload popup'ı kazanabiliyordu.
+> ≥4.5.68: **tek** zengin urgent gönderilir (containment ≤4s sonrası).
+> `suppress_local_notify` korunur.
 
 Urgent alert’e ek alanlar:
 
@@ -146,3 +151,4 @@ Urgent alert’e ek alanlar:
 - [ ] Intel-only kural emergency_lockdown tetiklemez
 - [x] Cloud, canary popup detayını `alerts/urgent`ten alır (health-report fallback 30 dk dedupe)
 - [x] ≥4.5.67: urgent `system_context.ransomware` dolu (file, change_type, suspects[])
+- [x] ≥4.5.68: canary urgent tek zengin yol (canlı smoke: urgent 200 + `target_service=SYSTEM` + `isolate_host`)
