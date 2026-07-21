@@ -1,5 +1,15 @@
 # Changelog — honeypot-contract
 
+## 1.3.1 — 2026-07-21
+
+- **Cloud implemented (network-guard / client ≥4.7.0):**
+  - `VALID_COMMAND_TYPES` → **38 tip**: `network_snapshot`, `network_restore`, `list_network_baseline`.
+  - `network_restore` destructive confirm gate (`confirm:true` yoksa 400).
+  - `ransomware_offline_bomb` popup builder: `system_context.network_guard.suspects[]` + `raw_events[].suspect_pid`/`image` → süreç/PID; popup listesinde.
+  - 60 sn trigger dedupe (`routes_v4._find_recent_duplicate_urgent`).
+  - Dashboard: `network_restored` rozeti + `network_restore` onay dialogu + kritik modal butonu.
+  - Canlı doğrulama (client 41): offline-bomb urgent → popup `cursor.exe`/PID + `network_restored=true` + restore_actions dolu.
+
 ## 1.3.0 — 2026-07-21 (spec; client **4.7.0** planlı)
 
 - **Yeni:** [`agent/network-guard.md`](agent/network-guard.md) — **offline fidye bombası**

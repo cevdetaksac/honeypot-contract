@@ -5,7 +5,7 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (35 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (38 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
 ---

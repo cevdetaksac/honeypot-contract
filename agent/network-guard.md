@@ -159,11 +159,13 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
 }
 ```
 
-**Cloud beklenen davranış:**
-- Kritik popup (kanary/tamper ile aynı detay motoru; `system_context.network_guard` + `raw_events` okunur).
-- Host'u "under_attack" işaretle + operatöre **isolate + suspend edilenleri incele** öner.
-- Dedupe: aynı `trigger` için kısa pencere (öneri 60 sn).
-- `restored:true` ise "bağlantı otomatik kurtarıldı" rozeti göster.
+**Cloud davranış (✅ implemented):**
+- Kritik popup (kanary/tamper ile aynı detay motoru; `system_context.network_guard.suspects[]` + `raw_events[].suspect_pid`/`image` → süreç/PID).
+- `ransomware_offline_bomb` popup listesinde (`helpers._POPUP_THREAT_TYPES`).
+- `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
+- Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
+- Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) + `network_restore` (**destructive confirm**).
+- Host'u "under_attack" işaretle + operatöre **isolate + suspend edilenleri incele** öner (dashboard quick actions).
 
 ---
 
