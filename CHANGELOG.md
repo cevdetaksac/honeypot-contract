@@ -1,5 +1,17 @@
 # Changelog — honeypot-contract
 
+## 1.2.0 — 2026-07-21
+
+Client **4.6.0** survival katmanı için cloud desteği (Guardian service, tamper wire, break-glass recovery).
+
+- **Cloud implemented:** Yeni komut tipleri whitelist’te — `create_user`, `remote_logon`, `set_autologon`, `clear_autologon`, `reboot` (`VALID_COMMAND_TYPES` → 35 tip).
+- **Cloud implemented:** Destructive confirm gate genişletildi — `create_user`, `remote_logon`, `set_autologon`, `reboot` `confirm:true` olmadan 400 (`clear_autologon` non-destructive). `create_user`/`remote_logon` → username+password, `set_autologon` → username alan doğrulaması.
+- **Cloud implemented:** Break-glass şifre maskeleme — `password`/`new_password` audit log + `GET /api/commands/{id}` görünümünde `***`; agent’a giden `pending`/WS payload gerçek şifreyi taşır; komut terminal duruma geçince DB’de şifre `***` ile ezilir (`helpers.scrub_command_params`). `remote_logon` TTL 15 dk, `reboot` TTL 15 dk.
+- **Cloud implemented:** `agent_tamper` popup builder — `system_context.tamper.offender` (+ `raw_events[].offender_pid`/`image`) → popup süreç/PID; `agent_tamper` popup açar.
+- **Cloud implemented:** `pending_tunnel_commands` legacy kuyruğu TTL (30 dk) + servis-başına dedupe (`routes_agent._prune_tunnel_commands`) — hem tunnel-set (yazma) hem tunnel-status (okuma).
+- **Cloud implemented:** Opsiyonel dead-man — health report `snapshot.persistence` `daemon_ok=false`/`service_ok=false` (operator_stop yok) → sentetik `agent_persistence_degraded` alert (high/70, 30 dk dedupe). Tamper urgent’e ikincil güvenlik ağı.
+- Doküman: `api/03-control-websocket.md` (komut katalog + destructive + maskeleme), `agent/attacks-and-services.md` (tunnel TTL/dedupe), `agent/threat-engine.md` (tamper + dead-man).
+
 ## 1.1.7 — 2026-07-21
 
 - **Fix (cloud):** Komut zarfına `type` alias'ı eklendi (= `command_type`) — client `verify_command_signature` tipi `type`/`command` anahtarından okuduğu için alias'sız imza doğrulaması reject ediyordu ("Invalid command signature"). Canlı 4.5.68 ile signed `list_sessions` → completed doğrulandı.

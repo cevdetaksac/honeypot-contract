@@ -155,6 +155,63 @@ Channel’lar `monitored_event_channels` ile filtrelenir.
 
 ---
 
+## Agent survival — tamper + dead-man (client ≥4.6.0)
+
+Guardian service + SYSTEM daemon kendini korur; motor durdurulmaya çalışılırsa veya
+beklenmedik şekilde ölürse cloud’a bildirir.
+
+### `agent_tamper` alert (SoT: `POST /api/alerts/urgent`)
+
+```json
+{
+  "severity": "critical",
+  "threat_type": "agent_tamper",
+  "title": "AGENT TAMPER — motor durdurulmaya calisildi",
+  "description": "reason=… leg=… resurrected=…",
+  "threat_score": 100,
+  "target_service": "SYSTEM",
+  "recommended_action": "isolate_host",
+  "system_context": {
+    "tamper": {
+      "reason": "service_stop",
+      "leg": "daemon",
+      "legitimate": false,
+      "resurrected": true,
+      "resurrect_ms": 850,
+      "ts": "…Z",
+      "offender": { "pid": 6120, "image": "taskkill.exe" }
+    }
+  },
+  "raw_events": [
+    { "kind": "agent_tamper", "reason": "service_stop", "leg": "daemon",
+      "resurrected": true, "offender_pid": 6120, "image": "taskkill.exe" }
+  ]
+}
+```
+
+- Cloud, `system_context.tamper.offender` (veya `raw_events[].offender_pid`/`image`) →
+  popup süreç/PID alanları (`helpers.parse_alert_process_info`).
+- `agent_tamper` **popup açar** (`helpers._POPUP_THREAT_TYPES`); modalda “Kill Process” ile offender durdurulabilir.
+- `legitimate=true` (planlı stop/update/operator) ise client **hiç göndermez**.
+
+### Dead-man (cloud fallback) — `snapshot.persistence`
+
+Health report’ta `snapshot.persistence` bloğu (client ≥4.6.0):
+
+```json
+{ "service_ok": true, "service_installed": true, "daemon_ok": true,
+  "tasks_armed": true, "self_protection": true, "operator_stop": false,
+  "last_tamper_ts": null, "tamper_count_24h": 0 }
+```
+
+Cloud kuralı (`routes_v4._maybe_alert_persistence_degraded`): `service_installed=true` iken
+`daemon_ok=false` **veya** `service_ok=false` **ve** `operator_stop=false` → sentetik
+`agent_persistence_degraded` alert (severity **high**, score 70, 30 dk dedupe).
+`operator_stop=true` (bilinçli durdurma) → alarm yok. Bu, tamper urgent gelmeden
+motor sessizce ölürse **ikincil güvenlik ağıdır**; SoT tamper urgent’tir.
+
+---
+
 ## Acceptance
 
 - [ ] Config poll → `protection.block_rules` + auto_block_* dolu

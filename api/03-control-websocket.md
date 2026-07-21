@@ -5,7 +5,7 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (30 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (35 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
 ---
@@ -90,12 +90,25 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `disable_account` / `disable_all_users`
 - `enable_lockdown` (emergency lockdown)
 - `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
+- **Break-glass (client ≥4.6.0):** `create_user`, `remote_logon`, `set_autologon`, `reboot`
 
 Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
 (`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
 Cloud-internal maintenance akışları (blok temizliği → `clear_firewall`) bu endpoint’i kullanmaz; gate dashboard/API çağrıları içindir.
 
+> `clear_autologon` yıkıcı **değildir** (autologon geri alma) — onay gerekmez.
+
+**Cloud alan doğrulaması:** `create_user`/`remote_logon` → `username` + `password` zorunlu; `set_autologon` → `username` zorunlu (aksi halde 400).
+
 Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zorunluluğudur.
+
+### Şifre maskeleme (break-glass)
+
+`password` / `new_password` taşıyan komutlar (`create_user`, `remote_logon`, `set_autologon`, `remote_session_prepare`, `reset_password`) için:
+
+- **Agent’a** iletilen `params` (WS push + `GET /api/commands/pending`) **gerçek** şifreyi taşır — agent’ın uygulaması için gerekli.
+- **Dashboard/audit** görünümleri maskelenir: `GET /api/commands/{id}` ve `CommandAuditLog` → `***`.
+- Komut terminal duruma (`completed`/`failed`/…) geçince cloud, kayıtlı `params` içindeki şifreyi DB’de `***` ile ezer (`helpers.scrub_command_params`).
 
 ---
 
@@ -125,6 +138,11 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `self_update` | `force`, `tag`, `download_url` | Installer |
 | `check_update` | — | Sürüm kontrol |
 | `unlock_ransomware_quarantine` | — | IFEO / quarantine temizle ([`../agent/ransomware-shield.md`](../agent/ransomware-shield.md)) |
+| `create_user` | `username`, `password`, `groups[]`, `enable`, `if_exists("fail"\|"reset_enable")`, `password_never_expires`, `comment` | Break-glass yerel hesap (≥4.6.0, destructive) |
+| `remote_logon` | `username`, `password`, `domain`, `mode("auto"\|"reconnect_only"\|"autologon_reboot")`, `reboot`, `timeout_sec` | Konsol oturumu: reconnect veya autologon+reboot (≥4.6.0, destructive, TTL 15 dk) |
+| `set_autologon` | `username`, `password?`, `domain`, `count` | AutoAdminLogon arm (≥4.6.0, destructive) |
+| `clear_autologon` | — | AutoAdminLogon geri al (≥4.6.0, **non-destructive**) |
+| `reboot` | `grace_sec`, `reason` | Zamanlı yeniden başlatma (≥4.6.0, destructive, TTL 15 dk) |
 
 Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md).
 

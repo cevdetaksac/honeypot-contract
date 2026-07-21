@@ -48,6 +48,16 @@ Dashboard hâlâ “tunnel” API isimleri kullanır; anlam = **bait listen desi
 
 Varsayılan listen portları (şablon): RDP 3389, MSSQL 1433, MYSQL 3306, SSH 22, FTP 21.
 
+### `pending_tunnel_commands` — TTL + dedupe (geri uyumluluk kuyruğu)
+
+`tunnel-set` iki yol yazar: **hızlı yol** `pending_commands` (`tunnel_start`/`tunnel_stop`, agent zaten poll/WS ile alır) + **legacy kuyruk** `settings_json.tunnel_commands` (eski agent’lar için `tunnel-status` yanıtındaki `pending_tunnel_commands`).
+
+Legacy kuyruk artık **TTL + dedupe** uygular (cloud, `routes_agent._prune_tunnel_commands`):
+
+- **Dedupe:** servis başına yalnız **en yeni** komut tutulur (start→stop art arda gelirse en son desired kazanır); `tunnel-set` aynı servisin eski girdilerini düşürür.
+- **TTL:** `created_at` üzerinden **30 dk**’dan eski girdiler düşer. Hem yazma (`tunnel-set`) hem okuma (`tunnel-status`) yolunda uygulanır; okuma sırasında değişiklik olursa kalıcılaşır.
+- Agent gerçek listen durumunu `POST /api/agent/tunnel-status` ile raporladığında desired’e ulaşan girdiler zaten düşürülür (mevcut davranış korunur).
+
 **RDP port taşıma:** Gerçek RDP güvenli porta alınır; bait 3389’da kalabilir. Onay akışı client’ta korunur — cloud sadece desired/state görür.
 
 ---
