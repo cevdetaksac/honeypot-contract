@@ -32,6 +32,14 @@
   confirm-gated; unsigned high-impact creates return HTTP 400 instead of
   queuing; legacy `tunnel_commands` carry additive `issued_at`/`signature`
   while `PendingCommand` remains the authoritative signed path.
+- Remote Desktop v2 viewer fixes (cloud dashboard): when WebRTC video is
+  connected the JPEG `img` surface is force-hidden (no more double-desktop
+  render), late `img.onload` cannot re-show it, status polling no longer
+  downgrades a live WebRTC session to "waiting/empty frame", and the stats
+  badge measures decoded video FPS via `getVideoPlaybackQuality()`.
+  `GET /api/remote/status` now reports `live=true` / `diag=live` while a
+  viewer WebRTC peer is connected even though the agent stops posting JPEG
+  frames in that mode.
 
 ## 1.4.1 — 2026-07-22 (Security & Resilience vNext delivery plan)
 
