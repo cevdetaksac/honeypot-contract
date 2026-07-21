@@ -120,6 +120,18 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
 }
 ```
 
+### STATUS dependency invariant (client ≥4.7.4)
+
+`:58632 STATUS` handler'ı tek-thread control server üzerinde çalışır. Handler
+ve çağırdığı summary fonksiyonları **aynı STATUS soketini tekrar probe edemez**.
+Özellikle persistence summary, `daemon_ok` değerini mevcut motor state'inden
+(`_is_daemon_motor && remote_commands_running`) alır; handler içinden
+`is_motor_healthy()` çağırmaz.
+
+Neden: `STATUS → persistence → is_motor_healthy → STATUS` recursive self-call
+kuyruğu listener'ı tüketir, `CLOSE_WAIT` biriktirir ve GUI/Guardian timeout olur.
+External health caller'lar normal şekilde STATUS probe etmeye devam eder.
+
 ---
 
 ## Lifecycle
@@ -146,3 +158,4 @@ Yeni GUI özellikleri: `client_gui_*.py` alt modülleri tercih et.
 - [ ] GUI kapandı → dashboard poll devam
 - [ ] threats/config `protection.block_rules` motor’da uygulanır
 - [ ] İki RDP kullanıcısı → RD `session_id` doğru masaüstü
+- [x] 5 ardışık STATUS hızlı döner; recursive self-probe / CLOSE_WAIT yok (≥4.7.4)

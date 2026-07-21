@@ -3,7 +3,7 @@
 > **Repo:** [cevdetaksac/honeypot-contract](https://github.com/cevdetaksac/honeypot-contract)  
 > **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md) · fleet: [`FLEET.md`](../FLEET.md)  
 > **API:** `https://honeypot.yesnext.com.tr`  
-> **Production floor:** client ≥ **4.7.3**
+> **Production floor:** client ≥ **4.7.4**
 
 Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalama.
 

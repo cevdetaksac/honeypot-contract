@@ -1,5 +1,17 @@
 # Changelog — honeypot-contract
 
+## 1.3.5 — 2026-07-21 (client **4.7.4** — daemon STATUS IPC health)
+
+- Live 4.7.3 smoke test found a recursive health dependency:
+  daemon `STATUS` → persistence summary → `is_motor_healthy()` → daemon `STATUS`.
+  The single-thread control server accumulated recursive requests/CLOSE_WAIT and
+  GUI/Guardian probes timed out although protection and cloud health continued.
+- Client ≥4.7.4 passes local daemon health into persistence summary while serving
+  STATUS; it never probes its own STATUS socket. External health callers still
+  probe normally. Regression test added.
+- Production floor raised to 4.7.4. Old empty quarantine state left by the
+  4.7.0/4.7.1 false-positive was cleared on the validated host.
+
 ## 1.3.4 — 2026-07-21 (client **4.7.3** — operator-approved containment + GUI)
 
 - Network Guard safety invariant tightened: detection is **always alert-only**;
