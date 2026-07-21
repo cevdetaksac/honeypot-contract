@@ -9,6 +9,12 @@
 - Canlı 4.8.3 bulgusu: frontend-only GUI'de engine nesneleri `None` olduğundan
   hızlı whitelist ekleme buluta boş liste yolluyordu ("eklendi" toast'ı ama
   Whitelist (0) ve cloud wipe riski). Production floor 4.8.4.
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):** dashboard
+  production floor 4.8.2 → **4.8.4** güncellendi (sürüm uyarı rozeti + download
+  kartı). `POST /api/dashboard/whitelist-ip` başarılı eklemede artık agent'a
+  `{"v":1,"t":"threat_config_updated"}` WS push da yollar — agent 60 sn
+  cache'ini beklemeden cloud whitelist setini yeniden çeker (SoT invariantı ile
+  uyumlu).
 
 ## 1.3.11 — 2026-07-21 (client **4.8.3** — dashboard PIN yönetimi + IP hızlı aksiyonları)
 
