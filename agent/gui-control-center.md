@@ -135,6 +135,31 @@ Runtime uygulanabilen ilk katmanlar:
 
 Tespit motoru hiçbir koşulda kendi kendine suspend/kill/network restore yapmaz.
 
+## IP Listeleri hızlı aksiyonları (≥4.8.3)
+
+IP tablosu başlığının sağ üstünde iki hızlı aksiyon butonu bulunur:
+
+- **＋ IP Engelle** — IP adresi sorulur (modal input), geçerli IPv4/IPv6 ise
+  satır aksiyonlarıyla aynı yol kullanılır (daemon IPC `block_ip`, yoksa lokal
+  AutoResponse fallback) + toast + tablo yenileme.
+- **＋ Whitelist'e Ekle** — aynı akış; whitelist seti anında
+  `POST /api/threats/config` (`whitelist_ips`) ile buluta yazılır.
+
+Kurallar: giriş `ipaddress` ile doğrulanır (geçersiz → toast, işlem yok);
+her iki aksiyon da PIN gate'inden (`require_gui_unlock(reason="mutate")`)
+geçer; tablo içi satır aksiyonlarıyla aynı fonksiyonlar kullanılır (tek yol).
+
+## GUI PIN — dashboard yönetimi (≥4.8.3)
+
+- Cloud `set_gui_pin` / `clear_gui_pin` komutları (bkz.
+  [`../api/03-control-websocket.md`](../api/03-control-websocket.md)) PIN
+  store'u (`gui_lock.json`) SYSTEM daemon üzerinden ezer/siler.
+- GUI süreci store dosyasının mtime'ını izler: dış değişiklikte hash yeniden
+  yüklenir ve aktif oturum kilidi düşürülür (restart gerekmez).
+- Hesap bağlıysa (`is_account_linked()`) tüm PIN diyalogları şu ipucunu
+  gösterir: *"Hesabınız bağlı — PIN kodunuzu dashboard üzerinden
+  tanımlayabilir veya sıfırlayabilirsiniz."* (`pin_dashboard_hint` i18n).
+
 ## Sayaç kabul kriterleri
 
 - Kart ve popup aynı fonksiyon/snapshot/revision kullanır.

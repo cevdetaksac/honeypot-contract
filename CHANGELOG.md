@@ -1,5 +1,20 @@
 # Changelog — honeypot-contract
 
+## 1.3.11 — 2026-07-21 (client **4.8.3** — dashboard PIN yönetimi + IP hızlı aksiyonları)
+
+- `api/03-control-websocket.md`: yeni komutlar **`set_gui_pin`** (`pin` 4-12
+  hane; confirm gate; result/audit'te PIN maskeli — cloud `scrub_command_params`
+  listesine `pin` eklenmeli) ve **`clear_gui_pin`** (confirm gate). Cloud TODO:
+  `VALID_COMMAND_TYPES` + `DESTRUCTIVE_COMMAND_TYPES` + dashboard "GUI PIN
+  tanımla/sıfırla" aksiyonu.
+- GUI PIN store dış-değişiklik algılama: daemon `gui_lock.json`'ı yazınca GUI
+  süreci mtime'dan yeniden yükler ve oturum kilidini düşürür (restart yok).
+- `agent/gui-control-center.md`: hesap bağlıysa PIN diyaloglarında
+  "dashboard'dan tanımla/sıfırla" ipucu (`pin_dashboard_hint`).
+- IP Listeleri başlığına **＋ IP Engelle** / **＋ Whitelist'e Ekle** hızlı
+  aksiyon butonları (modal IP girişi + `ipaddress` doğrulaması + PIN gate;
+  satır aksiyonlarıyla aynı IPC/cloud yolu). Production floor 4.8.3.
+
 ## 1.3.10 — 2026-07-21 (client **4.8.2** — Settings config surface documented)
 
 - `agent/threat-engine.md`: `GET /api/threats/config` field list now documents

@@ -8,6 +8,8 @@
 Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (40 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
+> **Cloud TODO (≥1.3.11):** `set_gui_pin` + `clear_gui_pin` → `VALID_COMMAND_TYPES`, `DESTRUCTIVE_COMMAND_TYPES` (confirm gate) ve `scrub_command_params` (`pin` alanı `***`) listelerine eklenmeli; dashboard sunucu detayına "GUI PIN tanımla/sıfırla" aksiyonu eklenmeli (client ≥4.8.3 uygular).
+
 ---
 
 ## Bağlantı
@@ -95,6 +97,7 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
 - `network_restore` (ağ baseline'dan geri yükle — [`../agent/network-guard.md`](../agent/network-guard.md))
 - `suspend_process` (şüpheli süreci askıya al — açık kullanıcı onayı zorunlu)
+- `set_gui_pin` / `clear_gui_pin` (yerel GUI anti-tamper PIN'ini ez/sıfırla — ≥4.8.3)
 
 Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
 (`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
@@ -108,7 +111,7 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 
 ### Şifre maskeleme (break-glass, implemented)
 
-`password` / `new_password` taşıyan komutlar (`create_user`, `remote_logon`, `set_autologon`, `remote_session_prepare`, `reset_password`):
+`password` / `new_password` taşıyan komutlar (`create_user`, `remote_logon`, `set_autologon`, `remote_session_prepare`, `reset_password`) — ve `pin` taşıyan `set_gui_pin` (≥4.8.3, cloud scrub listesine `pin` alanı eklenmeli):
 
 - **Agent’a** iletilen `params` (WS push + `GET /api/commands/pending`) **gerçek** şifreyi taşır — uygulama için gerekli.
 - **Dashboard/audit** görünümleri maskeli: `GET /api/commands/{id}` + `CommandAuditLog` → `***`.
@@ -151,6 +154,10 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `network_snapshot` | — | Anlık ağ baseline al — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
 | `network_restore` | `targets[]?` | Baseline'dan ağ/sürücü geri yükle (confirm) — ≥4.7.0 |
 | `list_network_baseline` | — | Baseline sürümleri/özeti — ≥4.7.0 |
+| `set_gui_pin` | `pin` (4-12 hane, yalnız rakam) | Dashboard'dan yerel GUI PIN tanımla/değiştir (confirm; result PIN içermez) — ≥4.8.3 |
+| `clear_gui_pin` | — | Dashboard'dan yerel GUI PIN'i sıfırla/kaldır (confirm) — ≥4.8.3 |
+
+**GUI PIN semantiği (≥4.8.3):** PIN store `ProgramData/.../gui_lock.json` — SYSTEM daemon komutu uygular, GUI süreci dosya mtime'ından değişikliği otomatik algılar (restart gerekmez) ve aktif oturum kilidini düşürür. Hesap bağlıysa GUI PIN diyalogları "dashboard üzerinden tanımlayabilir/sıfırlayabilirsiniz" ipucu gösterir (`is_account_linked()`), böylece PIN unutulduğunda kurtarma yolu görünürdür. Client doğrulaması: `pin` eksik → `missing_pin`, format dışı → `invalid_pin_format`.
 
 Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md); kurtarma → [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md); kalıcılık/tamper → [`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md).
 
