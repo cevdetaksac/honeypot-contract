@@ -1,5 +1,19 @@
 # Changelog — honeypot-contract
 
+## 1.3.0 — 2026-07-21 (spec; client **4.7.0** planlı)
+
+- **Yeni:** [`agent/network-guard.md`](agent/network-guard.md) — **offline fidye bombası**
+  savunması (fire-and-forget + internetsiz kütle şifreleme). Beş parça:
+  **A** imzalı ağ baseline yedeği (mapped drive / shares / adapter / DNS / route / firewall),
+  **B** internetsiz davranışsal tespit (ağ-kesme delta + FS yazma/rename fırtınası + fidye notu deseni skorlama; ağ-kesme+FS-fırtınası → canary beklemeden tetik),
+  **C** agresif containment **suspend-first** (kill değil; acil VSS snapshot; operatör onayıyla kill/release; opsiyonel auto-kill),
+  **D** ağ/bağlantı kurtarma (adapter/DNS/firewall/route/mapped-drive/shares baseline'dan restore → daemon yeniden bağlanır),
+  **E** `ransomware_offline_bomb` urgent alarmı (`system_context.network_guard`, `restored` işaretli).
+- Yeni komutlar: `network_snapshot`, `network_restore` (confirm), `list_network_baseline`.
+- STATUS/health `network_guard{}` bloğu.
+- Dürüst sınır: tam EDR/AV değil; davranışsal tespit ayarlanabilir eşik + güvenli
+  (suspend-first) varsayılan; garanti = erken containment + kurtarılabilirlik.
+
 ## 1.2.0 — 2026-07-21 (client **4.6.0** implemented)
 
 - **Yeni:** [`agent/persistence-and-tamper.md`](agent/persistence-and-tamper.md) — survival modeli:
