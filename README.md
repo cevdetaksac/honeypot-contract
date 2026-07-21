@@ -6,7 +6,7 @@
 |--|--|
 | **VERSION** | See [`VERSION`](VERSION) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
-| **Fleet** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.5.68** |
+| **Fleet** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.9.0** |
 | **API base** | `https://honeypot.yesnext.com.tr` |
 | **Auth** | `Authorization: Bearer <token>` — agent API’de `?token=` **yok** (geçiş dual-read cloud’da olabilir; client göndermez) |
 
@@ -31,7 +31,7 @@
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: git checkout v1.3.13
+# pin: git checkout v1.4.0
 ```
 
 `CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.  

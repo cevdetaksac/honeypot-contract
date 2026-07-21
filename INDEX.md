@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.3.13** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.8.5** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips)
+> **VERSION 1.4.0** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling)
 
 ## agent/
 
@@ -19,7 +19,7 @@
 | [agent/log-retention.md](agent/log-retention.md) | Günlük yerel loglar, 7 gün retention, updater uyumluluğu | ≥ **4.7.6** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
-| [agent/remote-input.md](agent/remote-input.md) | Frame `inputs[]` | ≥ 4.5.55 |
+| [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + persistent session helper (frame `inputs[]` baseline ≥4.5.55) | ≥ **4.9.0** |
 
 ## api/
 
@@ -29,7 +29,7 @@
 | [api/02-account.md](api/02-account.md) | Account link / multi-server | — |
 | [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komut kataloğu + HMAC + `threat_intel_updated` | 4.5.x / intel push ≥4.5.66 |
 | [api/04-self-update.md](api/04-self-update.md) | Self-update ACK | 4.5.39+ |
-| [api/05-remote-desktop.md](api/05-remote-desktop.md) | Remote stream / prepare | — |
+| [api/05-remote-desktop.md](api/05-remote-desktop.md) | Remote Desktop v2 (WS/JPEG + WebRTC signaling, prepare/stream) | prepare ≥4.5.48 / **v2 ≥4.9.0** |
 | [api/06-firewall-blocks.md](api/06-firewall-blocks.md) | HP-BLOCK / sync / clear | 4.5.40+ |
 | [api/07-lifecycle-sessions.md](api/07-lifecycle-sessions.md) | Lifecycle / sessions / processes | — |
 | [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI IPC (`RS_*`) | ≥ **4.5.66** |

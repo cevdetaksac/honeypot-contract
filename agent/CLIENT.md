@@ -3,7 +3,7 @@
 > **Repo:** [cevdetaksac/honeypot-contract](https://github.com/cevdetaksac/honeypot-contract)  
 > **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md) · fleet: [`FLEET.md`](../FLEET.md)  
 > **API:** `https://honeypot.yesnext.com.tr`  
-> **Production floor:** client ≥ **4.8.5**
+> **Production floor:** client ≥ **4.9.0**
 
 Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalama.
 
@@ -70,3 +70,9 @@ Motor+Guardian servisi çapraz watchdog; durdurma yalnız update-lock / imzalı 
 ## Network Guard + GUI (tek satır, ≥4.7.3)
 
 Şüpheli yoğun aktivite **yalnız alarm** (`ransomware_offline_suspect`); süreç dondurma açık kullanıcı onayıyla `suspend_process`. Güvenlik katmanı toggle'ları GUI → `POST /api/threats/config` → `threat_config_updated` push. Detay: [`network-guard.md`](./network-guard.md), [`gui-control-center.md`](./gui-control-center.md).
+
+---
+
+## Remote Desktop v2 (tek satır, ≥4.9.0)
+
+Sağlıklı yol **WS + JPEG** (her WS karesinde ayrıca HTTP post YOK); `hello`/`meta` protocol 2 (native vs encoded boyut, negatif origin, requested/effective telemetri); input protocol 2 + mobil jestler + `input_ack` + gizlilik (tuş/metin loglanmaz); farklı WTS oturumu için kalıcı session helper; opsiyonel WebRTC signaling agent/view WS relay üzerinden (protocol=1, non-trickle ICE, H264, data-channel input, offer içinde cloud-verilen sınırlı `ice_servers` — credential loglanmaz) → başarısızlıkta JPEG-WS fallback. Detay: [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md), [`remote-input.md`](./remote-input.md).

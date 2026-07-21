@@ -1,5 +1,62 @@
 # Changelog — honeypot-contract
 
+## 1.4.0 — 2026-07-21 (client **4.9.0** — Remote Desktop v2)
+
+- `api/05-remote-desktop.md` is now **canonical** with an early, clearly
+  delimited **"Remote Desktop v2 (client ≥ 4.9.0)"** section for cloud/dashboard
+  implementers. Legacy prompt-sourced material is preserved but marked
+  *(superseded by v2)* where it conflicts.
+- **WS `hello`/`meta` exact additive schemas** documented (protocol 2):
+  truthful `capabilities` (`codecs` always starts `["jpeg"]`; `h264`/`vp8` and
+  `"webrtc"` transport only when the aiortc/av runtime is really present;
+  `webrtc.signaling=1`, `ice="non-trickle"`, `fallback="jpeg-ws"`), and `meta`
+  carrying `native_*` vs encoded `width/height`, `origin_x/y` (may be negative),
+  requested-vs-effective adaptive fields and monotonic capture/send stamps.
+- **Healthy path is WS + JPEG only** — corrected the long-standing wrong
+  guidance that the agent must POST an HTTP frame on every WS frame. HTTP frame
+  upload (and its `inputs[]` ACK, the primary input path while on HTTP) is used
+  **only while WS is down**. Latest-frame / coalescing outbound semantics and
+  input backup poll cadence (2.0 s WS-healthy / 0.30 s WS-down) specified.
+- **Input protocol 2** exact envelope + legacy protocol-1 compatibility, WS
+  `input_ack` schema (one ACK per coalesced move id), semantic mobile events
+  (tap/double_tap/long_press, drag_start/move/end, trackpad/direct modes,
+  two-finger vertical+horizontal scroll, relative movement), critical-edge
+  ordering/non-drop + move budget, and the **no key/text logging** privacy rule.
+- `agent/remote-input.md` rewritten: no longer requires duplicate per-frame HTTP
+  posts; documents the **persistent same-session helper** (SYSTEM daemon loopback
+  listener + one `CreateProcessAsUser` helper, HMAC-framed `RDH1` full-duplex
+  F/I/A/C/S protocol, live config, fire-and-forget moves + short-ACK critical
+  edges) and the legacy one-shot fallback.
+- **WebRTC signaling over the existing agent/view WS relay** (optional, client
+  ≥ 4.9.0): exact `webrtc_offer`/`answer`/`reject` schema with **protocol=1**,
+  strict `stream_id`/`session_id` matching, **non-trickle ICE** (client explicitly
+  **rejects standalone trickle ICE** with `reason=non_trickle_ice`), H264
+  preference, data-channel input, automatic JPEG-WS fallback. Cloud requirements:
+  viewer-created offer, answer/reject relay, runtime capability gating, session
+  cleanup / stale rejection. No new endpoints invented; existing WS/HTTP
+  endpoints kept.
+- **Cloud-supplied ICE configuration implemented (client ≥ 4.9.0):** the
+  protocol-1 **offer** may carry optional `ice_servers` (≤8 servers, ≤8 URLs
+  each, `stun:`/`turn:`/`turns:` only, URL ≤512 / username ≤256 / credential
+  ≤512 chars, no whitespace/control chars, only `urls`/`username`/`credential`
+  keys); the client validates and applies it to its `RTCPeerConnection`,
+  rejecting out-of-bounds configs **without echoing values** (generic errors;
+  no credential in logs/reject payloads/status). Truthful capability flag
+  `webrtc.ice_server_config` advertised in `hello`/`meta`. Cloud flow over the
+  **existing viewer/agent WS only**: cloud pushes short-lived
+  `{"t":"webrtc_ice_config","protocol":1,"stream_id",…,"ice_servers":[…]}` to
+  the viewer before offer creation; the viewer builds its RTCPeerConnection
+  and forwards the same bounded `ice_servers` in the offer; cloud must redact
+  credentials from logs/audits/status. TURN credential issuance/config
+  delivery is now an **actionable Cloud TODO** (client consumer shipped), not
+  an open question.
+- Added an ordered **Cloud TODO / acceptance checklist** (dashboard mobile
+  pointer UX, `<video>`/WebRTC fallback, telemetry/status badges, browser/mobile
+  test matrix).
+- `VERSION` → **1.4.0**; `INDEX.md`/`FLEET.md`/`README.md`/`agent/CLIENT.md`
+  version + production-floor references aligned to **client ≥ 4.9.0** (README's
+  stale 4.5.68 floor fixed).
+
 ## 1.3.13 — 2026-07-21 (client **4.8.5** — block-removed ACK ips + updated)
 
 - **Cloud data retention (honeypot.yesnext.com.tr, 2026-07-21):** saldırı
