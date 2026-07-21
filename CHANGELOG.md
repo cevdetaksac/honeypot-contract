@@ -1,5 +1,22 @@
 # Changelog — honeypot-contract
 
+## 1.2.0 — 2026-07-21 (spec — client 4.6.0 hedef, implementasyon onay bekliyor)
+
+- **Yeni:** [`agent/persistence-and-tamper.md`](agent/persistence-and-tamper.md) — survival modeli:
+  Windows Servisi `CloudHoneypotGuardian` (SCM restart-on-failure) + Session 0 motor
+  **çapraz watchdog**; durdurma yalnız (1) update-lock (2) imzalı PIN `operator_stop.json`;
+  başka her sonlanma → **tamper** → ≤5 sn diriliş + `agent_tamper` urgent (SACL offender PID).
+- **Yeni:** [`agent/disaster-recovery.md`](agent/disaster-recovery.md) — felaket kurtarma:
+  `create_user` (yeni/yeniden Administrator), `remote_logon` (var olan oturum reconnect →
+  yoksa **autologon `AutoLogonCount=1` + reboot** break-glass, boot sonrası LSA secret temizlenir),
+  `set_autologon`/`clear_autologon`/`reboot` primitifleri, uçtan uca kurtarma runbook.
+- `api/03-control-websocket.md`: komut kataloğuna `create_user`, `remote_logon`,
+  `set_autologon`/`clear_autologon`, `reboot`; hepsi HMAC + **destructive confirm** listesinde.
+- `api/08-architecture.md`: Guardian servis bacağı + durdurma politikası.
+- `agent/attacks-and-services.md`: cloud `pending_tunnel_commands` **TTL/expiry + dedupe**
+  sözleşmesi (10 aylık bayat komut bulgusu); client zaten yok sayıyor, `desired` otorite.
+- `FLEET.md` / `INDEX.md`: 4.6.0 hedef satırları; production floor **4.5.68** (değişmedi).
+
 ## 1.1.7 — 2026-07-21
 
 - **Fix (cloud):** Komut zarfına `type` alias'ı eklendi (= `command_type`) — client `verify_command_signature` tipi `type`/`command` anahtarından okuduğu için alias'sız imza doğrulaması reject ediyordu ("Invalid command signature"). Canlı 4.5.68 ile signed `list_sessions` → completed doğrulandı.

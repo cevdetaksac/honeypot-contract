@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.1.7** · Repo: https://github.com/cevdetaksac/honeypot-contract  
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.68**
+> **VERSION 1.2.0** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.68** · Hedef: **4.6.0** (survival + recovery)
 
 ## agent/
 
@@ -12,7 +12,9 @@
 | [agent/polling.md](agent/polling.md) | Cadence tablosu | — |
 | [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | ≥ **4.5.66** |
 | [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |
-| [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports | — |
+| [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian servisi, çapraz watchdog, tamper wire | ≥ **4.6.0** |
+| [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` (autologon break-glass) | ≥ **4.6.0** |
+| [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
 | [agent/remote-input.md](agent/remote-input.md) | Frame `inputs[]` | ≥ 4.5.55 |
 

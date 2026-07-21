@@ -11,10 +11,13 @@
 | Katman | Process | Rol |
 |--------|---------|-----|
 | **Motor** | `CloudHoneypot-Background` (`--mode=daemon`, SYSTEM Session 0) | Threat, firewall, honeypot, RemoteCommands, control WS, threat-intel, ransomware shield, `:58632`, self_update, RD — **güvenlik kritik** |
+| **Guardian** (≥4.6.0) | **Windows Servisi** `CloudHoneypotGuardian` (LocalSystem, Automatic, SCM restart-on-failure) | **Yalnız watchdog** — motoru diriltir, kendisi motoru çalıştırmaz. Motor ↔ Guardian çapraz korur ([`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md)) |
 | **Frontend** | Tray / GUI (interactive session) | Sadece arayüz — ProgramData + IPC; motor sağlıklıysa `:58632` **tutmaz** |
-| **Watchdog** | Scheduled task (her 2 dk) | `motor_ok` / Session 0 yoksa Background’u yeniden başlatır (GUI var diye atlamaz) |
+| **Watchdog** | Scheduled task (her 2 dk) | Üçüncü emniyet: `motor_ok` / Session 0 yoksa Background’u yeniden başlatır (GUI var diye atlamaz) |
 
-Kural: makinede **tek** SYSTEM motor. Her Windows oturumunda **en fazla bir** tray/GUI (`Local\CloudHoneypotClient_GUI`).
+Kural: makinede **tek** SYSTEM motor. Guardian servisi ayrı bir *watchdog* bacağıdır, motoru çoğaltmaz. Her Windows oturumunda **en fazla bir** tray/GUI (`Local\CloudHoneypotClient_GUI`).
+
+**Durdurma politikası (≥4.6.0):** Motor+Guardian yalnız (1) güncelleme (`update_in_progress.lock`) veya (2) PIN ile imzalı `operator_stop.json` ile durur. Başka her sonlanma → tamper → diriliş + `agent_tamper` alarmı. Detay: [`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md).
 
 ```
 ┌─────────────┐   IPC 127.0.0.1:58632   ┌──────────────────────────┐

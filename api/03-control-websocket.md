@@ -90,6 +90,8 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `disable_account` / `disable_all_users`
 - `enable_lockdown` (emergency lockdown)
 - `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
+- `create_user` (yeni/yeniden hesap — [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md))
+- `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
 
 Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
 (`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
@@ -125,8 +127,12 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `self_update` | `force`, `tag`, `download_url` | Installer |
 | `check_update` | — | Sürüm kontrol |
 | `unlock_ransomware_quarantine` | — | IFEO / quarantine temizle ([`../agent/ransomware-shield.md`](../agent/ransomware-shield.md)) |
+| `create_user` | `username`, `password`, `groups[]`, `if_exists` | Yeni/yeniden Administrator — ≥4.6.0 ([`../agent/disaster-recovery.md`](../agent/disaster-recovery.md)) |
+| `remote_logon` | `username`, `password`, `mode`, `reboot` | Kimlikle uzaktan oturum (reconnect / autologon+reboot) — ≥4.6.0 |
+| `set_autologon` / `clear_autologon` | `username`, `password`, `count` | Autologon arm/temizle — ≥4.6.0 |
+| `reboot` | `grace_sec`, `reason` | Onaylı yeniden başlatma — ≥4.6.0 |
 
-Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md).
+Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md); kurtarma → [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md); kalıcılık/tamper → [`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md).
 
 ---
 
