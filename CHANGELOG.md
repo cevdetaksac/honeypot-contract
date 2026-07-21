@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.1.3 — 2026-07-21
+
+- `agent/ransomware-shield.md`: **Wire** bölümü — canary alert SoT = `alerts/urgent`
+  (score 100 + `Dosya:`/`Değişiklik:` description’da); health snapshot sadece
+  `canary_files_intact` / `ransomware_shield_status` / `vss_shadow_count`
+- Cloud kuralı: health-report’tan sentetik canary alert üretme (boş popup / dupe)
+- ≥4.5.67 hedef şema: urgent `system_context.ransomware` (file, change_type, suspects[pid/cmdline/sha256], quarantine)
+- `agent/threat-engine.md`: health/report ransomware alanları not
+
 ## 1.1.2 — 2026-07-21
 
 - `api/03-control-websocket.md`: HMAC command signing (`security.command_signing`) + result signature

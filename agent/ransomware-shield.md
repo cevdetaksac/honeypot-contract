@@ -52,6 +52,80 @@ Persist: `%ProgramData%\…\ransomware_quarantine.json`
 
 ---
 
+## Wire — canary tetiğinde cloud’a ne gider
+
+**Alert SoT = `POST /api/alerts/urgent`** (anında). Health report **detay taşımaz**;
+cloud health-report’tan sentetik canary alert **üretmemeli** (dupe + boş popup) —
+en fazla fallback olarak, urgent gelmemişse.
+
+### 1) `POST /api/alerts/urgent` (≤ 4.5.66 — mevcut)
+
+```json
+{
+  "severity": "critical",
+  "threat_type": "ransomware_canary_triggered",
+  "title": "🚨 Ransomware Tespiti — Canary dosya MODIFIED!",
+  "description": "Tuzak dosya '!000_….xlsx' değiştirildi/silindi. …\n\nDosya: C:\\Users\\…\\.cloud-honeypot-canary\\!000_….xlsx\nDeğişiklik: MODIFIED\n\nAcil müdahale önerilir!",
+  "threat_score": 100,
+  "auto_response_taken": ["emergency_alert"],
+  "source_ip": "",
+  "target_service": "",
+  "username": "",
+  "raw_events": [],
+  "system_context": {}
+}
+```
+
+- `change_type` ∈ `MODIFIED | DELETED | SIZE_CHANGED`
+- Dosya yolu + change type **description satırlarında** (`Dosya:` / `Değişiklik:`) — cloud parse edebilir
+- Suspect süreç/PID ≤4.5.66’da **yok**: `_contain_after_hit` (≤4s scan) urgent’tan **sonra** koşar
+- `source_ip` boş = süreç/dosya olayı (network kaynaklı değil)
+
+### 2) `POST /api/health/report` snapshot (periyodik — mevcut)
+
+| Anahtar | Tip | Anlam |
+|---------|-----|-------|
+| `canary_files_intact` | bool | `canary_alerts == 0` |
+| `ransomware_shield_status` | `active` / `disabled` / `error` | Shield çalışıyor mu |
+| `vss_shadow_count` | int | VSS shadow sayısı |
+
+Snapshot’ta dosya yolu / suspect süreç **yok** (≤4.5.66).
+
+### 3) Zengin şema (≥ **4.5.67** — hedef; cloud parse buna göre)
+
+Urgent alert’e ek alanlar:
+
+```json
+{
+  "target_service": "SYSTEM",
+  "recommended_action": "isolate_host",
+  "system_context": {
+    "ransomware": {
+      "trigger": "canary MODIFIED: C:\\…\\!000_….xlsx",
+      "file": "C:\\Users\\…\\.cloud-honeypot-canary\\!000_….xlsx",
+      "change_type": "MODIFIED",
+      "suspects": [
+        {
+          "image": "evil.exe",
+          "path": "C:\\Users\\x\\AppData\\Local\\Temp\\evil.exe",
+          "pid": 4712,
+          "cmdline": "evil.exe --encrypt …",
+          "sha256": "…"
+        }
+      ],
+      "quarantine": { "active": true, "entries": 1, "kills": 1 }
+    }
+  }
+}
+```
+
+- Client: quarantine arm + suspect scan (≤4s) **önce**, urgent **sonra** (≤ ~5s gecikme kabul)
+- Suspect bulunamazsa `suspects: []` — alanlar yine de yapılandırılmış gönderilir
+- Health snapshot’a ek: `ransomware_quarantine: { active, trigger, entries: [{image,path,pid,sha256,ifeo,at}] }`
+- Cloud popup: `system_context.ransomware` varsa onu kullan; yoksa `description` `Dosya:` / `Değişiklik:` parse (≤4.5.66 uyumluluk)
+
+---
+
 ## Acceptance
 
 - [ ] Explorer varsayılanında canary klasörü görünmez
@@ -59,3 +133,5 @@ Persist: `%ProgramData%\…\ransomware_quarantine.json`
 - [ ] Canary hit → dashboard alert; yerel balloon yok
 - [ ] `RS_UNLOCK` quarantine temizler
 - [ ] Intel-only kural emergency_lockdown tetiklemez
+- [ ] Cloud, canary popup detayını `alerts/urgent`ten alır (health-report sentetik alert yok)
+- [ ] ≥4.5.67: urgent `system_context.ransomware` dolu (file, change_type, suspects[])
