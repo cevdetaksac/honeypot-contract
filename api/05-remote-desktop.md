@@ -319,6 +319,12 @@ commercial remote desktops. Cloud-side viewer fixes are deployed (single
 render surface, JPEG frames ignored while WebRTC is connected). The remaining
 work is client-side:
 
+> **Client 4.9.1 status:** items 1, 2, 4 and 5 are implemented. Item 3 is
+> partially implemented: capture is decoupled to a 30 fps/Q78 media profile,
+> helper ceiling is 60 fps, and the WebRTC build optionally prefers DXGI
+> Desktop Duplication via `dxcam`; aiortc remains the honest encoder until
+> measured NVENC/QSV/AMF integration. Item 6 additive telemetry is implemented.
+
 1. **Remove the internal 10 fps request clamp — this is the dominant
    smoothness limiter.** Measured evidence: cloud queued
    `remote_stream_start` with `params.fps = 30.0`; the agent's own command

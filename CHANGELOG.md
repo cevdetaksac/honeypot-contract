@@ -1,5 +1,19 @@
 # Changelog — honeypot-contract
 
+## 1.4.4 — 2026-07-22 (client 4.9.1 WebRTC smoothness)
+
+- Client 4.9.1 implements strict JPEG suppression while ICE+DTLS media is
+  connected, clears pre-connect pending JPEGs, and resumes the existing
+  JPEG-WS/HTTP fallback when media disconnects/fails/closes.
+- WebRTC capture pacing is decoupled from JPEG-era controls (30 fps/Q78
+  starting profile; helper accepts up to 60 fps), stale frames remain
+  latest-only, and the WebRTC build optionally prefers DXGI Desktop Duplication
+  (`dxcam`) before GDI/ImageGrab/MSS fallback.
+- Added optional media telemetry: `encoder`, `effective_capture_fps`,
+  `capture_quality`, `target_bitrate_bps`. Current encoder is honestly reported
+  as aiortc; verified NVENC/QSV/AMF integration remains a later measured task.
+- Production floor remains **4.9.0**; 4.9.1 is recommended for smoother WebRTC.
+
 ## 1.4.3 — 2026-07-22 (P1 client observe package planning)
 
 - Recorded the landed client P1 observe/default-off primitives in

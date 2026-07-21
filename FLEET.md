@@ -12,6 +12,7 @@
 | Remote Desktop v2: WS/JPEG healthy path + adaptive telemetry + latest-frame coalescing | `api/05-remote-desktop.md` | **4.9.0** |
 | Remote input protocol 2 + mobile gestures + ACK + persistent session helper | `agent/remote-input.md` | **4.9.0** |
 | Remote Desktop optional WebRTC signaling (protocol=1, non-trickle, H264, data-channel input, cloud-supplied `ice_servers` in offer) | `api/05-remote-desktop.md` | **4.9.0** |
+| WebRTC strict JPEG suppression, 30–60 fps media pacing, optional DXGI capture and effective media telemetry | `api/05-remote-desktop.md` | **4.9.1** |
 | One GUI/session + motor watchdog | `api/08-architecture.md` | 4.5.58–59 |
 | Threat-intel GET/304/ACK | `api/09-threat-intel.md` | **4.5.61** |
 | Canary sort-bait + quarantine IPC | `agent/ransomware-shield.md` | 4.5.62–64 |
