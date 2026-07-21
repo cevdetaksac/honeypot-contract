@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.3.2 — 2026-07-21
+
+- **Cloud gap-fill (network-guard + survival):**
+  - `under_attack` bayrağı: `agent_tamper` / `ransomware_offline_bomb` / canary urgent → `settings`; `client_status` + `dashboard-live` expose; `network_restore`/`unlock_ransomware_quarantine` completed → clear; 24 saat TTL.
+  - Health snapshot `persistence` + `network_guard` → settings persist → `client_status`/`dashboard-live`.
+  - `GET/POST threats/config`: `protection.network_guard{enabled,auto_restore,auto_kill}` (defaults + update).
+  - Dashboard confirm: `create_user` / `remote_logon` / `set_autologon` / `reboot` (+ mevcut `network_restore`).
+  - Tunnel cloud acceptance maddeleri kapatıldı (TTL/dedupe/desired).
+
 ## 1.3.1 — 2026-07-21
 
 - **Cloud implemented (network-guard / client ≥4.7.0):**

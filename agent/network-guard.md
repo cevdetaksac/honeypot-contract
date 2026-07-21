@@ -165,7 +165,9 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
 - `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
 - Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) + `network_restore` (**destructive confirm**).
-- Host'u "under_attack" işaretle + operatöre **isolate + suspend edilenleri incele** öner (dashboard quick actions).
+- Host'u "under_attack" işaretle (`client_status` / `dashboard-live`) + operatöre **isolate + suspend edilenleri incele** öner (dashboard quick actions).
+- `protection.network_guard{}` threats/config poll + update (`auto_restore`/`auto_kill` defaults).
+- Health snapshot `network_guard` + `persistence` → settings persist (client_status rozeti).
 
 ---
 
@@ -198,7 +200,7 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 - [ ] Şüpheli süreçler varsayılan **suspend** edilir (kill değil); operatör onayıyla kill/release
 - [ ] Acil VSS snapshot best-effort alınır
 - [ ] `auto_restore` ile adapter/DNS/firewall/route/mapped-drive/shares baseline'dan geri yüklenir
-- [ ] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
+- [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
 - [ ] Yedekleme/AV whitelist + `_PROTECTED_IMAGES` skorlamadan muaf (FP koruması)
-- [ ] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (`network_restore` = confirm)
-- [ ] STATUS/health `network_guard` bloğu dolu
+- [x] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (`network_restore` = confirm)
+- [x] STATUS/health `network_guard` bloğu dolu
