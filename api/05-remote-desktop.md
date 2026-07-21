@@ -319,13 +319,25 @@ commercial remote desktops. Cloud-side viewer fixes are deployed (single
 render surface, JPEG frames ignored while WebRTC is connected). The remaining
 work is client-side:
 
-1. **Stop JPEG WS frames while WebRTC is connected.** The agent currently
+1. **Remove the internal 10 fps request clamp — this is the dominant
+   smoothness limiter.** Measured evidence: cloud queued
+   `remote_stream_start` with `params.fps = 30.0`; the agent's own command
+   result and `meta` telemetry reported `requested: {fps: 10.0}` and capture
+   ran at ≤ 10 fps. The wire contract already allows up to 30 (`fps` clamp
+   0.5–30 server-side); the client must honor the requested value at least up
+   to 30 for the JPEG path and 30–60 for the WebRTC encode path (item 3).
+   With a 10 Hz source, Chrome-Remote-Desktop-level fluidity is impossible
+   regardless of transport.
+2. **Stop JPEG WS frames while WebRTC is connected.** The agent currently
    keeps posting JPEG frames over WS after the peer connection reaches
    `connected`; the viewer ignores them, so this is pure bandwidth/CPU waste
-   that competes with the media path. Suspend JPEG capture/upload on
-   `connected`, resume immediately on `disconnected|failed|closed` (the
-   existing fallback contract in “JPEG WS fallback from WebRTC” stays).
-2. **Decouple the WebRTC encode path from the JPEG `fps`/`quality` knobs.**
+   that competes with the media path. Production telemetry during a
+   simultaneous WebRTC+JPEG period showed `send_ms_ewma ≈ 12000 ms` and 67
+   adaptive degrades (effective 5.5 fps · Q20) — the two paths starve each
+   other. Suspend JPEG capture/upload on `connected`, resume immediately on
+   `disconnected|failed|closed` (the existing fallback contract in “JPEG WS
+   fallback from WebRTC” stays).
+3. **Decouple the WebRTC encode path from the JPEG `fps`/`quality` knobs.**
    `remote_stream_start.fps` (≤ 30) and `quality` (Q20–80) are JPEG-era
    parameters; applying them to the WebRTC capture/encode loop caps the
    stream at slideshow rates. While a peer is connected the client should:
@@ -336,15 +348,23 @@ work is client-side:
    - let **WebRTC bandwidth estimation** (transport-cc/REMB) drive bitrate
      and resolution adaptation instead of a fixed JPEG quality constant —
      static desktop ≈ near-zero bitrate, motion gets the full budget.
-3. **Frame pacing over throughput.** Prefer dropping stale frames to queueing
+4. **Frame pacing over throughput.** Prefer dropping stale frames to queueing
    them; encode the newest captured frame only (mirror of the WS
    latest-frame/coalescing semantics in §3).
-4. **Telemetry additions (additive, optional):** report `media.encoder`
+5. **Re-offer after stream restart must complete or reject.** When a new
+   `remote_stream_start` (new `stream_id`) interrupts an active WebRTC
+   session, the agent's media state was observed stuck at
+   `connection_state: "connecting"` with `error: "peer setup failed"` until a
+   further restart. Tear the old peer down synchronously before accepting the
+   new stream's offer, and send `webrtc_reject` if the new peer cannot be
+   set up so the viewer falls back instantly instead of waiting out its
+   15 s connect timeout.
+6. **Telemetry additions (additive, optional):** report `media.encoder`
    (`"nvenc"|"qsv"|"amf"|"x264"|…`), effective encode fps and target bitrate
    in `hello`/`meta.media` so the dashboard can show real numbers instead of
    the JPEG-era `fps→fps · Q→Q` badge when transport is WebRTC.
 
-None of this changes the wire protocol; items 1–3 are behavioral, item 4 is
+None of this changes the wire protocol; items 1–5 are behavioral, item 6 is
 additive to the `media` object.
 
 ### Cloud requirements for WebRTC
