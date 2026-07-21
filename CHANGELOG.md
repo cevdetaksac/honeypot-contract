@@ -1,5 +1,28 @@
 # Changelog — honeypot-contract
 
+## 1.3.3 — 2026-07-21 (client **4.7.2** — KRİTİK güvenlik düzeltmesi)
+
+- **Network Guard güvenli-varsayılan (client ≥4.7.2):** 4.7.0/4.7.1 canlı bir
+  geliştirme makinesinde normal ağır-I/O uygulamalarını (Chrome/Firefox/Cursor/
+  GameLoop/EdgeWebView) "offline fidye bombası" sanıp **otomatik suspend edip PC'yi
+  kilitledi.** Sözleşme buna göre sıkılaştırıldı:
+  - **`net_cut` yalnız gerçek internet erişim kaybında** (`internet_lost`) True olur;
+    adapter down / VPN-Wi-Fi churn tek başına net_cut sayılmaz. (Kök hata: güncel
+    adapter listesi boşken tüm baseline adapterları "down" sanılıyordu.)
+  - **Otomatik containment varsayılan KAPALI:** `auto_contain=false`, `auto_kill=false`,
+    `auto_restore=false`, `require_strong_signal=true`. Network Guard varsayılanda
+    yalnız **alarm** üretir (`ransomware_offline_suspect`, severity **warning**);
+    süreç dondurma/ağ değiştirme yapmaz.
+  - Otomatik containment yalnız operatör `auto_contain=true` yaptıysa **ve** yüksek
+    güvenli imza (aktif canary/VSS quarantine) varsa çalışır; o zaman
+    `ransomware_offline_bomb` (critical) üretir. Ham yazma hızı tek başına asla süreç dondurmaz.
+  - `threats/config` `protection.network_guard{}` alanları + güvenli defaultlar,
+    STATUS/health `network_guard` bloğuna `auto_contain`, 60 sn trigger debounce.
+- **Not (cloud'a):** popup builder artık iki tip görmeli — `ransomware_offline_suspect`
+  (warning, `recommended_action=review_suspects`, otomatik aksiyon YOK) ve
+  `ransomware_offline_bomb` (critical, containment yapıldı). `under_attack` bayrağı
+  yalnız `_bomb` (critical) için tetiklenmeli; `_suspect` host'u under_attack yapmamalı.
+
 ## 1.3.2 — 2026-07-21
 
 - **Cloud gap-fill (network-guard + survival):**

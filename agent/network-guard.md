@@ -70,7 +70,14 @@ Motor içi, internet gerektirmez. Bir **skorlama** penceresi (öneri 10 sn kayan
 | **VSS silme** | yüksek | (mevcut) shadow copy azalması |
 | **Canary** | kesin | (mevcut) canary'ye yazma → doğrudan yüksek skor |
 
-- **Ağ kesildi + FS fırtınası birlikte → yüksek güven → canary'yi beklemeden agresif containment.**
+- **Ağ kesildi + FS fırtınası birlikte → şüpheli → canary'yi beklemeden ALARM.**
+  (client ≥4.7.2: bu kombinasyon *containment* değil, yalnız uyarı üretir; otomatik
+  containment için C bölümündeki iki koşul gerekir.)
+- **`net_cut` yalnız gerçek internet erişim kaybında** (`internet_lost`) True olur.
+  Adapter down / VPN-Wi-Fi churn tek başına net_cut sayılmaz (false-positive koruması).
+- Alarm ayrımı: containment yapılmayan durum `ransomware_offline_suspect`
+  (severity **warning**); operatör onaylı containment `ransomware_offline_bomb`
+  (severity **critical**).
 - Whitelist: imzalı yedekleme/AV süreçleri + `_PROTECTED_IMAGES` skorlamadan muaf tutulur (FP azaltma).
 - Eşikler `client_config.json` / dashboard `protection.network_guard{}` ile ayarlanabilir.
 
@@ -78,8 +85,20 @@ Motor içi, internet gerektirmez. Bir **skorlama** penceresi (öneri 10 sn kayan
 
 ## C) Agresif containment (suspend-first)
 
+> **GÜVENLİK (client ≥4.7.2):** Otomatik containment **varsayılan KAPALI**
+> (`auto_contain=false`, `auto_kill=false`, `auto_restore=false`). Sebep: salt
+> "ağ-kesme + yazma fırtınası" sinyali meşru ağır-I/O uygulamalarında (tarayıcı,
+> editör, oyun, yedekleme) **false-positive** üretip süreçleri dondurabilir
+> (4.7.0/4.7.1 canlıda bunu yaşattı). Varsayılanda Network Guard **yalnız alarm**
+> gönderir; operatör dashboard'dan inceleyip suspend/kill/restore onaylar.
+>
+> Otomatik containment yalnız **iki koşul birlikte** sağlanırsa çalışır:
+> (1) operatör `protection.network_guard.auto_contain=true` yapmış, **ve**
+> (2) yüksek güvenli fidye imzası mevcut (aktif canary/VSS quarantine).
+> Ham yazma hızı tek başına **asla** süreç dondurmaz.
+
 Fire-and-forget'e karşı: ebeveyn çıkmış olabilir → anormal yazma fan-out'u olan **tüm**
-şüpheli süreçler hedeflenir. **Varsayılan davranış = suspend** (kill değil):
+şüpheli süreçler hedeflenir. **Onaylı davranış = suspend** (kill değil):
 
 1. **Suspend** — şüpheli süreçlerin thread'leri askıya alınır (`NtSuspendProcess`/thread suspend).
    Adli kayıt korunur, geri alınabilir, şifreleme durur.
@@ -166,7 +185,13 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
 - Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) + `network_restore` (**destructive confirm**).
 - Host'u "under_attack" işaretle (`client_status` / `dashboard-live`) + operatöre **isolate + suspend edilenleri incele** öner (dashboard quick actions).
-- `protection.network_guard{}` threats/config poll + update (`auto_restore`/`auto_kill` defaults).
+- `protection.network_guard{}` threats/config poll + update. **Alanlar (client ≥4.7.2):**
+  `enabled`, `auto_contain`, `auto_kill`, `auto_restore`, `require_strong_signal`,
+  `score_threshold`, `fs_write_bytes_per_sec`, `fs_write_count_per_sec`.
+  **Güvenli defaultlar:** `auto_contain=false`, `auto_kill=false`, `auto_restore=false`,
+  `require_strong_signal=true`. Cloud bu alanları göndermezse client güvenli
+  default kullanır; cloud `auto_contain`'i **açıkça** true yapmadıkça client
+  hiçbir süreci otomatik dondurmaz.
 - Health snapshot `network_guard` + `persistence` → settings persist (client_status rozeti).
 
 ---
@@ -184,7 +209,8 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
   "mapped_drives": 2,
   "suspended_processes": 0,
   "last_trigger_ts": null,
-  "auto_restore": true,
+  "auto_contain": false,
+  "auto_restore": false,
   "auto_kill": false
 }
 ```
@@ -193,12 +219,13 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 
 ## Acceptance
 
-- [ ] Boot + periyodik ağ baseline yazılır, imzalı, N sürüm saklanır
-- [ ] Ağ kesme (adapter/DNS/firewall/route delta) tespit edilir
-- [ ] FS fırtınası (write/rename/uzantı/entropi) eşik aşımı tespit edilir
-- [ ] Ağ kesme + FS fırtınası → canary beklemeden containment tetiklenir
-- [ ] Şüpheli süreçler varsayılan **suspend** edilir (kill değil); operatör onayıyla kill/release
-- [ ] Acil VSS snapshot best-effort alınır
+- [x] Boot + periyodik ağ baseline yazılır, imzalı, N sürüm saklanır
+- [x] `net_cut` yalnız gerçek internet erişim kaybında True (adapter/VPN churn tek başına tetiklemez) — **FP koruması (client ≥4.7.2)**
+- [x] FS fırtınası (yazma hız) eşik aşımı tespit edilir (yüksek eşik; salt sinyal olarak)
+- [x] Ağ kesme + FS fırtınası → canary beklemeden **ALARM** (`ransomware_offline_suspect`, warning) — containment DEĞİL
+- [x] **Varsayılanda hiçbir süreç otomatik dondurulmaz** (`auto_contain=false`); yalnız operatör açar + güçlü imza (canary/VSS) varsa suspend
+- [ ] Operatör onaylı suspend/kill/release (dashboard) — client ≥4.7.2 uçtan uca doğrulama bekliyor
+- [ ] Acil VSS snapshot yalnız onaylı containment sırasında best-effort alınır
 - [ ] `auto_restore` ile adapter/DNS/firewall/route/mapped-drive/shares baseline'dan geri yüklenir
 - [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
 - [ ] Yedekleme/AV whitelist + `_PROTECTED_IMAGES` skorlamadan muaf (FP koruması)
