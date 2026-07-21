@@ -311,6 +311,42 @@ logs or status. If the runtime constructor itself fails, the viewer sees only
   should present a `<video>` element for WebRTC and seamlessly fall back to the
   JPEG `<img>` renderer.
 
+### Client TODO — WebRTC smoothness (target: Chrome Remote Desktop parity)
+
+Observed on production (cloud viewer, client 4.9.x, 2026-07-22): WebRTC
+connects and decodes correctly, but the stream is far less fluid than
+commercial remote desktops. Cloud-side viewer fixes are deployed (single
+render surface, JPEG frames ignored while WebRTC is connected). The remaining
+work is client-side:
+
+1. **Stop JPEG WS frames while WebRTC is connected.** The agent currently
+   keeps posting JPEG frames over WS after the peer connection reaches
+   `connected`; the viewer ignores them, so this is pure bandwidth/CPU waste
+   that competes with the media path. Suspend JPEG capture/upload on
+   `connected`, resume immediately on `disconnected|failed|closed` (the
+   existing fallback contract in “JPEG WS fallback from WebRTC” stays).
+2. **Decouple the WebRTC encode path from the JPEG `fps`/`quality` knobs.**
+   `remote_stream_start.fps` (≤ 30) and `quality` (Q20–80) are JPEG-era
+   parameters; applying them to the WebRTC capture/encode loop caps the
+   stream at slideshow rates. While a peer is connected the client should:
+   - capture at **30–60 fps** using change-driven capture (DXGI Desktop
+     Duplication dirty regions / present events), independent of the JPEG fps;
+   - use a **hardware encoder** (NVENC / QuickSync / AMF) when available,
+     software x264 `ultrafast`+`zerolatency` otherwise;
+   - let **WebRTC bandwidth estimation** (transport-cc/REMB) drive bitrate
+     and resolution adaptation instead of a fixed JPEG quality constant —
+     static desktop ≈ near-zero bitrate, motion gets the full budget.
+3. **Frame pacing over throughput.** Prefer dropping stale frames to queueing
+   them; encode the newest captured frame only (mirror of the WS
+   latest-frame/coalescing semantics in §3).
+4. **Telemetry additions (additive, optional):** report `media.encoder`
+   (`"nvenc"|"qsv"|"amf"|"x264"|…`), effective encode fps and target bitrate
+   in `hello`/`meta.media` so the dashboard can show real numbers instead of
+   the JPEG-era `fps→fps · Q→Q` badge when transport is WebRTC.
+
+None of this changes the wire protocol; items 1–3 are behavioral, item 4 is
+additive to the `media` object.
+
 ### Cloud requirements for WebRTC
 
 1. **Viewer-created offer:** dashboard builds the offer; cloud relays it to the

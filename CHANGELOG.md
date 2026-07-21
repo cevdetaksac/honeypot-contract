@@ -32,6 +32,17 @@
   confirm-gated; unsigned high-impact creates return HTTP 400 instead of
   queuing; legacy `tunnel_commands` carry additive `issued_at`/`signature`
   while `PendingCommand` remains the authoritative signed path.
+- `api/05-remote-desktop.md`: added **“Client TODO — WebRTC smoothness”**
+  (production observation 2026-07-22). Client should: (1) stop JPEG WS frames
+  while the peer connection is `connected` and resume them on fallback,
+  (2) decouple WebRTC capture/encode from the JPEG `fps`/`quality` knobs —
+  30–60 fps change-driven capture (DXGI dirty regions), hardware encoder when
+  available, bitrate governed by WebRTC bandwidth estimation instead of a
+  fixed Q constant, (3) prefer frame dropping over queueing (latest-frame
+  pacing), (4) optionally report `media.encoder` + effective encode fps /
+  target bitrate (additive). No wire change. Cloud viewer now defaults to
+  24 fps and offers a 30 fps option (server clamp stays ≤ 30 for the JPEG
+  path).
 - Remote Desktop v2 viewer fixes (cloud dashboard): when WebRTC video is
   connected the JPEG `img` surface is force-hidden (no more double-desktop
   render), late `img.onload` cannot re-show it, status polling no longer
