@@ -80,6 +80,39 @@
 - `VERSION` → **1.4.0**; `INDEX.md`/`FLEET.md`/`README.md`/`agent/CLIENT.md`
   version + production-floor references aligned to **client ≥ 4.9.0** (README's
   stale 4.5.68 floor fixed).
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-22):** agent
+  `hello`/per-frame `meta` protocol-2 alanları forward-compatible parse edilip
+  canlı room/status durumuna eklendi; sağlıklı JPEG akışı WS-only çalışır ve
+  HTTP yalnız fallback/input-drain yoludur. Viewer input-v2 envelope/ACK,
+  legacy fallback, direct + trackpad mobil pointer, tap/double-tap/long-press,
+  relative drag ve iki eksenli two-finger scroll uygular. Mevcut agent/view WS
+  üzerinde stream/session eşlemeli non-trickle WebRTC offer/answer/reject relay,
+  `<video>` → JPEG otomatik fallback ve stream restart/stop cleanup eklendi.
+  `webrtc_ice_config` bounded validation ile viewer'a iletilir; opsiyonel
+  coturn REST secret üzerinden stream-bazlı 60–900 sn kimlik bilgisi üretilir
+  ve credential hiçbir status/audit/log yüzeyine konmaz. Dashboard transport,
+  effective→requested kalite/FPS, coalesced/degrade/recover/WS failure ve
+  WebRTC state/codec rozetlerini gösterir. Production floor **4.9.0**'a çekildi.
+- **Cloud TURN/STUN devrede (honeypot.yesnext.com.tr, 2026-07-22):** cloud
+  sunucusunda coturn (`194.5.236.181:3478` STUN+TURN udp/tcp, relay
+  49160–49300/udp, iç ağlara relay kapalı) kuruldu; `REMOTE_STUN_URLS` /
+  `REMOTE_TURN_URLS` / `REMOTE_TURN_SECRET` ile stream-bazlı kısa ömürlü REST
+  kimlikleri artık gerçek `webrtc_ice_config` push'unda gönderiliyor. Ayrıca
+  viewer'a **15 sn WebRTC bağlanma zaman aşımı** eklendi: ICE `connected`
+  olmazsa peer kapatılır, aynı stream için tekrar offer denenmez ve görüntü
+  JPEG-WS'te kalır; `webrtc_viewer_state:closed` hub'a elle bildirilir.
+  `remote_stream_start` sonrası hub yeni stream için `webrtc_ice_config`'i
+  tüm viewer'lara kendiliğinden iter (agent `hello`'su beklenmez).
+- **CLIENT TODO (4.9.0 sahada gözlenen bug — öncelik yüksek):** agent, viewer
+  offer'ını yanıtladıktan sonra ICE hiç tamamlanmadan (`ice_state:"checking"`,
+  `error:"peer setup failed"`, `codec:""`) medya oturumunu **aktif** sayıp
+  `media.connection_state:"connected"` raporladı ve tüm kareleri media
+  mailbox'a yönlendirdi (`mailbox_coalesced` 1160+); JPEG WS kareleri kesildi
+  ve viewer donuk kaldı (`diag: agent_ws_no_frames`). §"JPEG WS fallback from
+  WebRTC" gereği: (1) kareler medya yoluna **yalnız ICE/DTLS gerçekten
+  bağlandıktan sonra** yönlendirilmeli, (2) `checking` durumu makul bir zaman
+  aşımıyla (örn. 15 sn) başarısız sayılıp JPEG-WS'e otomatik dönülmeli,
+  (3) `media.connection_state` ICE tamamlanmadan `connected` raporlanmamalı.
 
 ## 1.3.13 — 2026-07-21 (client **4.8.5** — block-removed ACK ips + updated)
 
