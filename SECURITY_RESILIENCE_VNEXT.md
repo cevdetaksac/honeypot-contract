@@ -1,6 +1,6 @@
 # Security & Resilience vNext — Shared Delivery Plan
 
-> Contract planning version: **1.4.1**  
+> Contract planning version: **1.4.3**
 > Baseline: client **4.9.0**, production floor remains **4.9.0**  
 > Audience: Windows client, Cloud/API, Dashboard and QA implementers  
 > Status: **planning / non-normative**
@@ -372,6 +372,43 @@ After P0 compatibility and telemetry are green:
 - TPM device identity pilot and clone/re-enrollment workflow.
 
 P2 is tenant opt-in and cannot raise the global floor by itself.
+
+## 7A. P1 client observe package — 2026-07-22
+
+The client has landed the following **default-off / observe-only primitives**.
+They do not change production wire or the 4.9.0 floor:
+
+- RES-103 candidate signed heartbeat (`heartbeat_proof`, HMAC v1);
+- RES-105/106 path-free DACL fingerprints + local HMAC baseline/drift summary;
+- RANS-302/303 bounded ETW loss/pressure health + fan-out/rename/write
+  correlation (no raw paths, no containment);
+- DEC-201/202 canary coverage counts and DEC-205/206 decoy capacity/saturation;
+- NET-501 restore dry-run plan and NET-502 signed retained-version selector;
+- OOB-501 DPAPI+HMAC bounded/idempotent local queue primitive;
+- ID-402/403 password reset/change burst aggregates (no identity/raw payload,
+  no automatic lockout);
+- ZT-602/603 public operator-key metadata/rotation scaffold (verify disabled);
+- DEV-601 read-only TPM capability probe (no key/enrollment/attestation).
+
+**Cloud/dashboard work required before enabling any flag:**
+
+1. Promote exact schemas for `heartbeat_proof`, `access_integrity`,
+   `identity_burst`, `device_identity`, ETW correlation and deception health.
+2. Define offline urgent-event ingest + ACK/idempotency endpoint, TTL, maximum
+   payload, replay result and redaction requirements.
+3. Extend `network_restore` params with `dry_run:boolean` and
+   `rollback_version:int|null`; dry-run must not require destructive dispatch,
+   actual restore remains confirm-gated.
+4. Promote operator public-key endpoint/key-set schema, exact algorithm,
+   canonical serialization, revocation/overlap and deterministic test vectors
+   before agent verification can be enabled.
+5. Define TPM enrollment/PoP/re-enrollment only after recovery and hardware
+   replacement UX exists. Missing TPM is `unsupported`, never hard failure.
+6. Add dashboard observe cards and rollback/emergency-disable controls before
+   a tenant pilot. Missing blocks remain `legacy`, not degraded.
+
+Canonical API files must be updated and VERSION/CHANGELOG bumped before any of
+these candidate fields are accepted as production behavior.
 
 ## 8. Cloud implementation checklist
 

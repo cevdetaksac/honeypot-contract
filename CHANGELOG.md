@@ -1,5 +1,19 @@
 # Changelog — honeypot-contract
 
+## 1.4.3 — 2026-07-22 (P1 client observe package planning)
+
+- Recorded the landed client P1 observe/default-off primitives in
+  `SECURITY_RESILIENCE_VNEXT.md`: signed-heartbeat candidate, path-free ACL
+  drift, ETW correlation, deception/canary health, network restore dry-run and
+  retained-version rollback, DPAPI offline queue, password burst aggregate,
+  operator public-key metadata scaffold and read-only TPM capability.
+- Added the exact cloud/dashboard promotion checklist. No candidate schema is
+  normative yet; production wire and client floor **4.9.0** remain unchanged.
+- Reaffirmed that destructive restore remains confirm-gated, identity
+  correlation never auto-locks, ETW never auto-contains, TPM absence is
+  unsupported rather than failure, and v2 operator verification remains off
+  until canonical algorithms/key distribution/test vectors are promoted.
+
 ## 1.4.2 — 2026-07-22 (cloud-first resilience observe compatibility)
 
 - Promoted the first v1.4.1 Lane-B/P0 schemas into canonical contracts without
