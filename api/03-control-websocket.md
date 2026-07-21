@@ -5,10 +5,15 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (40 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (42 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
-> **Cloud TODO (≥1.3.11):** `set_gui_pin` + `clear_gui_pin` → `VALID_COMMAND_TYPES`, `DESTRUCTIVE_COMMAND_TYPES` (confirm gate) ve `scrub_command_params` (`pin` alanı `***`) listelerine eklenmeli; dashboard sunucu detayına "GUI PIN tanımla/sıfırla" aksiyonu eklenmeli (client ≥4.8.3 uygular).
+> **Cloud implemented (≥1.3.11, 2026-07-21):** `set_gui_pin` + `clear_gui_pin` →
+> `VALID_COMMAND_TYPES` (42 tip) + `DESTRUCTIVE_COMMAND_TYPES` (confirm gate) +
+> `scrub_command_params` (`pin` → `***`, sonuç sonrası DB'den de maskelenir).
+> Sunucu tarafı format doğrulaması: `pin` 4-12 hane yalnız rakam → aksi 400.
+> Dashboard: Tehdit Merkezi → Remote Commands → **GUI PIN** modalı
+> (PIN tanımla / PIN sıfırla, confirm dialoglu). Client ≥4.8.3 uygular.
 
 ---
 

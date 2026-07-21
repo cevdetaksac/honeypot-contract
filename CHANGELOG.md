@@ -14,6 +14,12 @@
 - IP Listeleri başlığına **＋ IP Engelle** / **＋ Whitelist'e Ekle** hızlı
   aksiyon butonları (modal IP girişi + `ipaddress` doğrulaması + PIN gate;
   satır aksiyonlarıyla aynı IPC/cloud yolu). Production floor 4.8.3.
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):** `set_gui_pin` /
+  `clear_gui_pin` whitelist (42 tip) + destructive confirm gate; `pin` alanı
+  `scrub_command_params` ile audit/GET/result'ta `***` (komut kapanınca DB'de de
+  maskeli); server-side `pin` format doğrulaması (4-12 hane, yalnız rakam → 400);
+  dashboard Tehdit Merkezi → Remote Commands → **GUI PIN** modalı (tanımla /
+  sıfırla, confirm dialoglu, TR/EN i18n).
 
 ## 1.3.10 — 2026-07-21 (client **4.8.2** — Settings config surface documented)
 
