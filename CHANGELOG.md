@@ -14,6 +14,15 @@
   yanıt `removed_ips[]` döndürür. `pending-unblocks` GET salt-okunur (öğeler ACK
   gelene kadar kuyrukta kalır). `AgentBlockRemoved` şemasına `ips: List[str]`
   eklendi.
+- **Cloud dashboard (honeypot.yesnext.com.tr, 2026-07-21):** yeni
+  `POST /api/dashboard/whitelist-remove` (dashboard-internal) — whitelist
+  IP/subnet satır silme; başarılı silmede agent'a
+  `{"v":1,"t":"threat_config_updated"}` WS push yollanır (whitelist-ip ile
+  simetrik, v1.3.12 SoT invariantı ile uyumlu). Bloklama sayfası Whitelist
+  sekmesi tag-input yerine satır bazlı tabloya çevrildi (ekle/sil anında
+  kaydedilir); ana sayfa canlı bloklama mini tablolarına satır aksiyonları
+  eklendi (bekleyen: whitelist+sil, uygulanan: whitelist+kaldır, oto:
+  whitelist+engel kaldır).
 
 ## 1.3.12 — 2026-07-21 (client **4.8.4** — whitelist cloud SoT invariantı)
 
