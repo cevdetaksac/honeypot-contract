@@ -2,6 +2,23 @@
 
 ## 1.3.13 — 2026-07-21 (client **4.8.5** — block-removed ACK ips + updated)
 
+- **Cloud data retention (honeypot.yesnext.com.tr, 2026-07-21):** saldırı
+  geçmişine client-bazlı 1/3/6 aydan eski kayıtları batch silme aksiyonları
+  ve dashboard-auth korumalı `POST /api/dashboard/attacks/prune` eklendi.
+  Otomatik `Attack` retention 180 günden **365 güne** çıkarıldı;
+  büyük `raw_events/system_context` alanları taşıyan `ThreatAlert` kayıtlarına
+  da 365 günlük üst sınır getirildi. Takip güncellemesinde Tehdit Merkezi'ne
+  uyarı ve bildirim geçmişi için ayrı 1/3/6 ay silme menüleri, görünür
+  `NotificationLog` tablosu ve dashboard-auth korumalı ortak
+  `POST /api/dashboard/history/prune` (`attacks|alerts|notifications`) eklendi.
+  Uyarı ve bildirim menülerinde ayrıca güçlü onay metinli `clear_all` seçeneği
+  vardır; saldırı geçmişi toplu `clear_all` kapsamına bilinçli olarak alınmaz.
+  `NotificationLog` ve pasif `AutoBlock` için 365 gün; terminal durumdaki
+  `PendingCommand` ve kapanmış `LogonChallenge` için 90 gün otomatik retention
+  uygulanır. Açık komut/challenge, aktif bloklar ve silinmez `CommandAuditLog`
+  kapsam dışıdır. `SecurityEvent` 90 günlük mevcut politikayı korur. Saatlik
+  temizleyici, binlerce client'ta backlog oluşmaması için tablo başına
+  kontrollü olarak en fazla 10 batch boşaltır.
 - `api/06-firewall-blocks.md`: `POST /api/agent/block-removed` ACK body now
   documents `block_ids` **and** `ips`/`ip`. Live 4.8.4: ids-only often returned
   `updated:0` while dashboard stayed on "Kaldırılıyor…"; ip ACK returns
