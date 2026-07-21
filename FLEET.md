@@ -31,12 +31,13 @@
 | Settings webhook cloud→local köprüsü + config surface dokümante | `agent/threat-engine.md` | **4.8.2** |
 | Dashboard PIN set/reset (`set_gui_pin`/`clear_gui_pin`) + IP hızlı aksiyon butonları | `api/03-control-websocket.md`, `agent/gui-control-center.md` | **4.8.3** |
 | Whitelist cloud SoT (merge-only persist + tablo cloud okur) | `agent/gui-control-center.md` | **4.8.4** |
+| block-removed ACK ips(+ids); dashboard "Kaldırılıyor" takılma fix | `api/06-firewall-blocks.md` | **4.8.5** |
 
-**Önerilen production floor:** **4.8.4** (survival + disaster recovery +
+**Önerilen production floor:** **4.8.5** (survival + disaster recovery +
 operator-approved Network Guard containment + GUI control center v2 + tutarlı
 detay popup'ları + cloud-yönetimli webhook + dashboard PIN yönetimi + whitelist
-cloud SoT). 4.8.3'te frontend GUI'den whitelist ekleme buluta boş liste yollar
-(kayıp + wipe riski).
+cloud SoT + unblock ACK). 4.8.4'te dashboard unblock sonrası "Kaldırılıyor…"
+takılı kalabilir (ACK yalnız block_ids, cloud updated=0).
 4.7.0/4.7.1 production'da kullanılmamalı; 4.7.3'te STATUS timeout, 4.7.4'te
 update false-tamper vardır; 4.7.x GUI'de katman toggle'ları yanlış (hep KAPALI)
 render edilir. 4.8.0'da koruma detay popup'ı chip AKTİF iken OFF gösterir (4.8.1

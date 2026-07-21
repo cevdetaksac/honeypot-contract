@@ -27,6 +27,23 @@
 | POST | `/api/agent/sync-rules` | Canlı FW envanteri → cloud |
 | POST | `/api/premium/clear-all-blocks` | Dashboard; komut `clear_firewall` push |
 
+### block-removed ACK (client ≥4.8.5)
+
+Body (agent → cloud):
+
+```json
+{ "token": "…", "block_ids": [2582, 2649], "ips": ["50.16.16.211", "178.62.3.223"], "ip": "…" }
+```
+
+- `block_ids`: pending-unblocks öğelerindeki `id` (tercihen int).
+- `ips` / `ip`: aynı satırların IP'leri — **zorunlu pratik alan**. Canlı 4.8.4'te cloud
+  yalnız `block_ids` ile çoğu zaman `{"updated":0,"status":"ok"}` döndü; dashboard
+  "Kaldırılıyor…" durumunda kaldı. `ip` ile ACK `updated>0` üretiyor.
+- Client ≥4.8.5 her iki alanı birden gönderir; `updated=0` ise IP başına retry yapar.
+- **Cloud TODO:** `block_ids` ile de remove_pending / "removing" satırlarını kapat
+  (`updated` = etkilenen satır sayısı). Kuyruk öğeleri ACK gelene kadar
+  `pending-unblocks`'ta kalmalı (GET ile silinmemeli — aksi halde retry imkânsız).
+
 ### sync-rules (özet)
 
 Agent `netsh` / HP-BLOCK taraması → JSON blocks listesi. Cloud SoT envanter için.

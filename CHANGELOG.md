@@ -1,5 +1,13 @@
 # Changelog — honeypot-contract
 
+## 1.3.13 — 2026-07-21 (client **4.8.5** — block-removed ACK ips + updated)
+
+- `api/06-firewall-blocks.md`: `POST /api/agent/block-removed` ACK body now
+  documents `block_ids` **and** `ips`/`ip`. Live 4.8.4: ids-only often returned
+  `updated:0` while dashboard stayed on "Kaldırılıyor…"; ip ACK returns
+  `updated>0`. Cloud TODO: match remove_pending by block_ids too; keep queue
+  items until ACK (not on GET). Production floor 4.8.5.
+
 ## 1.3.12 — 2026-07-21 (client **4.8.4** — whitelist cloud SoT invariantı)
 
 - `agent/gui-control-center.md`: yeni **whitelist SoT invariantı** — whitelist
