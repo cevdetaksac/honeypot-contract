@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.3.5** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.7.4** (operator-approved containment + healthy daemon IPC)
+> **VERSION 1.3.6** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.7.5** (safe containment + healthy IPC/update handoff)
 
 ## agent/
 

@@ -1,5 +1,13 @@
 # Changelog — honeypot-contract
 
+## 1.3.6 — 2026-07-21 (client **4.7.5** — clean update/tamper handoff)
+
+- Update authorization lock must remain active until the replacement daemon
+  completes its boot-time previous-session check and reports motor ready.
+- Fixes planned installer restarts being falsely emitted as
+  `unexpected_exit` / `agent_tamper`.
+- Production floor raised to 4.7.5.
+
 ## 1.3.5 — 2026-07-21 (client **4.7.4** — daemon STATUS IPC health)
 
 - Live 4.7.3 smoke test found a recursive health dependency:

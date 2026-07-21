@@ -139,6 +139,9 @@ External health caller'lar normal şekilde STATUS probe etmeye devam eder.
 - `client_startup` — daemon veya frontend
 - `gui_quit` — frontend kapandı; **motor ayakta kalmalı**
 - `self_update_*` — ACK + helper; bitiş = yeni process version
+- Update handoff (≥4.7.5): `update_in_progress.lock`, replacement daemon
+  `Ensure-DaemonMotor` ile hazır olup previous-session kontrolünü tamamlayana
+  kadar silinmez. Planlı restart `unexpected_exit` / `agent_tamper` üretmez.
 
 ---
 
@@ -159,3 +162,4 @@ Yeni GUI özellikleri: `client_gui_*.py` alt modülleri tercih et.
 - [ ] threats/config `protection.block_rules` motor’da uygulanır
 - [ ] İki RDP kullanıcısı → RD `session_id` doğru masaüstü
 - [x] 5 ardışık STATUS hızlı döner; recursive self-probe / CLOSE_WAIT yok (≥4.7.4)
+- [x] Update sonrası `tamper_count_24h=0`, `last_tamper_ts=null` (≥4.7.5)

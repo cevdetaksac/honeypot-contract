@@ -24,9 +24,10 @@
 | Hard alert-only + onaylı exact-process suspend/resume | `agent/network-guard.md` | **4.7.3** |
 | GUI Security Layers + cloud config push + sayaç invariant | `agent/gui-control-center.md` | **4.7.3** |
 | Daemon STATUS recursion / GUI-Guardian IPC health hotfix | `api/08-architecture.md` | **4.7.4** |
+| Update lock → replacement motor-ready tamper handoff | `api/08-architecture.md` | **4.7.5** |
 
-**Önerilen production floor:** **4.7.4** (survival + disaster recovery +
+**Önerilen production floor:** **4.7.5** (survival + disaster recovery +
 operator-approved Network Guard containment). 4.7.0/4.7.1 production'da
-kullanılmamalı; 4.7.3'te STATUS recursive IPC health timeout'u vardır.
+kullanılmamalı; 4.7.3'te STATUS timeout, 4.7.4'te update false-tamper vardır.
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).
