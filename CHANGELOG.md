@@ -30,6 +30,13 @@
   maskeli); server-side `pin` format doğrulaması (4-12 hane, yalnız rakam → 400);
   dashboard Tehdit Merkezi → Remote Commands → **GUI PIN** modalı (tanımla /
   sıfırla, confirm dialoglu, TR/EN i18n).
+- **Cloud dashboard IP hızlı aksiyonları (2026-07-21):** Bloklama sayfası
+  başlığına **IP Engelle** (kırmızı, mevcut `#modalIPBlock`) ve **Whitelist'e
+  Ekle** (yeşil, yeni `#modalWhitelistAdd`) butonları eklendi. Whitelist modalı
+  IP veya CIDR subnet kabul eder; `POST /api/dashboard/whitelist-ip` artık
+  subnet'i de `ipaddress.ip_network(strict=False)` ile doğrulayıp
+  `whitelist_subnets` alanına yazar (IP → `whitelist_ips`), geçersiz girişte
+  400 `invalid_ip`. Modal "Mevcut IP'mi kullan" hızlı doldurmasını içerir.
 
 ## 1.3.10 — 2026-07-21 (client **4.8.2** — Settings config surface documented)
 
