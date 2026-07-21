@@ -91,7 +91,7 @@ en fazla fallback olarak, urgent gelmemişse.
 
 Snapshot’ta dosya yolu / suspect süreç **yok** (≤4.5.66).
 
-### 3) Zengin şema (≥ **4.5.67** — hedef; cloud parse buna göre)
+### 3) Zengin şema (≥ **4.5.67** — implemented)
 
 Urgent alert’e ek alanlar:
 
@@ -121,7 +121,8 @@ Urgent alert’e ek alanlar:
 
 - Client: quarantine arm + suspect scan (≤4s) **önce**, urgent **sonra** (≤ ~5s gecikme kabul)
 - Suspect bulunamazsa `suspects: []` — alanlar yine de yapılandırılmış gönderilir
-- Health snapshot’a ek: `ransomware_quarantine: { active, trigger, entries: [{image,path,pid,sha256,ifeo,at}] }`
+- `raw_events[0]`: canary file/change; sonraki elemanlar suspect process (`process_name`, `pid`, `cmdline`, `path`, `sha256`)
+- Health snapshot’a ek: `ransomware_quarantine: { active, trigger, entries: [{image,path,pid,cmdline,sha256,ifeo,at}] }`
 - Cloud popup: `system_context.ransomware` varsa onu kullan; yoksa `description` `Dosya:` / `Değişiklik:` parse (≤4.5.66 uyumluluk)
 
 ---
@@ -134,4 +135,4 @@ Urgent alert’e ek alanlar:
 - [ ] `RS_UNLOCK` quarantine temizler
 - [ ] Intel-only kural emergency_lockdown tetiklemez
 - [ ] Cloud, canary popup detayını `alerts/urgent`ten alır (health-report sentetik alert yok)
-- [ ] ≥4.5.67: urgent `system_context.ransomware` dolu (file, change_type, suspects[])
+- [x] ≥4.5.67: urgent `system_context.ransomware` dolu (file, change_type, suspects[])

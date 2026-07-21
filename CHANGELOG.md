@@ -1,5 +1,12 @@
 # Changelog — honeypot-contract
 
+## 1.1.4 — 2026-07-21
+
+- Client **4.5.67** implements enriched canary urgent payload:
+  `system_context.ransomware`, process-compatible `raw_events`, SYSTEM target/action.
+- Health snapshot implements `ransomware_quarantine` with persisted suspect entries.
+- Fleet production floor moved to 4.5.67 for detailed cloud canary popup.
+
 ## 1.1.3 — 2026-07-21
 
 - `agent/ransomware-shield.md`: **Wire** bölümü — canary alert SoT = `alerts/urgent`
