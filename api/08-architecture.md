@@ -44,6 +44,7 @@ BLOCK_IP <ip> [reason]
 UNBLOCK_IP <ip>
 RS_STATUS
 RS_UNLOCK
+THREAT_TOP
 HONEYPOT START <SVC> <PORT>
 HONEYPOT STOP <SVC>
 HONEYPOT LIST
@@ -51,6 +52,13 @@ SHOW / QUIT   (daemon: SHOW→NOGUI; QUIT for installer)
 ```
 
 JSON replies start with `{`. Helpers: `client_daemon_ipc.py`.
+
+**`THREAT_TOP` (≥4.7.6):** frontend GUI kendi threat engine'ini tutmaz; "Toplam
+Saldırı" detay popup'ı boş kalmasın diye motor top saldırgan context'lerini
+döner: `{ok, engine, total, attackers:[{ip, services[], failed_attempts,
+threat_score, last_seen, is_blocked}]}`. Kart sayacı bulut `attack-count`
+(kümülatif) kalır; motorda anlık IP context yoksa GUI bulut toplamı + açıklama
+gösterir, boş ekran değil.
 
 **Kural:** Unelevated GUI **asla** doğrudan `netsh delete/add` ile envanteri silmez/mutasyon yapmaz — motor IPC kullanır. Okuma: ProgramData + throttled live scan.
 

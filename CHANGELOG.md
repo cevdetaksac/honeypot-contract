@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.3.7 — 2026-07-21 (client **4.7.6** — daily log retention)
+
+- New `agent/log-retention.md`: date-named client/threat/lifecycle logs,
+  7-calendar-day retention and daemon/Guardian rename-race avoidance.
+- `update-install.log` keeps its fixed active name for liveness compatibility;
+  old dated lines are partitioned into 7-day archives.
+- Threat logs now use the canonical APPDATA/ProgramData root instead of cwd.
+- Production floor raised to 4.7.6.
+
 ## 1.3.6 — 2026-07-21 (client **4.7.5** — clean update/tamper handoff)
 
 - Update authorization lock must remain active until the replacement daemon
