@@ -1,16 +1,43 @@
 # Changelog — honeypot-contract
 
-## 1.2.0 — 2026-07-21
+## 1.3.0 — 2026-07-21 (spec; client **4.7.0** planlı)
 
-Client **4.6.0** survival katmanı için cloud desteği (Guardian service, tamper wire, break-glass recovery).
+- **Yeni:** [`agent/network-guard.md`](agent/network-guard.md) — **offline fidye bombası**
+  savunması (fire-and-forget + internetsiz kütle şifreleme). Beş parça:
+  **A** imzalı ağ baseline yedeği (mapped drive / shares / adapter / DNS / route / firewall),
+  **B** internetsiz davranışsal tespit (ağ-kesme delta + FS yazma/rename fırtınası + fidye notu deseni skorlama; ağ-kesme+FS-fırtınası → canary beklemeden tetik),
+  **C** agresif containment **suspend-first** (kill değil; acil VSS snapshot; operatör onayıyla kill/release; opsiyonel auto-kill),
+  **D** ağ/bağlantı kurtarma (adapter/DNS/firewall/route/mapped-drive/shares baseline'dan restore → daemon yeniden bağlanır),
+  **E** `ransomware_offline_bomb` urgent alarmı (`system_context.network_guard`, `restored` işaretli).
+- Yeni komutlar: `network_snapshot`, `network_restore` (confirm), `list_network_baseline`.
+- STATUS/health `network_guard{}` bloğu.
+- Dürüst sınır: tam EDR/AV değil; davranışsal tespit ayarlanabilir eşik + güvenli
+  (suspend-first) varsayılan; garanti = erken containment + kurtarılabilirlik.
 
-- **Cloud implemented:** Yeni komut tipleri whitelist’te — `create_user`, `remote_logon`, `set_autologon`, `clear_autologon`, `reboot` (`VALID_COMMAND_TYPES` → 35 tip).
-- **Cloud implemented:** Destructive confirm gate genişletildi — `create_user`, `remote_logon`, `set_autologon`, `reboot` `confirm:true` olmadan 400 (`clear_autologon` non-destructive). `create_user`/`remote_logon` → username+password, `set_autologon` → username alan doğrulaması.
-- **Cloud implemented:** Break-glass şifre maskeleme — `password`/`new_password` audit log + `GET /api/commands/{id}` görünümünde `***`; agent’a giden `pending`/WS payload gerçek şifreyi taşır; komut terminal duruma geçince DB’de şifre `***` ile ezilir (`helpers.scrub_command_params`). `remote_logon` TTL 15 dk, `reboot` TTL 15 dk.
-- **Cloud implemented:** `agent_tamper` popup builder — `system_context.tamper.offender` (+ `raw_events[].offender_pid`/`image`) → popup süreç/PID; `agent_tamper` popup açar.
-- **Cloud implemented:** `pending_tunnel_commands` legacy kuyruğu TTL (30 dk) + servis-başına dedupe (`routes_agent._prune_tunnel_commands`) — hem tunnel-set (yazma) hem tunnel-status (okuma).
-- **Cloud implemented:** Opsiyonel dead-man — health report `snapshot.persistence` `daemon_ok=false`/`service_ok=false` (operator_stop yok) → sentetik `agent_persistence_degraded` alert (high/70, 30 dk dedupe). Tamper urgent’e ikincil güvenlik ağı.
-- Doküman: `api/03-control-websocket.md` (komut katalog + destructive + maskeleme), `agent/attacks-and-services.md` (tunnel TTL/dedupe), `agent/threat-engine.md` (tamper + dead-man).
+## 1.2.0 — 2026-07-21 (client **4.6.0** implemented)
+
+- **Yeni:** [`agent/persistence-and-tamper.md`](agent/persistence-and-tamper.md) — survival modeli:
+  Windows Servisi `CloudHoneypotGuardian` (SCM restart-on-failure) + Session 0 motor
+  **çapraz watchdog**; durdurma yalnız (1) update-lock (2) imzalı PIN `operator_stop.json`;
+  başka her sonlanma → **tamper** → ≤5 sn diriliş + `agent_tamper` urgent (SACL offender PID).
+- **Yeni:** [`agent/disaster-recovery.md`](agent/disaster-recovery.md) — felaket kurtarma:
+  `create_user` (yeni/yeniden Administrator), `remote_logon` (var olan oturum reconnect →
+  yoksa **autologon `AutoLogonCount=1` + reboot** break-glass, boot sonrası LSA secret temizlenir),
+  `set_autologon`/`clear_autologon`/`reboot` primitifleri, uçtan uca kurtarma runbook.
+- `api/03-control-websocket.md`: komut kataloğuna `create_user`, `remote_logon`,
+  `set_autologon`/`clear_autologon`, `reboot`; hepsi HMAC + **destructive confirm** listesinde.
+- `api/08-architecture.md`: Guardian servis bacağı + durdurma politikası.
+- `agent/attacks-and-services.md`: cloud `pending_tunnel_commands` **TTL/expiry + dedupe**
+  sözleşmesi (10 aylık bayat komut bulgusu); client zaten yok sayıyor, `desired` otorite.
+- `FLEET.md` / `INDEX.md`: 4.6.0 hedef satırları; production floor **4.5.68** (değişmedi).
+- **Cloud implemented (aynı gün):**
+  - `VALID_COMMAND_TYPES` → **35 tip**: `create_user`, `remote_logon`, `set_autologon`, `clear_autologon`, `reboot` eklendi.
+  - Destructive confirm gate genişletildi: `create_user`/`remote_logon`/`set_autologon`/`reboot` `confirm:true` olmadan 400 (`clear_autologon` non-destructive). Alan doğrulaması: create_user/remote_logon → username+password, set_autologon → username. `remote_logon`/`reboot` TTL 15 dk.
+  - Break-glass şifre maskeleme (`helpers.scrub_command_params`): audit log + `GET /api/commands/{id}` → `***`; agent’a giden gerçek şifre `pending`/WS payload’ta; terminal durumda DB’de şifre ezilir.
+  - `agent_tamper` popup builder: `system_context.tamper.offender` (+ `raw_events[].offender_pid`/`image`) → popup süreç/PID; `agent_tamper` popup listesinde.
+  - `pending_tunnel_commands` TTL (**24 saat**, kontrat yaşam döngüsü bölümü) + servis-başına dedupe (`routes_agent._prune_tunnel_commands`) — tunnel-set (yazma) + tunnel-status (okuma).
+  - Opsiyonel dead-man: health `snapshot.persistence` `daemon_ok=false`/`service_ok=false` (operator_stop yok) → sentetik `agent_persistence_degraded` (high/70, 30 dk dedupe). Tamper urgent’e ikincil ağ.
+  - Doküman: `agent/threat-engine.md` (tamper + dead-man wire), `agent/attacks-and-services.md` (tunnel TTL/dedupe detay).
 
 ## 1.1.7 — 2026-07-21
 

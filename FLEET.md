@@ -16,7 +16,11 @@
 | `protection.block_rules` apply + WS intel push | `agent/register-protection.md`, `api/09` | **4.5.66** |
 | Enriched canary alert + quarantine snapshot | `agent/ransomware-shield.md` | 4.5.67 |
 | Single enriched canary urgent (thin-race fix) | `agent/ransomware-shield.md` | **4.5.68** |
+| Guardian service + cross-watchdog + tamper wire | `agent/persistence-and-tamper.md` | **4.6.0** |
+| `create_user` + `remote_logon` (autologon break-glass) | `agent/disaster-recovery.md` | **4.6.0** |
+| Network Guard: offline bomba + ağ sürücü yedek/kurtarma | `agent/network-guard.md` | **4.7.0** (planlı) |
 
-**Önerilen production floor:** **4.5.68** (cloud canary popup detail); 4.5.66 core protection floor.
+**Önerilen production floor:** **4.6.0** (survival + disaster recovery); 4.5.68 canary floor.
+Network Guard (`4.7.0`) planlı — implemente edilince floor güncellenecek.
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).

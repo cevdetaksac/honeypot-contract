@@ -90,7 +90,9 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `disable_account` / `disable_all_users`
 - `enable_lockdown` (emergency lockdown)
 - `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
-- **Break-glass (client ≥4.6.0):** `create_user`, `remote_logon`, `set_autologon`, `reboot`
+- `create_user` (yeni/yeniden hesap — [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md))
+- `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
+- `network_restore` (ağ baseline'dan geri yükle — [`../agent/network-guard.md`](../agent/network-guard.md))
 
 Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
 (`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
@@ -98,17 +100,17 @@ Cloud-internal maintenance akışları (blok temizliği → `clear_firewall`) bu
 
 > `clear_autologon` yıkıcı **değildir** (autologon geri alma) — onay gerekmez.
 
-**Cloud alan doğrulaması:** `create_user`/`remote_logon` → `username` + `password` zorunlu; `set_autologon` → `username` zorunlu (aksi halde 400).
+**Cloud alan doğrulaması (implemented):** `create_user`/`remote_logon` → `username` + `password` zorunlu; `set_autologon` → `username` zorunlu (aksi halde 400). `remote_logon` ve `reboot` komut TTL’i **15 dk** (reboot/autologon boot süresi).
 
 Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zorunluluğudur.
 
-### Şifre maskeleme (break-glass)
+### Şifre maskeleme (break-glass, implemented)
 
-`password` / `new_password` taşıyan komutlar (`create_user`, `remote_logon`, `set_autologon`, `remote_session_prepare`, `reset_password`) için:
+`password` / `new_password` taşıyan komutlar (`create_user`, `remote_logon`, `set_autologon`, `remote_session_prepare`, `reset_password`):
 
-- **Agent’a** iletilen `params` (WS push + `GET /api/commands/pending`) **gerçek** şifreyi taşır — agent’ın uygulaması için gerekli.
-- **Dashboard/audit** görünümleri maskelenir: `GET /api/commands/{id}` ve `CommandAuditLog` → `***`.
-- Komut terminal duruma (`completed`/`failed`/…) geçince cloud, kayıtlı `params` içindeki şifreyi DB’de `***` ile ezer (`helpers.scrub_command_params`).
+- **Agent’a** iletilen `params` (WS push + `GET /api/commands/pending`) **gerçek** şifreyi taşır — uygulama için gerekli.
+- **Dashboard/audit** görünümleri maskeli: `GET /api/commands/{id}` + `CommandAuditLog` → `***`.
+- Komut terminal duruma geçince (`completed`/`failed`/…) cloud, kayıtlı `params` şifresini DB’de `***` ile ezer (`helpers.scrub_command_params`).
 
 ---
 
@@ -138,13 +140,15 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `self_update` | `force`, `tag`, `download_url` | Installer |
 | `check_update` | — | Sürüm kontrol |
 | `unlock_ransomware_quarantine` | — | IFEO / quarantine temizle ([`../agent/ransomware-shield.md`](../agent/ransomware-shield.md)) |
-| `create_user` | `username`, `password`, `groups[]`, `enable`, `if_exists("fail"\|"reset_enable")`, `password_never_expires`, `comment` | Break-glass yerel hesap (≥4.6.0, destructive) |
-| `remote_logon` | `username`, `password`, `domain`, `mode("auto"\|"reconnect_only"\|"autologon_reboot")`, `reboot`, `timeout_sec` | Konsol oturumu: reconnect veya autologon+reboot (≥4.6.0, destructive, TTL 15 dk) |
-| `set_autologon` | `username`, `password?`, `domain`, `count` | AutoAdminLogon arm (≥4.6.0, destructive) |
-| `clear_autologon` | — | AutoAdminLogon geri al (≥4.6.0, **non-destructive**) |
-| `reboot` | `grace_sec`, `reason` | Zamanlı yeniden başlatma (≥4.6.0, destructive, TTL 15 dk) |
+| `create_user` | `username`, `password`, `groups[]`, `if_exists` | Yeni/yeniden Administrator — ≥4.6.0 ([`../agent/disaster-recovery.md`](../agent/disaster-recovery.md)) |
+| `remote_logon` | `username`, `password`, `mode`, `reboot` | Kimlikle uzaktan oturum (reconnect / autologon+reboot) — ≥4.6.0 |
+| `set_autologon` / `clear_autologon` | `username`, `password`, `count` | Autologon arm/temizle — ≥4.6.0 |
+| `reboot` | `grace_sec`, `reason` | Onaylı yeniden başlatma — ≥4.6.0 |
+| `network_snapshot` | — | Anlık ağ baseline al — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
+| `network_restore` | `targets[]?` | Baseline'dan ağ/sürücü geri yükle (confirm) — ≥4.7.0 |
+| `list_network_baseline` | — | Baseline sürümleri/özeti — ≥4.7.0 |
 
-Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md).
+Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md); kurtarma → [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md); kalıcılık/tamper → [`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md).
 
 ---
 
