@@ -1,5 +1,29 @@
 # Changelog — honeypot-contract
 
+## 1.4.1 — 2026-07-22 (Security & Resilience vNext delivery plan)
+
+- Added `SECURITY_RESILIENCE_VNEXT.md` as the shared implementation plan for
+  Client, Cloud/API, Dashboard and QA. It is explicitly **planning /
+  non-normative**: current wire behavior and the client **4.9.0** production
+  floor do not change until each schema is promoted to its canonical contract.
+- Defined parallel delivery lanes, ownership, dependency order, compatibility
+  rollout and joint acceptance gates for command integrity, release trust,
+  resilience, identity events, ETW ransomware telemetry, binary integrity,
+  deception, device identity and future E2E authorization/encryption.
+- P0 cloud instructions make existing command HMAC coverage observable before
+  enforcement, require deterministic Client/Cloud crypto test vectors and a
+  cloud-first dual-compatible rollout. Missing signatures are not rejected
+  fleet-wide until cloud signing reaches 100% and the observing client release
+  proves compatibility.
+- Added coordinated Authenticode/WinVerifyTrust release metadata, Guardian
+  health/SLO, Event IDs 4723/4724, ETW shadow-mode aggregation, SBOM/provenance
+  and canonical asymmetric command-envelope design packages.
+- Reaffirmed safety boundaries: no automatic process/network containment,
+  automatic admin lockout, process-wide realtime priority, covert DNS/ICMP
+  tunnel or irreversible hardware fingerprint lock.
+- `VERSION`/`INDEX.md`/`README.md` updated to **1.4.1**. This planning-only
+  release does not modify `FLEET.md`.
+
 ## 1.4.0 — 2026-07-21 (client **4.9.0** — Remote Desktop v2)
 
 - `api/05-remote-desktop.md` is now **canonical** with an early, clearly

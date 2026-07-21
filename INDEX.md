@@ -1,8 +1,14 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.0** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> **VERSION 1.4.1** · Repo: https://github.com/cevdetaksac/honeypot-contract
 > Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling)
+
+## Shared delivery plans
+
+| Dosya | Konu | Statü |
+|-------|------|-------|
+| [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri, sahiplik ve rollout kapıları | Planlama; normative wire değişikliği değil |
 
 ## agent/
 
