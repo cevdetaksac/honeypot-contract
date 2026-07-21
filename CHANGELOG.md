@@ -1,5 +1,15 @@
 # Changelog — honeypot-contract
 
+## 1.3.12 — 2026-07-21 (client **4.8.4** — whitelist cloud SoT invariantı)
+
+- `agent/gui-control-center.md`: yeni **whitelist SoT invariantı** — whitelist
+  tek kaynağı cloud `threats/config.whitelist_ips`. Persist merge-only (cloud
+  seti + yerel engine setleri + açık add/remove deltası; kör overwrite yasak);
+  tablo render'ı engine setleri ∪ cloud seti okur.
+- Canlı 4.8.3 bulgusu: frontend-only GUI'de engine nesneleri `None` olduğundan
+  hızlı whitelist ekleme buluta boş liste yolluyordu ("eklendi" toast'ı ama
+  Whitelist (0) ve cloud wipe riski). Production floor 4.8.4.
+
 ## 1.3.11 — 2026-07-21 (client **4.8.3** — dashboard PIN yönetimi + IP hızlı aksiyonları)
 
 - `api/03-control-websocket.md`: yeni komutlar **`set_gui_pin`** (`pin` 4-12
