@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.3.7** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.7.6** (safe containment + healthy IPC + bounded logs)
+> **VERSION 1.3.9** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.8.1** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups)
 
 ## agent/
 
@@ -15,7 +15,7 @@
 | [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian servisi, çapraz watchdog, tamper wire | ≥ **4.6.0** |
 | [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` (autologon break-glass) | ≥ **4.6.0** |
 | [agent/network-guard.md](agent/network-guard.md) | Offline fidye alarmı, ağ baseline; otomatik müdahale yok, onaylı suspend | ≥ **4.7.3** |
-| [agent/gui-control-center.md](agent/gui-control-center.md) | Dinamik GUI, güvenlik katmanları, sayaç/action invariant'ları | ≥ **4.7.3** |
+| [agent/gui-control-center.md](agent/gui-control-center.md) | Dinamik GUI, güvenlik katmanları, koruma şeridi + Ayarlar sekmesi, sayaç/action + detay popup veri-kaynağı invariant'ları | ≥ **4.7.3** (şerit/Ayarlar ≥ **4.8.0**, popup kaynağı ≥ **4.8.1**) |
 | [agent/log-retention.md](agent/log-retention.md) | Günlük yerel loglar, 7 gün retention, updater uyumluluğu | ≥ **4.7.6** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |

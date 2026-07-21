@@ -1,5 +1,32 @@
 # Changelog — honeypot-contract
 
+## 1.3.9 — 2026-07-21 (client **4.8.1** — protection popup data-source fix)
+
+- `agent/gui-control-center.md`: new **detay popup veri-kaynağı invariantı** —
+  a card/chip and its detail popup must show the same truth. Frontend-only GUI
+  holds no local engine objects (`process_protection`, `ransomware_shield`,
+  `network_guard`, `memory_guard` are always `None`), so protection popups must
+  read daemon `STATUS` (IPC), never `if local_obj:`. Fixes 4.8.0 "Koruma Motoru
+  chip AKTİF but Koruma popup OFF".
+- Protection/engine popup now derives state from `STATUS.motor_ok` +
+  `STATUS.persistence.self_protection`; local object is a fallback, not the sole
+  source. Production floor raised to 4.8.1.
+
+## 1.3.8 — 2026-07-21 (client **4.8.0** — GUI control center v2)
+
+- `agent/gui-control-center.md`: new **Protection Status strip** on the landing
+  page (motor / ransomware / network guard / guardian / honeypots / quarantine
+  chips fed from daemon `STATUS`, each a shortcut to detail or tab) and new
+  **Settings tab** managing email alerts, auto-block limits, silent hours and
+  webhook via partial `POST /api/threats/config` deep-merge.
+- `api/08-architecture.md`: daemon `STATUS` payload extended with
+  `ransomware_running` and `network_guard{present,enabled,running,
+  suspended_processes,baseline_age_sec,internet_ok}` so the frontend GUI never
+  assumes local engines for layer state.
+- Toggle render invariant documented: CTk switches must be enabled **before**
+  select/deselect — fixes 4.7.x "shield ACTIVE but layer toggles look OFF".
+- Layers/Settings tabs re-sync from cloud on every visit (no stale UI).
+
 ## 1.3.7 — 2026-07-21 (client **4.7.6** — daily log retention)
 
 - New `agent/log-retention.md`: date-named client/threat/lifecycle logs,

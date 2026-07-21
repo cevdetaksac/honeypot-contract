@@ -124,9 +124,29 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
     "active": false,
     "entries": 0,
     "canary_files": 138
+  },
+  "ransomware_running": true,
+  "network_guard": {
+    "present": true,
+    "enabled": true,
+    "running": true,
+    "suspended_processes": 0,
+    "baseline_age_sec": 512,
+    "internet_ok": true
+  },
+  "persistence": {
+    "service_ok": true,
+    "daemon_ok": true,
+    "tasks_armed": true,
+    "tamper_count_24h": 0
   }
 }
 ```
+
+**STATUS zenginleştirme (≥4.8.0):** frontend GUI'nin "Koruma Durumu" şeridi tüm
+katman durumlarını tek STATUS çağrısından okur — `ransomware_running` (shield
+watcher canlı mı) ve `network_guard{}` özeti eklendi. Frontend hiçbir katman
+durumu için yerel engine varsaymaz; motor yoksa katman "KAPALI" gösterilir.
 
 ### STATUS dependency invariant (client ≥4.7.4)
 

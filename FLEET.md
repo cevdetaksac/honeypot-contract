@@ -26,9 +26,15 @@
 | Daemon STATUS recursion / GUI-Guardian IPC health hotfix | `api/08-architecture.md` | **4.7.4** |
 | Update lock → replacement motor-ready tamper handoff | `api/08-architecture.md` | **4.7.5** |
 | Daily client/threat/lifecycle logs + 7-day retention | `agent/log-retention.md` | **4.7.6** |
+| Protection strip + Settings tab + STATUS network_guard/rs alanları | `agent/gui-control-center.md`, `api/08` | **4.8.0** |
+| Detay popup veri-kaynağı invariantı (chip=popup, daemon STATUS) | `agent/gui-control-center.md` | **4.8.1** |
 
-**Önerilen production floor:** **4.7.6** (survival + disaster recovery +
-operator-approved Network Guard containment). 4.7.0/4.7.1 production'da
-kullanılmamalı; 4.7.3'te STATUS timeout, 4.7.4'te update false-tamper vardır.
+**Önerilen production floor:** **4.8.1** (survival + disaster recovery +
+operator-approved Network Guard containment + GUI control center v2 + tutarlı
+detay popup'ları).
+4.7.0/4.7.1 production'da kullanılmamalı; 4.7.3'te STATUS timeout, 4.7.4'te
+update false-tamper vardır; 4.7.x GUI'de katman toggle'ları yanlış (hep KAPALI)
+render edilir. 4.8.0'da koruma detay popup'ı chip AKTİF iken OFF gösterir (4.8.1
+düzeltir).
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).
