@@ -10,6 +10,15 @@
   **cloud** threats/config (was local-only ≤4.8.1); the daemon bridges them to
   local `notifications.*` and still forwards alerts client-side. Cloud does not
   send webhooks itself. Production floor raised to 4.8.2.
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):**
+  `POST /api/threats/config` deep-merge accepts GUI Settings fields
+  (`alert_email_*`, `instant_email_for_critical`, `min_severity_for_email`,
+  `daily_digest_enabled`, `auto_block_*`, `silent_hours{…}`, `webhook_*`) and
+  returns effective config + `{ "v":1, "t":"threat_config_updated" }` WS push.
+  Cloud consumes email prefs (severity gate + instant critical + daily digest
+  tick); webhook is store/return only (no cloud forward). Health/STATUS
+  `ransomware_running` + `network_guard{}` mirrored to client_status /
+  dashboard-live. Dashboard production floor warn → **4.8.2**. Mirror published.
 
 ## 1.3.9 — 2026-07-21 (client **4.8.1** — protection popup data-source fix)
 

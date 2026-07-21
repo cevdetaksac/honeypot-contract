@@ -55,8 +55,13 @@ Partial deep-merge. Gönderilmeyen sibling alanlar silinmez. Cloud:
 2. Aynı client'ın control WS kanalına `{ "v":1, "t":"threat_config_updated" }` push eder.
 3. Daemon hemen GET + runtime apply yapar (poll fallback).
 
-GUI Security Layers ve whitelist mutasyonları bu endpoint'i kullanır
-([`gui-control-center.md`](./gui-control-center.md)).
+GUI Security Layers, Ayarlar sekmesi (≥4.8.0) ve whitelist mutasyonları bu
+endpoint'i kullanır ([`gui-control-center.md`](./gui-control-center.md)).
+
+**Cloud (honeypot.yesnext.com.tr):** Settings alanları (`alert_email_*`,
+`instant_email_for_critical`, `min_severity_for_email`, `daily_digest_enabled`,
+`auto_block_*`, `silent_hours`, `webhook_*`) deep-merge ile kabul edilir;
+e-posta tercihlerini cloud tüketir; webhook yalnız saklanır/döner (göndermez).
 
 ---
 
