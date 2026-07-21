@@ -62,6 +62,12 @@ endpoint'i kullanır ([`gui-control-center.md`](./gui-control-center.md)).
 `instant_email_for_critical`, `min_severity_for_email`, `daily_digest_enabled`,
 `auto_block_*`, `silent_hours`, `webhook_*`) deep-merge ile kabul edilir;
 e-posta tercihlerini cloud tüketir; webhook yalnız saklanır/döner (göndermez).
+Server-side validation: geçersiz değer **HTTP 422**
+`{"detail":{"error":"validation_failed","fields":{...}}}` döner ve hiçbir alan
+yazılmaz — `min_severity_for_email` (low|medium|high|critical),
+`silent_hours.mode` (night_only|outside_working|always|custom), `HH:MM` saat
+alanları, integer sınırları (`auto_block_threshold` 1–100, süreler 0–8760,
+limitler ≥1) ve `webhook_url` http(s) şeması.
 
 ---
 
