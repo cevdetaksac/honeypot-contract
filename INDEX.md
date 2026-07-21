@@ -2,7 +2,7 @@
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
 > **VERSION 1.2.0** · Repo: https://github.com/cevdetaksac/honeypot-contract  
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.68** · Hedef: **4.6.0** (survival + recovery)
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.6.0**
 
 ## agent/
 

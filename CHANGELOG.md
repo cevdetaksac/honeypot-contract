@@ -1,6 +1,6 @@
 # Changelog — honeypot-contract
 
-## 1.2.0 — 2026-07-21 (spec — client 4.6.0 hedef, implementasyon onay bekliyor)
+## 1.2.0 — 2026-07-21 (client **4.6.0** implemented)
 
 - **Yeni:** [`agent/persistence-and-tamper.md`](agent/persistence-and-tamper.md) — survival modeli:
   Windows Servisi `CloudHoneypotGuardian` (SCM restart-on-failure) + Session 0 motor
