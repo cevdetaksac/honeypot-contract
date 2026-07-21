@@ -1,5 +1,16 @@
 # Changelog — honeypot-contract
 
+## 1.1.6 — 2026-07-21
+
+- Client **4.5.68** hotfix: canary tetiğinde **tek** zengin urgent yolu —
+  4.5.67'deki ince `handle_alert` + zengin `send_urgent` yarışı kaldırıldı
+  (canlı smoke boş-alanlı payload'ı yakaladı).
+- Kural: canary urgent **her zaman** `system_context.ransomware` + `raw_events` +
+  `target_service=SYSTEM` + `recommended_action=isolate_host` taşır.
+- Fleet production floor → **4.5.68**.
+- Canlı doğrulama (DESKTOP-F5SCL3G): canary MODIFIED → quarantine arm →
+  urgent 200 `received` (dashboard+email), `RS_UNLOCK` OK.
+
 ## 1.1.5 — 2026-07-21
 
 - **Cloud implemented:** HMAC command signing canlı — WS `command` push + `GET /api/commands/pending` artık `issued_at` + `signature` içeriyor (key = raw SHA256 digest; hostname kaynağı: heartbeat `hostname`)
