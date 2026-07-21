@@ -34,6 +34,14 @@ Cloud curated IoC → ayrı poll (`09`).
 - `silent_hours` / `working_hours`
 - `monitored_event_channels` (security/system/application/rdp)
 - `emergency_lockdown_*`, `logon_challenge`
+- **E-posta bildirim tercihleri (GUI Ayarlar sekmesi ≥4.8.0 yazar):**
+  `alert_email_enabled`, `instant_email_for_critical`,
+  `min_severity_for_email` (`low|medium|high|critical`), `daily_digest_enabled`.
+  Bunları **cloud tüketir** (e-postayı cloud gönderir); client apply etmez.
+- **Webhook (SIEM forward) — `webhook_enabled`, `webhook_url` (≥4.8.2):** GUI
+  Ayarlar sekmesi bu alanları threats/config'e yazar; client `_sync_threat_config`
+  bunları yerel `notifications.webhook_*`'e köprüler ve alert gönderiminde local
+  forward eder (aşağıya bkz).
 - **`protection.block_rules`** — [`register-protection.md`](./register-protection.md) ile aynı şema (SoT poll)
 - **`protection.network_guard{}`** — [`network-guard.md`](./network-guard.md): `enabled`,
   `auto_contain`/`auto_kill`/`auto_restore` (client hard-false), `require_strong_signal`,
@@ -76,7 +84,13 @@ GUI Security Layers ve whitelist mutasyonları bu endpoint'i kullanır
 
 Nested `alert: { … }` de kabul (cloud flatten eder).
 
-Opsiyonel client SIEM: `notifications.webhook_url` (local `client_config.json`) — cloud alert path’ine ek olarak local forward; API sözleşmesi değil.
+Client SIEM webhook: her urgent alert, `notifications.webhook_enabled=true` ise
+`notifications.webhook_url`'e local olarak da forward edilir (Slack/Teams/custom).
+≤4.8.1'de bu alanlar **yalnız** local `client_config.json`'dan okunurdu. ≥4.8.2'de
+GUI Ayarlar sekmesi `webhook_enabled`/`webhook_url`'ü **cloud** threats/config'e
+yazar; daemon `_sync_threat_config` bunları yerel `notifications.*`'e köprüler,
+böylece cloud tek kaynak olur ama forward yine client tarafında yapılır. Cloud
+kendisi webhook göndermez.
 
 ---
 

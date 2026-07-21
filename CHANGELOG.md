@@ -1,5 +1,16 @@
 # Changelog — honeypot-contract
 
+## 1.3.10 — 2026-07-21 (client **4.8.2** — Settings config surface documented)
+
+- `agent/threat-engine.md`: `GET /api/threats/config` field list now documents
+  the fields the GUI Settings tab writes — email prefs (`alert_email_enabled`,
+  `instant_email_for_critical`, `min_severity_for_email`, `daily_digest_enabled`,
+  **cloud-consumed**) and the webhook fields.
+- Webhook semantics clarified: `webhook_enabled`/`webhook_url` are now written to
+  **cloud** threats/config (was local-only ≤4.8.1); the daemon bridges them to
+  local `notifications.*` and still forwards alerts client-side. Cloud does not
+  send webhooks itself. Production floor raised to 4.8.2.
+
 ## 1.3.9 — 2026-07-21 (client **4.8.1** — protection popup data-source fix)
 
 - `agent/gui-control-center.md`: new **detay popup veri-kaynağı invariantı** —
