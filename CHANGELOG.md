@@ -43,6 +43,17 @@
 - Cloud follow-up: add `_suspect` popup Suspend action, command whitelist/gate,
   threat-config deep-merge/effective response/WS broadcast; `_suspect` must not
   set `under_attack`.
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):**
+  `suspend_process`/`resume_process` whitelist + suspend confirm-gate +
+  exact-identity validation (`pid`+`expected_image`+`process_start_time`);
+  `POST /api/threats/config` deep-merge → effective config response +
+  `{ "v":1, "t":"threat_config_updated" }` control-WS push;
+  `ransomware_offline_suspect` warning→high normalize + trigger/pid dedupe +
+  dashboard popup **Suspend/Resume** buttons; `under_attack` only on `_bomb`
+  (`_suspect`/warning never sets it). Network Guard safe-defaults mirrored
+  (`auto_contain/auto_kill/auto_restore=false`, `require_strong_signal=true`).
+  v1.3.5/1.3.6 are client-internal (daemon STATUS IPC, update/tamper handoff) —
+  no cloud API change required.
 
 ## 1.3.3 — 2026-07-21 (client **4.7.2** — KRİTİK güvenlik düzeltmesi)
 

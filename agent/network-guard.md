@@ -230,7 +230,7 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 - [x] Ağ kesme + FS fırtınası → canary beklemeden **ALARM** (`ransomware_offline_suspect`, warning) — containment DEĞİL
 - [x] **Hiçbir süreç otomatik dondurulmaz**; config ile açılamayan hard safety invariant (client ≥4.7.3)
 - [x] Client `suspend_process` / `resume_process`: PID+image+path+start-time doğrulamalı; suspend confirm-gated
-- [ ] Cloud popup/satır: açık onaylı suspend, ardından kill/release — uçtan uca doğrulama bekliyor
+- [x] Cloud popup/satır: açık onaylı **Suspend/Resume** butonu + exact-identity (pid+image+start-time) — cloud implemented; canlı client ile uçtan uca doğrulama bekliyor
 - [ ] Acil VSS snapshot yalnız ayrı/onaylı aksiyon sırasında best-effort alınır
 - [x] Ağ restore yalnız `network_restore` açık onayıyla çalışır
 - [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
