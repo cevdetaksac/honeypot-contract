@@ -1,5 +1,12 @@
 # Changelog — honeypot-contract
 
+## 1.1.3 — 2026-07-21
+
+- **Cloud implemented:** HMAC command signing canlı — WS `command` push + `GET /api/commands/pending` artık `issued_at` + `signature` içeriyor (key = raw SHA256 digest; hostname kaynağı: heartbeat `hostname`)
+- **Cloud implemented:** Destructive IR server gate canlı — `POST /api/commands/send` `confirm: true` olmadan 400 (`reset_password`, `disable_account`, `disable_all_users`, `enable_lockdown`, `clear_firewall` wipe)
+- **Cloud implemented:** `unlock_ransomware_quarantine` whitelist'te (30 tip); dashboard kritik ransomware popup'ına unlock butonu
+- `agent/ransomware-shield.md`: canary tetik detayı için health snapshot `ransomware` blok şeması (suspect process / changed_files / VSS) — cloud alert enrichment bu bloğu okur
+
 ## 1.1.2 — 2026-07-21
 
 - `api/03-control-websocket.md`: HMAC command signing (`security.command_signing`) + result signature

@@ -5,7 +5,7 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (29 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (30 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
 ---
@@ -73,8 +73,10 @@ Client config: `security.command_signing` (default **true**).
 ```
 
 - Algoritma: `HMAC-SHA256` → hex digest  
-- Anahtar türetimi (client): `SHA256("{token}|{COMPUTERNAME}|yesnext-chp-v1")`  
-- Cloud imza üretirken aynı token + kayıtlı hostname (`COMPUTERNAME`) kullanır  
+- Anahtar türetimi (client): `SHA256("{token}|{COMPUTERNAME}|yesnext-chp-v1")` — key = **raw digest** (32 bayt), hex string değil  
+- Cloud imza üretirken aynı token + kayıtlı hostname (`COMPUTERNAME`) kullanır (heartbeat `hostname` > `server_name` prefix)  
+- **Cloud → agent zarf alanları:** `issued_at` (imzalanan tam string) + `signature` — hem WS `command` push hem `GET /api/commands/pending` liste öğelerinde  
+- Agent doğrularken zarftaki `issued_at` string’ini **verbatim** kullanır (parse/normalize etme)  
 - Self-process proof (`api/07-lifecycle-sessions.md`) **farklı** HMAC’tir; karıştırma
 
 ---
@@ -87,6 +89,10 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `disable_account` / `disable_all_users`
 - `enable_lockdown` (emergency lockdown)
 - `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
+
+Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
+(`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
+Cloud-internal maintenance akışları (blok temizliği → `clear_firewall`) bu endpoint’i kullanmaz; gate dashboard/API çağrıları içindir.
 
 Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zorunluluğudur.
 

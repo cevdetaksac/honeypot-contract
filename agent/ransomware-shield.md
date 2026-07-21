@@ -40,6 +40,32 @@ IFEO / kill: SearchIndexer, Defender, OneDrive, shell host’lar **korumalı**.
 
 ---
 
+## Canary tetik detayı — health snapshot şeması
+
+`canary_files_intact: false` gönderildiğinde cloud, alert'i zenginleştirmek için snapshot içinde
+şu (opsiyonel) `ransomware` bloğunu okur — dashboard kritik popup'ta süreç/dosya detayı buradan gelir:
+
+```json
+{
+  "canary_files_intact": false,
+  "vss_shadow_count": 0,
+  "vss_deleted": true,
+  "ransomware": {
+    "suspect_process": "evil.exe",
+    "suspect_pid": 4242,
+    "suspect_cmdline": "evil.exe --encrypt C:\\Users",
+    "changed_files": ["C:\\ProgramData\\.cloud-honeypot-canary\\!000_a.docx"]
+  }
+}
+```
+
+- Kapsayıcı adı toleranslı: `ransomware` | `ransomware_shield` | `canary` | `canary_detail` da kabul edilir  
+- `changed_files` öğeleri string veya `{path}` objesi olabilir  
+- Blok yoksa alert yine oluşur (score 100, generic öneri) — detay olmadan  
+- Cloud alert alanları: `threat_score=100`, `target_service=SYSTEM`, `recommended_action` süreç bazlı, `raw_events.kind=ransomware_canary`
+
+---
+
 ## Unlock
 
 | Yol | Komut |
