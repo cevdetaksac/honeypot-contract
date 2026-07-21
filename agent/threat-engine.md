@@ -35,6 +35,20 @@ Cloud curated IoC → ayrı poll (`09`).
 - `monitored_event_channels` (security/system/application/rdp)
 - `emergency_lockdown_*`, `logon_challenge`
 - **`protection.block_rules`** — [`register-protection.md`](./register-protection.md) ile aynı şema (SoT poll)
+- **`protection.network_guard{}`** — [`network-guard.md`](./network-guard.md): `enabled`,
+  `auto_contain`/`auto_kill`/`auto_restore` (client hard-false), `require_strong_signal`,
+  `score_threshold`, `fs_write_*`
+
+## POST /api/threats/config (GUI / dashboard write)
+
+Partial deep-merge. Gönderilmeyen sibling alanlar silinmez. Cloud:
+
+1. Effective config'i döndürür.
+2. Aynı client'ın control WS kanalına `{ "v":1, "t":"threat_config_updated" }` push eder.
+3. Daemon hemen GET + runtime apply yapar (poll fallback).
+
+GUI Security Layers ve whitelist mutasyonları bu endpoint'i kullanır
+([`gui-control-center.md`](./gui-control-center.md)).
 
 ---
 

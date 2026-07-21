@@ -3,7 +3,7 @@
 > **Repo:** [cevdetaksac/honeypot-contract](https://github.com/cevdetaksac/honeypot-contract)  
 > **VERSION:** root [`VERSION`](../VERSION) · giriş: [`INDEX.md`](../INDEX.md) · fleet: [`FLEET.md`](../FLEET.md)  
 > **API:** `https://honeypot.yesnext.com.tr`  
-> **Production floor:** client ≥ **4.5.68**
+> **Production floor:** client ≥ **4.7.3**
 
 Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalama.
 
@@ -23,7 +23,9 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 10. [`remote-input.md`](./remote-input.md) + [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
 11. [`persistence-and-tamper.md`](./persistence-and-tamper.md) — survival + tamper (≥4.6.0)  
 12. [`disaster-recovery.md`](./disaster-recovery.md) — `create_user` / `remote_logon` (≥4.6.0)  
-13. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
+13. [`network-guard.md`](./network-guard.md) — offline şüpheli alarm + onaylı suspend (≥4.7.3)  
+14. [`gui-control-center.md`](./gui-control-center.md) — dinamik GUI / güvenlik katmanları (≥4.7.3)  
+15. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
 
 ---
 
@@ -61,3 +63,9 @@ SYSTEM daemon = motor (WS, FW, update, intel, ransomware). GUI = tray/UI + IPC (
 ## Survival + kurtarma (tek satır, ≥4.6.0)
 
 Motor+Guardian servisi çapraz watchdog; durdurma yalnız update-lock / imzalı PIN token; başka çıkış → tamper alarmı + diriliş. Felaket: `create_user` + `remote_logon` (autologon+reboot). Detay: [`persistence-and-tamper.md`](./persistence-and-tamper.md), [`disaster-recovery.md`](./disaster-recovery.md).
+
+---
+
+## Network Guard + GUI (tek satır, ≥4.7.3)
+
+Şüpheli yoğun aktivite **yalnız alarm** (`ransomware_offline_suspect`); süreç dondurma açık kullanıcı onayıyla `suspend_process`. Güvenlik katmanı toggle'ları GUI → `POST /api/threats/config` → `threat_config_updated` push. Detay: [`network-guard.md`](./network-guard.md), [`gui-control-center.md`](./gui-control-center.md).

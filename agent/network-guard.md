@@ -71,8 +71,7 @@ Motor içi, internet gerektirmez. Bir **skorlama** penceresi (öneri 10 sn kayan
 | **Canary** | kesin | (mevcut) canary'ye yazma → doğrudan yüksek skor |
 
 - **Ağ kesildi + FS fırtınası birlikte → şüpheli → canary'yi beklemeden ALARM.**
-  (client ≥4.7.2: bu kombinasyon *containment* değil, yalnız uyarı üretir; otomatik
-  containment için C bölümündeki iki koşul gerekir.)
+  (client ≥4.7.2: bu kombinasyon *containment* değil, yalnız uyarı üretir.)
 - **`net_cut` yalnız gerçek internet erişim kaybında** (`internet_lost`) True olur.
   Adapter down / VPN-Wi-Fi churn tek başına net_cut sayılmaz (false-positive koruması).
 - Alarm ayrımı: containment yapılmayan durum `ransomware_offline_suspect`
@@ -85,27 +84,30 @@ Motor içi, internet gerektirmez. Bir **skorlama** penceresi (öneri 10 sn kayan
 
 ## C) Agresif containment (suspend-first)
 
-> **GÜVENLİK (client ≥4.7.2):** Otomatik containment **varsayılan KAPALI**
-> (`auto_contain=false`, `auto_kill=false`, `auto_restore=false`). Sebep: salt
+> **GÜVENLİK (client ≥4.7.3):** Otomatik containment **yasak / hard-disabled**
+> (`auto_contain=false`, `auto_kill=false`, `auto_restore=false`). Cloud config
+> bu alanları `true` gönderse bile client uygulamaz. Sebep: salt
 > "ağ-kesme + yazma fırtınası" sinyali meşru ağır-I/O uygulamalarında (tarayıcı,
 > editör, oyun, yedekleme) **false-positive** üretip süreçleri dondurabilir
-> (4.7.0/4.7.1 canlıda bunu yaşattı). Varsayılanda Network Guard **yalnız alarm**
-> gönderir; operatör dashboard'dan inceleyip suspend/kill/restore onaylar.
->
-> Otomatik containment yalnız **iki koşul birlikte** sağlanırsa çalışır:
-> (1) operatör `protection.network_guard.auto_contain=true` yapmış, **ve**
-> (2) yüksek güvenli fidye imzası mevcut (aktif canary/VSS quarantine).
-> Ham yazma hızı tek başına **asla** süreç dondurmaz.
+> (4.7.0/4.7.1 canlıda bunu yaşattı). Network Guard **yalnız alarm** gönderir;
+> operatör popup/tablo satırından açık onay verince cloud `suspend_process`
+> komutunu yollar. Ham yazma hızı veya yüksek güvenli sinyal dahil, tespit
+> pipeline'ı kendi başına **asla** süreç dondurmaz.
 
 Fire-and-forget'e karşı: ebeveyn çıkmış olabilir → anormal yazma fan-out'u olan **tüm**
 şüpheli süreçler hedeflenir. **Onaylı davranış = suspend** (kill değil):
 
-1. **Suspend** — şüpheli süreçlerin thread'leri askıya alınır (`NtSuspendProcess`/thread suspend).
+1. **Operatör onayı** — dashboard şüpheli süreç satırında “Suspend” seçer;
+   cloud `confirm:true` gate'inden sonra `suspend_process` yollar.
+2. **Suspend** — şüpheli süreçlerin thread'leri askıya alınır (`psutil.Process.suspend`).
    Adli kayıt korunur, geri alınabilir, şifreleme durur.
-2. **Acil VSS snapshot** — şifreleme yayılmadan mevcut/etkilenen sürücüde bir shadow copy oluşturulur (best-effort, time-boxed).
-3. **Persistence blok** — encryptor'ın Run/RunOnce/Startup/Task persistence'ı temizlenir; imaj IFEO ile bloklanır.
-4. **Operatör onayı** — suspend edilenler `pending_confirmation` listesine girer; dashboard onayıyla `kill` veya `release`.
-5. **Otomatik yükseltme (opsiyonel)** — `protection.network_guard.auto_kill=true` ise yüksek skorda suspend yerine doğrudan kill+IFEO (varsayılan **kapalı**).
+3. **Kill / release ayrı onay** — suspend sonrası operatör `kill_process` veya
+   `resume_process` seçer. Otomatik kill yoktur.
+
+PID reuse koruması zorunlu: alarmdaki her suspect
+`pid + image + path + process_start_time` (Unix timestamp) taşır. Dashboard bu
+alanları komuta aynen koyar; client işlem anında ad/path/start-time eşleşmezse
+`STALE_PROCESS_TARGET` ile reddeder. Yalnız PID ile suspend/resume reddedilir.
 
 Ransomware quarantine ile aynı `unlock`/`list` IPC + komut kanalı kullanılır
 ([`ransomware-shield.md`](ransomware-shield.md)). Suspend edilen süreçler quarantine
@@ -127,10 +129,10 @@ alarm atabilsin** diye:
 | Mapped drive | kopan `net use` bağlantılarını baseline'dan yeniden kur | baseline `mapped_drives[]` |
 | Shares | silinen paylaşımları geri kur | baseline `shares[]` |
 
-Otomatik geri yükleme davranışı `protection.network_guard.auto_restore` (varsayılan
-**true**). Geri yükleme sonrası bağlantı doğrulanır (`connectivity` re-probe) ve **E**
-alarmı gönderilir. `mapped_drives` yeniden kurulurken **kimlik bilgisi güvensiz saklanmaz**;
-yalnız persistent/OS-kayıtlı bağlantılar restore edilir.
+Ağ geri yükleme de otomatik değildir. Operatör `network_restore` için açık onay
+verir; geri yükleme sonrası bağlantı doğrulanır (`connectivity` re-probe).
+`mapped_drives` yeniden kurulurken **kimlik bilgisi güvensiz saklanmaz**; yalnız
+persistent/OS-kayıtlı bağlantılar restore edilir.
 
 Dashboard komutları (control WS, [`../api/03-control-websocket.md`](../api/03-control-websocket.md)):
 `network_snapshot` (anlık baseline al), `network_restore` (baseline'dan geri yükle — `REQUIRES_CONFIRMATION`),
@@ -166,32 +168,35 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
       "fs": { "writes_10s": 412, "renamed": 380, "ext_added": ".locked", "roots": ["D:\\Data", "C:\\Users\\..."] },
       "suspects": [
         { "pid": 6644, "image": "invoice.exe", "path": "C:\\Users\\Public\\invoice.exe",
-          "sha256": "…", "state": "suspended", "origin": "network_share" }
+          "process_start_time": 1784635200.25, "sha256": "…",
+          "state": "observed", "origin": "network_share" }
       ],
       "vss_emergency_snapshot": true,
       "ts": "2026-07-21T08:00:00Z"
     }
   },
   "raw_events": [
-    { "kind": "network_guard", "trigger": "network_cut+fs_storm", "suspect_pid": 6644, "image": "invoice.exe", "state": "suspended" }
+    { "kind": "network_guard", "trigger": "network_cut+fs_storm", "suspect_pid": 6644, "image": "invoice.exe", "state": "observed" }
   ]
 }
 ```
 
-**Cloud davranış (✅ implemented):**
-- Kritik popup (kanary/tamper ile aynı detay motoru; `system_context.network_guard.suspects[]` + `raw_events[].suspect_pid`/`image` → süreç/PID).
-- `ransomware_offline_bomb` popup listesinde (`helpers._POPUP_THREAT_TYPES`).
+**Cloud davranış:**
+- `ransomware_offline_suspect` popup/tablo: `system_context.network_guard.suspects[]`
+  → süreç/PID/path/start-time + açık onaylı **Suspend** butonu.
+- `suspend_process` komutu `confirm:true` olmadan kuyruğa/push'a yazılmaz.
+- `ransomware_offline_bomb` yalnız operatör containment sonucunu temsil eder;
+  tespit pipeline'ı bu tipi kendi başına üretmez.
 - `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
 - Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) + `network_restore` (**destructive confirm**).
-- Host'u "under_attack" işaretle (`client_status` / `dashboard-live`) + operatöre **isolate + suspend edilenleri incele** öner (dashboard quick actions).
-- `protection.network_guard{}` threats/config poll + update. **Alanlar (client ≥4.7.2):**
+- Host'u `under_attack` yalnız doğrulanmış/operatör-contain edilmiş `_bomb` olayında
+  işaretle; `_suspect` warning tek başına bu bayrağı açmaz.
+- `protection.network_guard{}` threats/config poll + update. **Alanlar (client ≥4.7.3):**
   `enabled`, `auto_contain`, `auto_kill`, `auto_restore`, `require_strong_signal`,
   `score_threshold`, `fs_write_bytes_per_sec`, `fs_write_count_per_sec`.
-  **Güvenli defaultlar:** `auto_contain=false`, `auto_kill=false`, `auto_restore=false`,
-  `require_strong_signal=true`. Cloud bu alanları göndermezse client güvenli
-  default kullanır; cloud `auto_contain`'i **açıkça** true yapmadıkça client
-  hiçbir süreci otomatik dondurmaz.
+  `auto_contain`, `auto_kill`, `auto_restore` alanları wire compatibility için
+  kalır ama client bunları hard-false yapar; cloud ile açılamaz.
 - Health snapshot `network_guard` + `persistence` → settings persist (client_status rozeti).
 
 ---
@@ -223,10 +228,11 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 - [x] `net_cut` yalnız gerçek internet erişim kaybında True (adapter/VPN churn tek başına tetiklemez) — **FP koruması (client ≥4.7.2)**
 - [x] FS fırtınası (yazma hız) eşik aşımı tespit edilir (yüksek eşik; salt sinyal olarak)
 - [x] Ağ kesme + FS fırtınası → canary beklemeden **ALARM** (`ransomware_offline_suspect`, warning) — containment DEĞİL
-- [x] **Varsayılanda hiçbir süreç otomatik dondurulmaz** (`auto_contain=false`); yalnız operatör açar + güçlü imza (canary/VSS) varsa suspend
-- [ ] Operatör onaylı suspend/kill/release (dashboard) — client ≥4.7.2 uçtan uca doğrulama bekliyor
-- [ ] Acil VSS snapshot yalnız onaylı containment sırasında best-effort alınır
-- [ ] `auto_restore` ile adapter/DNS/firewall/route/mapped-drive/shares baseline'dan geri yüklenir
+- [x] **Hiçbir süreç otomatik dondurulmaz**; config ile açılamayan hard safety invariant (client ≥4.7.3)
+- [x] Client `suspend_process` / `resume_process`: PID+image+path+start-time doğrulamalı; suspend confirm-gated
+- [ ] Cloud popup/satır: açık onaylı suspend, ardından kill/release — uçtan uca doğrulama bekliyor
+- [ ] Acil VSS snapshot yalnız ayrı/onaylı aksiyon sırasında best-effort alınır
+- [x] Ağ restore yalnız `network_restore` açık onayıyla çalışır
 - [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
 - [ ] Yedekleme/AV whitelist + `_PROTECTED_IMAGES` skorlamadan muaf (FP koruması)
 - [x] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (`network_restore` = confirm)

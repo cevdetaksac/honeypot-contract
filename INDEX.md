@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.3.3** · Repo: https://github.com/cevdetaksac/honeypot-contract  
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.7.2** (Network Guard güvenli-varsayılan)
+> **VERSION 1.3.4** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.7.3** (operator-approved containment)
 
 ## agent/
 
@@ -14,7 +14,8 @@
 | [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |
 | [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian servisi, çapraz watchdog, tamper wire | ≥ **4.6.0** |
 | [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` (autologon break-glass) | ≥ **4.6.0** |
-| [agent/network-guard.md](agent/network-guard.md) | Offline fidye bombası, ağ baseline yedek/kurtarma, suspend-first containment | ≥ **4.7.0** |
+| [agent/network-guard.md](agent/network-guard.md) | Offline fidye alarmı, ağ baseline; otomatik müdahale yok, onaylı suspend | ≥ **4.7.3** |
+| [agent/gui-control-center.md](agent/gui-control-center.md) | Dinamik GUI, güvenlik katmanları, sayaç/action invariant'ları | ≥ **4.7.3** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
 | [agent/remote-input.md](agent/remote-input.md) | Frame `inputs[]` | ≥ 4.5.55 |

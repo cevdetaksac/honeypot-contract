@@ -18,9 +18,14 @@
 | Single enriched canary urgent (thin-race fix) | `agent/ransomware-shield.md` | **4.5.68** |
 | Guardian service + cross-watchdog + tamper wire | `agent/persistence-and-tamper.md` | **4.6.0** |
 | `create_user` + `remote_logon` (autologon break-glass) | `agent/disaster-recovery.md` | **4.6.0** |
-| Network Guard: offline bomba + ağ sürücü yedek/kurtarma | `agent/network-guard.md` | **4.7.0** (planlı) |
+| Network Guard baseline + offline şüpheli tespiti | `agent/network-guard.md` | **4.7.0** |
+| Network Guard locale decode hotfix | `agent/network-guard.md` | **4.7.1** |
+| Network Guard false-positive fix + alert-only default | `agent/network-guard.md` | **4.7.2** |
+| Hard alert-only + onaylı exact-process suspend/resume | `agent/network-guard.md` | **4.7.3** |
+| GUI Security Layers + cloud config push + sayaç invariant | `agent/gui-control-center.md` | **4.7.3** |
 
-**Önerilen production floor:** **4.6.0** (survival + disaster recovery); 4.5.68 canary floor.
-Network Guard (`4.7.0`) planlı — implemente edilince floor güncellenecek.
+**Önerilen production floor:** **4.7.3** (survival + disaster recovery +
+operator-approved Network Guard containment). 4.7.0/4.7.1 production'da
+kullanılmamalı; 4.7.2 false-positive'i düzeltir ama onaylı suspend komutları yoktur.
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).

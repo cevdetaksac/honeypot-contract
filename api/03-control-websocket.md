@@ -5,7 +5,7 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (38 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (40 tip).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
 ---
@@ -34,6 +34,7 @@ Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (38 tip).
 | `ping` / `pong` | keepalive |
 | `command` | push IR / update / remote / … |
 | `threat_intel_updated` | hemen `GET /api/agent/threat-intel` |
+| `threat_config_updated` | security-layer ayarı değişti; hemen `GET /api/threats/config` + runtime apply (client ≥4.7.3) |
 | `error` | |
 
 ### Command zarfı
@@ -93,6 +94,7 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `create_user` (yeni/yeniden hesap — [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md))
 - `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
 - `network_restore` (ağ baseline'dan geri yükle — [`../agent/network-guard.md`](../agent/network-guard.md))
+- `suspend_process` (şüpheli süreci askıya al — açık kullanıcı onayı zorunlu)
 
 Uygulama (cloud): `POST /api/commands/send` gövdesinde **`confirm: true`** yoksa **400** döner
 (`helpers.DESTRUCTIVE_COMMAND_TYPES`). Dashboard onay modalı geçildiğinde `confirm: true` gönderir.
@@ -127,6 +129,8 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `reset_password` | `username`, `new_password` (≥8) | Agent uydurmasın |
 | `disable_all_users` | `logoff`, `exclude[]` | Administrator **dahil** |
 | `kill_process` | `pid` / name | Self PID korumalı |
+| `suspend_process` | `pid`, `expected_image`, `expected_path?`, `process_start_time` | Açık onay sonrası exact-process suspend; PID reuse korumalı — ≥4.7.3 |
+| `resume_process` | `pid`, `expected_image`, `expected_path?`, `process_start_time` | Exact-process resume; non-destructive — ≥4.7.3 |
 | `block_process` | name/path | |
 | `list_sessions` / `list_processes` / `list_local_users` | — | Remote/IR UI |
 | `stop_service` / `start_service` / `restart_service` | `name` | |

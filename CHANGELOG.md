@@ -1,5 +1,20 @@
 # Changelog — honeypot-contract
 
+## 1.3.4 — 2026-07-21 (client **4.7.3** — operator-approved containment + GUI)
+
+- Network Guard safety invariant tightened: detection is **always alert-only**;
+  cloud config cannot enable automatic suspend/kill/network restore.
+- New confirm-gated `suspend_process` and non-destructive `resume_process`.
+  Commands require exact identity (`pid`, image/path, `process_start_time`) to
+  prevent delayed approval from acting on a reused PID.
+- New `agent/gui-control-center.md`: Security Layers tab, immediate
+  `POST /api/threats/config` + rollback, `threat_config_updated` WS push,
+  canonical card/popup count rules and row-action requirements.
+- Client tracked-IP card/detail use the same blocked∪watching snapshot.
+- Cloud follow-up: add `_suspect` popup Suspend action, command whitelist/gate,
+  threat-config deep-merge/effective response/WS broadcast; `_suspect` must not
+  set `under_attack`.
+
 ## 1.3.3 — 2026-07-21 (client **4.7.2** — KRİTİK güvenlik düzeltmesi)
 
 - **Network Guard güvenli-varsayılan (client ≥4.7.2):** 4.7.0/4.7.1 canlı bir
