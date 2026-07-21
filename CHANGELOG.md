@@ -28,6 +28,10 @@
   approval/replay/key lifecycle, optional HPKE separation and TPM
   proof-of-possession/re-enrollment. It explicitly cannot emit production v2
   wire before normative promotion.
+- Follow-up from cloud Lane-B mapping: `kill_process` is now server
+  confirm-gated; unsigned high-impact creates return HTTP 400 instead of
+  queuing; legacy `tunnel_commands` carry additive `issued_at`/`signature`
+  while `PendingCommand` remains the authoritative signed path.
 
 ## 1.4.1 — 2026-07-22 (Security & Resilience vNext delivery plan)
 

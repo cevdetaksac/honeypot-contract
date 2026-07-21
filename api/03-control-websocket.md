@@ -127,6 +127,7 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `disable_account` / `disable_all_users`
 - `enable_lockdown` (emergency lockdown)
 - `clear_firewall` (`wipe_all_honeypot_rules=true` dahil)
+- `kill_process` (exact-target process kill — açık kullanıcı onayı zorunlu)
 - `create_user` (yeni/yeniden hesap — [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md))
 - `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
 - `network_restore` (ağ baseline'dan geri yükle — [`../agent/network-guard.md`](../agent/network-guard.md))
