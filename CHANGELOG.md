@@ -7,6 +7,13 @@
   `updated:0` while dashboard stayed on "Kaldırılıyor…"; ip ACK returns
   `updated>0`. Cloud TODO: match remove_pending by block_ids too; keep queue
   items until ACK (not on GET). Production floor 4.8.5.
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):** `block-removed`
+  artık `block_ids` **ve** `ips`/`ip`'yi birlikte işler (4.8.4'teki
+  `if not block_ids` erken-çıkış hatası giderildi); satırlar `id` ile dedupe,
+  `updated` = kapatılan benzersiz satır sayısı, `pending` durumu da kapatılır,
+  yanıt `removed_ips[]` döndürür. `pending-unblocks` GET salt-okunur (öğeler ACK
+  gelene kadar kuyrukta kalır). `AgentBlockRemoved` şemasına `ips: List[str]`
+  eklendi.
 
 ## 1.3.12 — 2026-07-21 (client **4.8.4** — whitelist cloud SoT invariantı)
 

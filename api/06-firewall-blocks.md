@@ -40,9 +40,15 @@ Body (agent → cloud):
   yalnız `block_ids` ile çoğu zaman `{"updated":0,"status":"ok"}` döndü; dashboard
   "Kaldırılıyor…" durumunda kaldı. `ip` ile ACK `updated>0` üretiyor.
 - Client ≥4.8.5 her iki alanı birden gönderir; `updated=0` ise IP başına retry yapar.
-- **Cloud TODO:** `block_ids` ile de remove_pending / "removing" satırlarını kapat
-  (`updated` = etkilenen satır sayısı). Kuyruk öğeleri ACK gelene kadar
-  `pending-unblocks`'ta kalmalı (GET ile silinmemeli — aksi halde retry imkânsız).
+- **Cloud implemented (honeypot.yesnext.com.tr, 2026-07-21):** `block_ids` **ve**
+  `ips`/`ip` birlikte değerlendirilir (either/or DEĞİL) — 4.8.4'teki
+  `if not block_ids` erken-çıkış hatası giderildi. Eşleşen satırlar `id` ile
+  dedupe edilir; `updated` = kapatılan benzersiz satır sayısı. `pending` durumu
+  da kapatılır (agent firewall'dan kaldırdığını bildiriyorsa henüz uygulanmamış
+  kural da düşer). Yanıt ayrıca `removed_ips[]` döndürür. `pending-unblocks`
+  GET salt-okunur — öğeler yalnız `block-removed` ACK'iyle `removed` olur, ACK
+  gelene kadar kuyrukta kalır (retry mümkün). Cleanup yalnız `remove_pending`'e
+  taşır, satırı silmez.
 
 ### sync-rules (özet)
 
