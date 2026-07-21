@@ -148,6 +148,45 @@ katman durumlarını tek STATUS çağrısından okur — `ransomware_running` (s
 watcher canlı mı) ve `network_guard{}` özeti eklendi. Frontend hiçbir katman
 durumu için yerel engine varsaymaz; motor yoksa katman "KAPALI" gösterilir.
 
+### Additive resilience health — observe mode (contract 1.4.2)
+
+Cloud `POST /api/health/report` içinde aşağıdaki opsiyonel blokları kabul edip
+son health snapshot + client effective settings içinde saklar:
+
+```json
+{
+  "resilience": {
+    "guardian_installed": true,
+    "guardian_running": true,
+    "guardian_exit_code": 0,
+    "daemon_restarts_24h": 0,
+    "guardian_restarts_24h": 0,
+    "last_recovery_ms": 1840,
+    "restart_backoff_sec": 0,
+    "restart_storm": false,
+    "binary_integrity": "valid|invalid|unknown",
+    "stand_down_reason": "update|operator_pin|uninstall|null"
+  },
+  "event_log_health": {},
+  "etw_shadow": {},
+  "command_signing": {
+    "observe": true,
+    "enforce": false,
+    "missing": 0,
+    "invalid": 0,
+    "last_error": null
+  }
+}
+```
+
+Tüm bloklar additive/opsiyoneldir; missing = `legacy`, **failure değildir**.
+`etw_shadow` bu aşamada yalnız bounded sensor health/aggregate metadata taşır;
+raw unbounded file-I/O events cloud'a alınmaz. Restart storm, installed-but-not-
+running Guardian veya invalid binary integrity iki ardışık snapshot'ta
+görülürse cloud 30 dakika dedupe'lu `agent_resilience_degraded` observe alarmı
+üretir. Bu telemetri hiçbir process/network containment komutunu otomatik
+tetiklemez.
+
 ### STATUS dependency invariant (client ≥4.7.4)
 
 `:58632 STATUS` handler'ı tek-thread control server üzerinde çalışır. Handler

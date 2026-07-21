@@ -88,6 +88,35 @@ Client config: `security.command_signing` (default **true**).
 - Agent doğrularken zarftaki `issued_at` string’ini **verbatim** kullanır (parse/normalize etme)  
 - Self-process proof (`api/07-lifecycle-sessions.md`) **farklı** HMAC’tir; karıştırma
 
+### Cloud signing observe compatibility (contract 1.4.2)
+
+Cloud every newly-created queue row için aşağıdaki alanları **bir kez üretip
+kalıcı saklar**:
+
+- `issued_at`: UTC, mikro-saniyeli ISO-8601 (`YYYY-MM-DDTHH:MM:SS.ffffffZ`);
+- `signature`: yukarıdaki v1 HMAC hex digest;
+- internal `signing_status`: `signed | failed` (agent zarfına konmaz).
+
+`issued_at` delivery sırasında yeniden serialize edilmez. Control WS ve pending
+poll aynı DB satırındaki byte-identical `issued_at` + `signature` alanlarını
+döndürür. Cloud bütün command creation path'lerini (dashboard, REST, internal
+maintenance, scheduled job, remote desktop) ortak queue hook'uyla imzalar.
+
+Rollout şu anda **observe compatibility** modundadır:
+
+- eski client unknown alanları yok sayarak çalışmaya devam eder;
+- imzasız düşük-etkili legacy komut soft-allow uyumluluğunu korur;
+- imza üretilemeyen destructive/high-impact komut cloud tarafından dispatch
+  edilmez;
+- cloud metrikleri: `signed_commands_total`, `unsigned_commands_total`,
+  `signature_generation_failed`, `coverage_percent`;
+- client sağlık snapshot'ı opsiyonel
+  `command_signing{observe,enforce,missing,invalid,last_error}` bloğunu
+  taşıyabilir; eksik blok `legacy` demektir, hata değildir.
+
+Production enforcement **kapalıdır**. Mandatory reject/fleet policy ayrı bir
+kontrat ve rollout kararı gerektirir; floor **4.9.0** kalır.
+
 ---
 
 ## Destructive commands — server confirmation

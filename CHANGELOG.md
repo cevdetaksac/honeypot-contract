@@ -1,5 +1,34 @@
 # Changelog — honeypot-contract
 
+## 1.4.2 — 2026-07-22 (cloud-first resilience observe compatibility)
+
+- Promoted the first v1.4.1 Lane-B/P0 schemas into canonical contracts without
+  changing the production floor (**client 4.9.0**) or enabling enforcement.
+- `api/03-control-websocket.md`: every new command creation path now receives
+  one persisted v1 HMAC envelope; WS and pending poll deliver identical
+  `issued_at`/`signature`. Cloud exposes signed/unsigned/failure coverage.
+  Signature generation failure blocks destructive dispatch, while legacy
+  low-impact soft-allow remains during observe compatibility.
+- Added deterministic HMAC vectors covering timestamp serialization, Unicode
+  input and machine-name casing. Existing terminal rows are excluded from the
+  rollout denominator; pending legacy rows are backfilled.
+- `api/08-architecture.md`: promoted optional `resilience`,
+  `event_log_health`, `etw_shadow` sensor-health and `command_signing` health
+  blocks. Missing means legacy. Two consecutive degraded resilience samples
+  create a deduped observe alert; no automatic containment.
+- `api/04-self-update.md`: promoted additive release trust storage
+  (SHA-256, signer/publisher/thumbprints, timestamp policy, SBOM/provenance and
+  rollout/error state). Unknown stays `null`; current release wire is not
+  blocked during observe mode.
+- Dashboard now shows command-signing coverage/state, Guardian/restart storm,
+  binary integrity and release trust metadata before any enforcement toggle.
+  Network Guard remains alert-only and destructive commands confirm-gated.
+- Added `cloud/command-envelope-v2-design.md` for the ZT-601 design gate:
+  canonical envelope candidate, WebAuthn/managed-signer custody decision,
+  approval/replay/key lifecycle, optional HPKE separation and TPM
+  proof-of-possession/re-enrollment. It explicitly cannot emit production v2
+  wire before normative promotion.
+
 ## 1.4.1 — 2026-07-22 (Security & Resilience vNext delivery plan)
 
 - Added `SECURITY_RESILIENCE_VNEXT.md` as the shared implementation plan for

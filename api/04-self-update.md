@@ -113,6 +113,40 @@ Sadece karşılaştır; kurma. Result: `{ "update_available": true/false, "insta
 - [ ] `force=false` + aynı sürüm → no-op
 - [ ] Zamanlanmış auto-update bozulmadan çalışmaya devam eder
 
+## Release trust metadata — cloud observe compatibility (contract 1.4.2)
+
+Cloud release kayıtları additive olarak şu alanları saklar:
+
+```json
+{
+  "tag": "v4.9.0",
+  "channel": "stable",
+  "artifact_name": "cloud-client-installer.exe",
+  "artifact_size": 61091740,
+  "sha256": null,
+  "signed": null,
+  "publisher_identity": null,
+  "publisher_thumbprints": [],
+  "timestamp_policy": null,
+  "publisher_valid": null,
+  "checksum_valid": null,
+  "sbom_digest": null,
+  "provenance_digest": null,
+  "rollout_status": "observe",
+  "last_error": null
+}
+```
+
+`null` değeri **unknown / metadata henüz build pipeline'dan gelmedi** demektir;
+`false` ile aynı değildir. Current 4.9.0 release/download wire bu aşamada
+değişmez ve client bu alanları göndermek zorunda değildir. Dashboard unknown,
+signed/publisher/checksum durumlarını dürüstçe gösterir.
+
+Future production gate (henüz enforce edilmez): `signed=true`,
+`publisher_valid=true`, `checksum_valid=true` olmayan artifact production
+rollout'a geçirilemez. Publisher rotation current+next overlap allowset ve
+rollback metadata'sı ayrı rollout ile aktive edilir.
+
 ---
 
 ## Not

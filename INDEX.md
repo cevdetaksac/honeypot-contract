@@ -1,7 +1,7 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.1** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> **VERSION 1.4.2** · Repo: https://github.com/cevdetaksac/honeypot-contract
 > Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling)
 
 ## Shared delivery plans
@@ -47,6 +47,7 @@
 |-------|------|
 | [cloud/overview.md](cloud/overview.md) | Mimari özet (agent-visible) |
 | [cloud/threat-intel-ingest.md](cloud/threat-intel-ingest.md) | Harici feed → bundle (agent çekmez) |
+| [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 v2 envelope + TPM/WebAuthn design gate (wire değil) |
 
 ## Sprint checklist
 
