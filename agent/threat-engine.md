@@ -80,6 +80,10 @@ Opsiyonel client SIEM: `notifications.webhook_url` (local `client_config.json`) 
 
 ## POST /api/health/report
 
+Ransomware alanları (snapshot): `canary_files_intact` (bool), `ransomware_shield_status`
+(`active|disabled|error`), `vss_shadow_count` (int) — **detay yok**; canary alert detayı
+`alerts/urgent`tedir → [`ransomware-shield.md`](./ransomware-shield.md) “Wire” bölümü.
+
 ```json
 {
   "snapshot": {

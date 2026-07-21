@@ -1,14 +1,14 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.1.2** · Repo: https://github.com/cevdetaksac/honeypot-contract  
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.66**
+> **VERSION 1.1.5** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.5.67**
 
 ## agent/
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
-| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | ≥ **4.5.66** |
+| [agent/CLIENT.md](agent/CLIENT.md) | İndeks / okuma sırası | ≥ **4.5.67** |
 | [agent/polling.md](agent/polling.md) | Cadence tablosu | — |
 | [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | ≥ **4.5.66** |
 | [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |

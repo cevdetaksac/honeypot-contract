@@ -1,11 +1,28 @@
 # Changelog — honeypot-contract
 
-## 1.1.3 — 2026-07-21
+## 1.1.5 — 2026-07-21
 
 - **Cloud implemented:** HMAC command signing canlı — WS `command` push + `GET /api/commands/pending` artık `issued_at` + `signature` içeriyor (key = raw SHA256 digest; hostname kaynağı: heartbeat `hostname`)
 - **Cloud implemented:** Destructive IR server gate canlı — `POST /api/commands/send` `confirm: true` olmadan 400 (`reset_password`, `disable_account`, `disable_all_users`, `enable_lockdown`, `clear_firewall` wipe)
 - **Cloud implemented:** `unlock_ransomware_quarantine` whitelist'te (30 tip); dashboard kritik ransomware popup'ına unlock butonu
-- `agent/ransomware-shield.md`: canary tetik detayı için health snapshot `ransomware` blok şeması (suspect process / changed_files / VSS) — cloud alert enrichment bu bloğu okur
+- **Cloud implemented:** Canary popup detayı `system_context.ransomware` (≥4.5.67 wire) + `raw_events`'ten okunuyor; health-report canary fallback'i 30 dk dedupe ile sentetik alert üretmiyor (Wire kuralına uyum)
+
+## 1.1.4 — 2026-07-21
+
+- Client **4.5.67** implements enriched canary urgent payload:
+  `system_context.ransomware`, process-compatible `raw_events`, SYSTEM target/action.
+- Health snapshot implements `ransomware_quarantine` with persisted suspect entries.
+- Fleet production floor moved to 4.5.67 for detailed cloud canary popup.
+
+## 1.1.3 — 2026-07-21
+
+- `agent/ransomware-shield.md`: **Wire** bölümü — canary alert SoT = `alerts/urgent`
+  (score 100 + `Dosya:`/`Değişiklik:` description’da); health snapshot sadece
+  `canary_files_intact` / `ransomware_shield_status` / `vss_shadow_count`
+- Cloud kuralı: health-report’tan sentetik canary alert üretme (boş popup / dupe)
+- ≥4.5.67 hedef şema: urgent `system_context.ransomware` (file, change_type, suspects[pid/cmdline/sha256], quarantine)
+- `agent/threat-engine.md`: health/report ransomware alanları not
+- Cloud tarafı (aynı gün): HMAC signing + destructive gate + unlock whitelist (detay 1.1.5)
 
 ## 1.1.2 — 2026-07-21
 

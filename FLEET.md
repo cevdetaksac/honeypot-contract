@@ -14,7 +14,8 @@
 | Canary sort-bait + quarantine IPC | `agent/ransomware-shield.md` | 4.5.62–64 |
 | Canary UX (no local scare, OneDrive skip) | `agent/ransomware-shield.md` | **4.5.65** |
 | `protection.block_rules` apply + WS intel push | `agent/register-protection.md`, `api/09` | **4.5.66** |
+| Enriched canary alert + quarantine snapshot | `agent/ransomware-shield.md` | **4.5.67** |
 
-**Önerilen production floor:** **4.5.66**
+**Önerilen production floor:** **4.5.67** (cloud canary popup detail); 4.5.66 core protection floor.
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).
