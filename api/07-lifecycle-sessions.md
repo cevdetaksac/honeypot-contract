@@ -68,10 +68,38 @@ Response 200:
 | `memory_restart_fallback` | warning | Direkt start fail, Background task ile denendi |
 | `memory_restart_failed` | error | Restart basarisiz (exe yok / stick olmadi) |
 | `memory_restart_skipped` | warning | Update lock nedeniyle atlandi |
+| `gui_quit` | info | Tray/GUI kapandi (SYSTEM motor ayakta kalabilir) |
 | `uninstall_requested` | warning | Control Panel / Uninstall.exe başlatıldı (`details.windows_user`) |
 | `uninstall_pin_failed` | warning | PIN hatalı / kilit / eksik — kaldırma iptal |
 | `uninstall_aborted` | info | Kullanıcı iptal veya gate hata |
 | `uninstall_authorized` | warning | PIN OK (veya PIN yok + onay) — dosya silme başlıyor |
+
+### Uninstall PIN bilgilendirme (client → dashboard)
+
+Akış:
+
+`uninstall_requested` → `uninstall_pin_failed` | `uninstall_aborted` | `uninstall_authorized`
+
+Body örneği:
+
+```json
+{
+  "token": "CLIENT_TOKEN",
+  "ts": "2026-07-22T08:00:00Z",
+  "event_type": "uninstall_authorized",
+  "severity": "warning",
+  "hostname": "SRV-01",
+  "version": "4.9.7",
+  "windows_user": "DOMAIN\admin",
+  "details": {
+    "windows_user": "DOMAIN\admin"
+  }
+}
+```
+
+- `windows_user` top-level **veya** `details.windows_user` kabul edilir; cloud timeline’da `user …` olarak gösterilir.
+- Bilinmeyen `event_type` yine kaydedilir (`known_type: false`); katalog tipleri `known_type: true`.
+- Dashboard filtre prefix: `uninstall`.
 
 ---
 
@@ -79,7 +107,8 @@ Response 200:
 
 - Sunucu detayinda **Client Lifecycle** timeline (son 50 olay)
 - `severity=error` -> toast / email (opsiyonel, account prefs)
-- Filtre: `watchdog_*`, `memory_restart_*`
+- Filtre: `watchdog_*`, `memory_restart_*`, `uninstall_*`
+- `uninstall_authorized` → toast / dikkat (PIN ile meşru kaldırma)
 
 ---
 

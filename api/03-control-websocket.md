@@ -58,6 +58,7 @@ command envelopes until ZT-603 key distribution + design gate promote. See
 | `command` | push IR / update / remote / … |
 | `threat_intel_updated` | hemen `GET /api/agent/threat-intel` |
 | `threat_config_updated` | security-layer ayarı değişti; hemen `GET /api/threats/config` + runtime apply (client ≥4.7.3) |
+| `pending_unblocks_updated` | whitelist lift / dashboard unblock; hemen `GET /api/agent/pending-unblocks` (+ `unblock_ip` komutu varsa uygula) (contract ≥1.4.11) |
 | `error` | |
 
 ### Command zarfı

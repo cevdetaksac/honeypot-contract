@@ -20,7 +20,7 @@ Cloud curated IoC → ayrı poll (`09`).
 | `POST /api/events/batch` | Buffer dolunca / ~30–60s |
 | `POST /api/alerts/urgent` | Anında (critical/high) |
 | `POST /api/alerts/auto-block` | Local firewall block sonrası |
-| `POST /api/alerts/lifecycle` | Startup / gui_quit / watchdog / self_update |
+| `POST /api/alerts/lifecycle` | Startup / gui_quit / watchdog / self_update / uninstall PIN |
 
 ---
 
@@ -176,6 +176,30 @@ Self-process koruma alanları: [`../api/07-lifecycle-sessions.md`](../api/07-lif
 
 Cloud `auto_blocks` + `block_rules` upsert. Response `extend_duration` / `permanent_block` → client kural süresini ayarlar.
 
+### Cloud reject / güvenlik ağı (contract ≥1.4.10 / 1.4.11)
+
+Client yine de HP-BLOCK basmış olabilir; cloud kaydı **kabul etmez** ve geri aldırır:
+
+| Koşul | HTTP 200 body | Client ne yapmalı |
+|-------|---------------|-------------------|
+| IP `whitelist_ips` / `whitelist_subnets` / silent-hours WL / lockdown mgmt | `status: "rejected"`, `reason: "whitelisted"`, `unblock_recommended: true`, `lifted_ips[]` | FW kuralını **hemen sil**; `POST /api/agent/block-removed` |
+| Çıplak `successful_logon` / RDP success (brute/IoC değil) | `status: "rejected"`, `reason: "successful_logon_no_autoblock"`, `unblock_recommended: true` | Aynı — engelleme; varsa kuralı kaldır |
+
+Örnek:
+
+```json
+{
+  "status": "rejected",
+  "reason": "whitelisted",
+  "unblock_recommended": true,
+  "blocked_ip": "84.44.42.18",
+  "lifted_ips": ["84.44.42.18"],
+  "commands": ["…unblock_ip command_id…"]
+}
+```
+
+Cloud ayrıca: BlockRule → `remove_pending`, AutoBlock pasif, Control WS `unblock_ip` + `pending_unblocks_updated`.
+
 ---
 
 ## Skor / auto-block (client ≥ **4.9.7**)
@@ -223,6 +247,7 @@ gelmez; urgent delivery `high` + `notify_urgent` olabilir, `block_ip` olmaz.
 | Rate limit | max per hour/day |
 | Silent hours | Bare success → **alert / challenge**; firewall kesmez (≤4.9.6’da agresif block vardı) |
 | Brute fail | `protection.block_rules` eşikleri (4625 flood) → HP-BLOCK hâlâ geçerli |
+| Cloud reject | `whitelisted` / `successful_logon_no_autoblock` → client FW sil + `block-removed` (contract ≥1.4.11) |
 
 ---
 
@@ -314,3 +339,6 @@ motor sessizce ölürse **ikincil güvenlik ağıdır**; SoT tamper urgent’tir
 - [ ] Brute sonra başarı → yüksek skor + `brute_force_then_access` block hâlâ çalışır
 - [ ] health/report 200
 - [ ] ThreatFox/CISA’ya client isteği **yok** (sadece `09` bundle)
+- [ ] Çıplak `successful_logon` score ≤70 ve auto-block **yok**
+- [ ] Whitelist IP → local HP-BLOCK yok; cloud auto-block → `rejected`/`whitelisted`
+- [ ] `unblock_recommended` veya `unblock_ip` / pending-unblocks → FW sil + `block-removed` ACK

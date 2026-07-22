@@ -26,6 +26,31 @@
 
 ---
 
+## Whitelist invariant (contract ≥1.4.11)
+
+`threats/config.whitelist_ips` / `whitelist_subnets` (ve silent-hours WL) içindeki
+IP **asla** engelli kalmamalı.
+
+| Kim | Ne yapar |
+|-----|----------|
+| Client | Auto-block / manual block öncesi WL kontrolü; WL ise HP-BLOCK yok |
+| Cloud | `POST /api/alerts/auto-block` → `rejected`/`whitelisted`; manuel block-rule create → reject |
+| Cloud lift | BlockRule `remove_pending` + AutoBlock pasif + `unblock_ip` komutu + `GET pending-unblocks` |
+| Client | `unblock_ip` **ve/veya** pending-unblocks → netsh sil → `POST block-removed` (`block_ids` **+** `ips`) |
+
+Reconcile tetikleri (cloud): whitelist-add, `GET/POST /api/threats/config`,
+`sync-rules`, cleanup sweep.
+
+Control WS (opsiyonel push):
+
+```json
+{ "v": 1, "t": "pending_unblocks_updated", "ips": ["84.44.42.18"], "reason": "whitelist_guard" }
+```
+
+Agent: mesaj gelince hemen `GET /api/agent/pending-unblocks` (poll bekleme).
+
+---
+
 ## Agent HTTP
 
 | Method | Path | Ne |
@@ -88,4 +113,7 @@ Agent eşikleri **local** `protection.block_rules` + cloud worker pending-blocks
 - [ ] pending-block → HP-BLOCK → block-applied 200  
 - [ ] clear_firewall wipe → sync boş / cloud clear (HP-INTEL dahil)  
 - [ ] INTEL kuralları BLOCK ile isim çakışması yok (`HP-INTEL-*` ≠ `HP-BLOCK-*`)
-- [ ] Whitelist IP → block yok; engelli ise anında kaldırılır
+- [ ] Whitelist IP → block yok; engelli ise anında kaldırılır (client ≥4.9.7)
+- [ ] Whitelist IP auto-block denemesi → cloud `rejected`/`whitelisted` + client FW’de kural yok
+- [ ] Whitelist’e eklenen önceden bloklu IP → `remove_pending` + `unblock_ip` / pending-unblocks → `block-removed` ACK `updated>0`
+- [ ] Çıplak `successful_logon` auto-block → cloud `successful_logon_no_autoblock` reject

@@ -232,6 +232,7 @@ processes / services) so the next dashboard poll is current.
 - [x] `list_sessions` + health `active_sessions` stay populated on live RDP/console
 - [x] `list_processes` returns rich rows (path/username/cpu/memory) ≤150
 - [x] **`list_services` implemented** — table fills on Services → Yenile
+  (**bug watch:** empty `services:[]` on some 4.9.4 hosts — prefer ≥4.9.7 verify)
 - [ ] Cloud cache visible after completed result (`remote_local_users` /
       `windows_services`) — verify on lab host after client ≥4.9.4
 

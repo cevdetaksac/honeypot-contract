@@ -1,5 +1,18 @@
 # Changelog — honeypot-contract
 
+## 1.4.11 — 2026-07-22 (Cloud whitelist lift + auto-block reject shapes)
+
+- Cloud normative: whitelist IP must never remain blocked. Rejects
+  `POST /api/alerts/auto-block` / manual block for trusted IPs
+  (`status:rejected`, `reason:whitelisted`), sets `remove_pending`, queues
+  `unblock_ip`, pushes Control WS `pending_unblocks_updated`. Reconcile on
+  whitelist-add, threats/config poll, sync-rules, cleanup sweep.
+- Bare `successful_logon` auto-block → `reason:successful_logon_no_autoblock`
+  + `unblock_recommended` (complements client ≥4.9.7 policy from 1.4.9).
+- Detail: [`api/06-firewall-blocks.md`](api/06-firewall-blocks.md),
+  [`api/03-control-websocket.md`](api/03-control-websocket.md),
+  [`agent/threat-engine.md`](agent/threat-engine.md) reject tables.
+
 ## 1.4.9 — 2026-07-22 (Threat intel HP-INTEL + bare-success no-block)
 
 - Normative client **≥ 4.9.7** behavior (production floor stays **≥ 4.9.0**):
@@ -20,7 +33,8 @@
 - INDEX / FLEET matrix rows for intel apply + auto-block policy.
 - [`api/07-lifecycle-sessions.md`](api/07-lifecycle-sessions.md): uninstall
   PIN gate lifecycle events (`uninstall_requested` / `pin_failed` /
-  `aborted` / `authorized`).
+  `aborted` / `authorized`) + `windows_user` / dashboard filter.
+
 
 ## 1.4.8 — 2026-07-22 (Server Management — dashboard ↔ client)
 
