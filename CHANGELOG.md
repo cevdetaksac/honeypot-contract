@@ -22,6 +22,16 @@
 - Wire key SoT for identity burst is **`password_burst`** (not
   `identity_burst`). Offline urgent ingest, operator key GET + verify, TPM
   enrollment, and all enforce toggles remain **not promoted**.
+- **Cloud follow-up implemented:** health ingest persists
+  `access_integrity` / `device_identity` / `canary_coverage` /
+  `deception_health` (missing = legacy); heartbeat soft-stores
+  `heartbeat_proof` without rejecting presence; control-WS hello stores
+  `caps.command_envelope_v2` (`off|observe` only, no v2 wire emit);
+  `network_restore` with `dry_run:true` skips destructive confirm (server +
+  dashboard) and is not treated as high-impact for unsigned-dispatch
+  blocking; Security & Resilience card shows the new observe badges;
+  recommended client **4.9.1**, production floor stays **4.9.0**. OOB
+  ingest, operator-key GET and TPM enrollment remain design-only.
 
 ## 1.4.4 — 2026-07-22 (client 4.9.1 WebRTC smoothness)
 
