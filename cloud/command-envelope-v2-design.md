@@ -1,8 +1,11 @@
 # Command Envelope v2 + hardware-backed identity — design gate
 
-> Contract: 1.4.2  
+> Contract: 1.4.5  
 > Status: design-only; **not production wire**  
-> Current production remains v1 HMAC + client 4.9.0 soft-allow/observe.
+> Current production remains v1 HMAC + client 4.9.0 soft-allow/observe.  
+> Client hello may advertise `caps.command_envelope_v2: "off"|"observe"` only
+> (see `api/03-control-websocket.md`). Operator key distribution draft:
+> [`operator-keyset-design.md`](./operator-keyset-design.md).
 
 ## Goals
 

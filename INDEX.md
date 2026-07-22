@@ -9,6 +9,9 @@
 | Dosya | Konu | Statü |
 |-------|------|-------|
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
+| [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 offline urgent ingest + ACK design | Design-only |
+| [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 operator public key distribution | Design-only |
+| [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 asymmetric envelope + TPM PoP gate | Design-only |
 
 ## agent/
 
