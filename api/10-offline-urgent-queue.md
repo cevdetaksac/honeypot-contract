@@ -28,6 +28,30 @@ Design history: [`../cloud/offline-urgent-queue-design.md`](../cloud/offline-urg
 | Local TTL (client) | 7 days — drop expired locally |
 | Cloud `expired` reject | `queued_at` older than 7 days |
 
+## Health observe (additive)
+
+`POST /api/health/report` may include:
+
+```json
+{
+  "offline_urgent_queue": {
+    "mode": "observe",
+    "enabled": false,
+    "pending": 0,
+    "max_records": 500,
+    "max_batch": 500,
+    "max_payload_bytes": 204800,
+    "ttl_sec": 604800,
+    "oldest_dropped": 0,
+    "expired_dropped": 0,
+    "too_large_rejected": 0
+  }
+}
+```
+
+`oldest_dropped` is durable across client restarts (local stats file). Flag
+`enabled` stays false until pilot.
+
 ## POST `/api/alerts/urgent` — soft idempotency
 
 Additive fields (optional; missing = legacy single-shot urgent):
@@ -122,6 +146,9 @@ Bearer token auth also accepted (`Authorization: Bearer …`).
 ## Acceptance
 
 - [x] Idempotent: double-delivery → one dashboard incident (cloud E2E)
-- [ ] Offline 10m canary → appears after reconnect (client pilot flag-on)
-- [x] Full disk / 500 cap → oldest dropped with local counter (client 4.9.2+)
+- [~] Offline 10m canary → appears after reconnect — **client harness green**
+  (`tests/test_offline_queue_pilot.py`); **live flag-on pilot** still required
+  once (`security.offline_urgent_queue=true` on one host)
+- [x] Full disk / 500 cap → oldest dropped with durable counter
+  (`offline_urgent_queue.oldest_dropped` on health/report; client harness)
 - [x] No DNS/ICMP fallback (out of scope / rejected)
