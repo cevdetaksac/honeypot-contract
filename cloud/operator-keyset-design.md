@@ -76,3 +76,10 @@ client rejects the document (`private_material_rejected`).
 - WebAuthn ceremony details (dashboard-owned)
 - Agent-side key generation for operators
 - Multi-party approval (ZT-604) — separate
+
+## Cloud-first scaffold (2026-07-22)
+
+`GET /api/agent/operator-keys` exists as an **observe stub**: returns
+`verify_enabled: false`, empty/public-only `keys`, and never private
+material. Agents may poll for readiness; verification must stay disabled
+until algorithm + deterministic vectors are promoted.

@@ -81,3 +81,17 @@ Preferred sequence:
 - [ ] Offline 10m canary → appears after reconnect
 - [ ] Full disk / 500 cap → oldest dropped with local counter
 - [ ] No DNS/ICMP fallback
+
+## Cloud-first scaffold (2026-07-22)
+
+Cloud accepts the following **without** enabling the client flag:
+
+1. `POST /api/alerts/urgent` soft-idempotency via optional
+   `event_id` / `idempotency_key` (or `alert_id`) — replay returns
+   `{duplicate:true, acked:true}` and does not create a second row.
+2. `POST /api/alerts/urgent/batch` with the ACK shape above
+   (`acked` / `duplicate` / `rejected`, cap 500). Mode is `observe`.
+
+Client must still keep `security.offline_urgent_queue` **off** until this
+endpoint is promoted into a normative `api/` doc with VERSION bump and the
+acceptance checklist is green.

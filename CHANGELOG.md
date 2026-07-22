@@ -30,8 +30,14 @@
   `network_restore` with `dry_run:true` skips destructive confirm (server +
   dashboard) and is not treated as high-impact for unsigned-dispatch
   blocking; Security & Resilience card shows the new observe badges;
-  recommended client **4.9.1**, production floor stays **4.9.0**. OOB
-  ingest, operator-key GET and TPM enrollment remain design-only.
+  recommended client **4.9.1**, production floor stays **4.9.0**.
+- **Cloud follow-up (design scaffolds):** `POST /api/alerts/urgent` soft
+  idempotency (`event_id`/`idempotency_key`); `POST /api/alerts/urgent/batch`
+  ACK shape (`acked`/`duplicate`/`rejected`, cap 500, mode=observe);
+  `GET /api/agent/operator-keys` observe stub (`verify_enabled:false`, no
+  private material). Client offline-queue / verify flags stay **off**.
+  Dashboard adds network_restore **dry-run plan** button (no confirm).
+  TPM enrollment remains design-only.
 
 ## 1.4.4 — 2026-07-22 (client 4.9.1 WebRTC smoothness)
 
