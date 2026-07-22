@@ -122,6 +122,6 @@ Bearer token auth also accepted (`Authorization: Bearer …`).
 ## Acceptance
 
 - [x] Idempotent: double-delivery → one dashboard incident (cloud E2E)
-- [ ] Offline 10m canary → appears after reconnect (client pilot)
-- [ ] Full disk / 500 cap → oldest dropped with local counter (client)
+- [ ] Offline 10m canary → appears after reconnect (client pilot flag-on)
+- [x] Full disk / 500 cap → oldest dropped with local counter (client 4.9.2+)
 - [x] No DNS/ICMP fallback (out of scope / rejected)
