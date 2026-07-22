@@ -1,5 +1,11 @@
 # Changelog — honeypot-contract
 
+## 1.4.6 — 2026-07-22 (dry-run confirm exception + design pointers)
+
+- `agent/network-guard.md` / README: mutating `network_restore` remains
+  confirm-gated; `dry_run:true` is plan-only without destructive confirm.
+- README pin note points at live `VERSION` instead of a stale tag.
+
 ## 1.4.5 — 2026-07-22 (P1 observe schemas promoted additive)
 
 - Promoted landed client P1 observe field shapes into canonical API/agent

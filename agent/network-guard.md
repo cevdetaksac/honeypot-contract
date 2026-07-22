@@ -196,7 +196,9 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
   tespit pipeline'ı bu tipi kendi başına üretmez.
 - `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
-- Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) + `network_restore` (**destructive confirm**).
+- Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) +
+  `network_restore` (**mutating = destructive confirm**; `dry_run:true` =
+  plan-only, confirm gerekmez — contract 1.4.5).
 - Host'u `under_attack` yalnız doğrulanmış/operatör-contain edilmiş `_bomb` olayında
   işaretle; `_suspect` warning tek başına bu bayrağı açmaz.
 - `protection.network_guard{}` threats/config poll + update. **Alanlar (client ≥4.7.3):**
@@ -239,8 +241,8 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 - [x] Client `suspend_process` / `resume_process`: PID+image+path+start-time doğrulamalı; suspend confirm-gated
 - [x] Cloud popup/satır: açık onaylı **Suspend/Resume** butonu + exact-identity (pid+image+start-time) — cloud implemented; canlı client ile uçtan uca doğrulama bekliyor
 - [ ] Acil VSS snapshot yalnız ayrı/onaylı aksiyon sırasında best-effort alınır
-- [x] Ağ restore yalnız `network_restore` açık onayıyla çalışır
+- [x] Ağ restore: mutating `network_restore` açık onayıyla; `dry_run:true` plan-only (confirm yok)
 - [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
 - [ ] Yedekleme/AV whitelist + `_PROTECTED_IMAGES` skorlamadan muaf (FP koruması)
-- [x] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (`network_restore` = confirm)
+- [x] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (mutate confirm; dry-run exempt)
 - [x] STATUS/health `network_guard` bloğu dolu

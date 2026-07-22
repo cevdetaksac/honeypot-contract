@@ -1,6 +1,6 @@
 # Security & Resilience vNext — Shared Delivery Plan
 
-> Contract planning version: **1.4.5**
+> Contract planning version: **1.4.6**
 > Baseline: client **4.9.0**, production floor remains **4.9.0**  
 > Audience: Windows client, Cloud/API, Dashboard and QA implementers  
 > Status: **planning + promoted observe schemas** (enforce still off)
