@@ -103,6 +103,13 @@ yazar; daemon `_sync_threat_config` bunları yerel `notifications.*`'e köprüle
 böylece cloud tek kaynak olur ama forward yine client tarafında yapılır. Cloud
 kendisi webhook göndermez.
 
+### Offline queue / idempotency (contract ≥1.4.7)
+
+Optional `event_id` / `idempotency_key` on urgent → soft ACK on replay.
+Batch drain: [`../api/10-offline-urgent-queue.md`](../api/10-offline-urgent-queue.md)
+(`POST /api/alerts/urgent/batch`). Flag `security.offline_urgent_queue`
+default **off**.
+
 ---
 
 ## POST /api/events/batch

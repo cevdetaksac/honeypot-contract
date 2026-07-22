@@ -397,12 +397,13 @@ remains **4.9.0**; no enforce toggles are on:
 
 **Still cloud/dashboard gated before enabling flags / pilots:**
 
-1. Persist/display the promoted observe blocks; missing = `legacy`.
-2. Define offline urgent-event ingest + ACK/idempotency (OOB-501 wire).
+1. Persist/display the promoted observe blocks; missing = `legacy`. **(done)**
+2. Offline urgent-event ingest + ACK/idempotency (OOB-501) — **promoted
+   1.4.7** → `api/10-offline-urgent-queue.md`; client flag still default off.
 3. Operator public-key endpoint + algorithm + test vectors before ZT-603
-   verify.
+   verify. (observe stub GET exists; verify stays false)
 4. TPM enrollment/PoP/re-enrollment UX (DEV-601 beyond probe).
-5. Dashboard observe cards + emergency-disable before tenant pilot.
+5. Dashboard observe cards + emergency-disable before tenant pilot. **(cards done)**
 6. Keep enforce / auto-contain / auto-lockout / Guardian reject-stale **off**.
 
 ## 8. Cloud implementation checklist

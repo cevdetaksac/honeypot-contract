@@ -1,5 +1,20 @@
 # Changelog — honeypot-contract
 
+## 1.4.7 — 2026-07-22 (OOB-501 promoted to api/)
+
+- Promoted offline urgent queue from design to normative
+  [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md).
+- Wire: `POST /api/alerts/urgent/batch` ACK
+  (`acked` / `duplicate` / `rejected`, cap 500) plus soft idempotency on
+  `POST /api/alerts/urgent` via `event_id` / `idempotency_key`.
+- Reject reasons: `schema` | `too_large` | `expired` (queued_at > 7d) |
+  `transient`. Production floor stays **client ≥ 4.9.0**.
+- Client flag `security.offline_urgent_queue` remains **default off**; cloud
+  endpoint is live for pilot drain after heartbeat/WS.
+- Cloud E2E: double-delivery of the same `event_id` yields one dashboard
+  incident (`duplicate` on replay). Operator-key GET and TPM enrollment stay
+  design-only.
+
 ## 1.4.6 — 2026-07-22 (dry-run confirm exception + design pointers)
 
 - `agent/network-guard.md` / README: mutating `network_restore` remains
