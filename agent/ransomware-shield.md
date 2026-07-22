@@ -98,9 +98,27 @@ en fazla fallback olarak, urgent gelmemişse.
 | `canary_files_intact` | bool | `canary_alerts == 0` |
 | `ransomware_shield_status` | `active` / `disabled` / `error` | Shield çalışıyor mu |
 | `vss_shadow_count` | int | VSS shadow sayısı |
+| `canary_coverage` | object (observe) | Path-free coverage counts (1.4.5) |
 
-Snapshot’ta dosya yolu / suspect süreç **yok** (≤4.5.66).
+`canary_coverage` shape (additive; missing = legacy):
 
+```json
+{
+  "mode": "observe",
+  "configured": true,
+  "files_total": 40,
+  "files_intact": 40,
+  "files_missing": 0,
+  "roots_covered": 3,
+  "coverage_ok": true
+}
+```
+
+No user paths. Desktop canaries remain **forbidden** (config entries under
+`\Desktop\` are skipped/removed at deploy). Snapshot’ta dosya yolu / suspect
+süreç **yok** (≤4.5.66). ETW shadow aggregates live under snapshot
+`etw_shadow` ([`../api/08-architecture.md`](../api/08-architecture.md)) —
+alert-only / health-only; never auto-contain.
 ### 3) Zengin şema (≥ **4.5.67**; tek-yol garantisi ≥ **4.5.68** — implemented)
 
 > **4.5.68 hotfix:** 4.5.67'de canary hem ince `on_alert` (threat-engine) hem

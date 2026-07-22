@@ -30,8 +30,24 @@ Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (42 tip).
 ### Agent → hello
 
 ```json
-{ "v": 1, "t": "hello", "role": "agent", "version": "4.5.65", "hostname": "…", "pid": 1234, "mode": "daemon" }
+{
+  "v": 1,
+  "t": "hello",
+  "role": "agent",
+  "version": "4.9.1",
+  "hostname": "…",
+  "pid": 1234,
+  "mode": "daemon",
+  "caps": {
+    "command_envelope_v2": "off"
+  }
+}
 ```
+
+Additive `caps` (contract 1.4.5): `command_envelope_v2` = `"off"` | `"observe"`
+only. Never `"enforce"`. Cloud stores capability; must not emit production v2
+command envelopes until ZT-603 key distribution + design gate promote. See
+[`../cloud/command-envelope-v2-design.md`](../cloud/command-envelope-v2-design.md).
 
 ### Cloud → agent
 
@@ -111,8 +127,9 @@ Rollout şu anda **observe compatibility** modundadır:
 - cloud metrikleri: `signed_commands_total`, `unsigned_commands_total`,
   `signature_generation_failed`, `coverage_percent`;
 - client sağlık snapshot'ı opsiyonel
-  `command_signing{observe,enforce,missing,invalid,last_error}` bloğunu
-  taşıyabilir; eksik blok `legacy` demektir, hata değildir.
+  `command_signing{observe,enforce,ok,missing,invalid,no_token,disabled,last_error}`
+  bloğunu taşıyabilir (`last_error` string, boş `""` olabilir); eksik blok
+  `legacy` demektir, hata değildir.
 
 Production enforcement **kapalıdır**. Mandatory reject/fleet policy ayrı bir
 kontrat ve rollout kararı gerektirir; floor **4.9.0** kalır.
@@ -130,7 +147,10 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
 - `kill_process` (exact-target process kill — açık kullanıcı onayı zorunlu)
 - `create_user` (yeni/yeniden hesap — [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md))
 - `remote_logon` / `set_autologon` / `reboot` (autologon + yeniden başlatma break-glass)
-- `network_restore` (ağ baseline'dan geri yükle — [`../agent/network-guard.md`](../agent/network-guard.md))
+- `network_restore` (ağ baseline'dan geri yükle — **mutating** path only —
+  [`../agent/network-guard.md`](../agent/network-guard.md)). Dry-run-only
+  (`params.dry_run=true` and no mutate) **must not** require destructive
+  `confirm:true`.
 - `suspend_process` (şüpheli süreci askıya al — açık kullanıcı onayı zorunlu)
 - `set_gui_pin` / `clear_gui_pin` (yerel GUI anti-tamper PIN'ini ez/sıfırla — ≥4.8.3)
 
@@ -187,10 +207,47 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `set_autologon` / `clear_autologon` | `username`, `password`, `count` | Autologon arm/temizle — ≥4.6.0 |
 | `reboot` | `grace_sec`, `reason` | Onaylı yeniden başlatma — ≥4.6.0 |
 | `network_snapshot` | — | Anlık ağ baseline al — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
-| `network_restore` | `targets[]?` | Baseline'dan ağ/sürücü geri yükle (confirm) — ≥4.7.0 |
+| `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Baseline'dan ağ/sürücü geri yükle. **Mutate** = confirm. `dry_run:true` = plan only (no confirm). `rollback_version` selects a retained signed baseline. ≥4.7.0 / dry-run+rollback observe ≥4.9.1 |
 | `list_network_baseline` | — | Baseline sürümleri/özeti — ≥4.7.0 |
 | `set_gui_pin` | `pin` (4-12 hane, yalnız rakam) | Dashboard'dan yerel GUI PIN tanımla/değiştir (confirm; result PIN içermez) — ≥4.8.3 |
 | `clear_gui_pin` | — | Dashboard'dan yerel GUI PIN'i sıfırla/kaldır (confirm) — ≥4.8.3 |
+
+### `network_restore` dry-run / rollback (contract 1.4.5)
+
+Params:
+
+```json
+{
+  "targets": ["adapter", "dns", "firewall", "mapped_drive"],
+  "dry_run": true,
+  "rollback_version": null
+}
+```
+
+- `dry_run: true` → client returns a bounded plan; **no** adapter/DNS/firewall/
+  drive mutation. Cloud must not require `confirm:true` for dry-run-only.
+- Mutating restore (`dry_run` absent/false) remains in
+  `DESTRUCTIVE_COMMAND_TYPES` and needs `confirm:true`.
+- `rollback_version: int` loads that retained signed baseline; missing/invalid
+  → result error `rollback_baseline_not_found_or_invalid`. Other errors:
+  `no_baseline`, `baseline_signature_invalid`.
+
+Dry-run result `data` example:
+
+```json
+{
+  "dry_run": true,
+  "baseline_version": 7,
+  "plan": [
+    {"target": "adapter", "action": "enable", "interface": "Ethernet"},
+    {"target": "dns", "action": "set", "interface": "Ethernet", "servers": ["1.1.1.1"]},
+    {"target": "firewall", "action": "enable_profiles", "profiles": ["domain", "private"]},
+    {"target": "mapped_drive", "action": "reconnect", "letter": "Z:", "unc": "\\\\srv\\share"}
+  ],
+  "restore_actions": [],
+  "connectivity": {"internet_ok": true, "dns_ok": true, "gateway_ok": true}
+}
+```
 
 **GUI PIN semantiği (≥4.8.3):** PIN store `ProgramData/.../gui_lock.json` — SYSTEM daemon komutu uygular, GUI süreci dosya mtime'ından değişikliği otomatik algılar (restart gerekmez) ve aktif oturum kilidini düşürür. Hesap bağlıysa GUI PIN diyalogları "dashboard üzerinden tanımlayabilir/sıfırlayabilirsiniz" ipucu gösterir (`is_account_linked()`), böylece PIN unutulduğunda kurtarma yolu görünürdür. Client doğrulaması: `pin` eksik → `missing_pin`, format dışı → `invalid_pin_format`.
 

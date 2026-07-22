@@ -58,13 +58,41 @@ Token: `%ProgramData%\YesNext\CloudHoneypotClient\token.dat` — immutable; decr
   "hostname": "HOST",
   "running": true,
   "system_context": {
-    "agent_version": "4.5.65",
-    "os": "Windows …"
+    "agent_version": "4.9.1",
+    "os": "Windows …",
+    "heartbeat_proof": {
+      "version": 1,
+      "issued_at": "2026-07-22T01:00:00.000000Z",
+      "algorithm": "hmac-sha256",
+      "signature": "<64-hex>",
+      "observe": true,
+      "enforce": false
+    }
   }
 }
 ```
 
 ~60s. Offline eşiği cloud tarafında ~2 dk (presence stale).
+
+### Optional signed heartbeat observe (contract 1.4.5 — RES-103)
+
+`system_context.heartbeat_proof` is additive. Missing = legacy. Cloud **soft-
+accepts** (store/metrics optional); it must **not** reject presence for
+missing/invalid/stale proofs. Client flag `security.signed_heartbeat_observe`
+(default **off**). Local verify helpers exist; Guardian reject-stale is **not**
+wired.
+
+Algorithm (must match client `client_resilience_p1`):
+
+```text
+key = SHA256("{token}|{hostname.lower()}|yesnext-heartbeat-v1")   // raw 32 bytes
+msg = "v1|{hostname.lower()}|{status}|{1|0}|{issued_at}"
+signature = HMAC-SHA256(key, msg).hexdigest()
+```
+
+`issued_at` is used verbatim (UTC ISO-8601, may include microseconds + `Z`).
+Suggested soft verify windows (observe metrics only): max age 300s; clock skew
+tolerance −30s. Distinct from command HMAC (`yesnext-chp-v1`).
 
 ---
 

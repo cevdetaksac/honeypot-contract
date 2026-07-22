@@ -148,7 +148,7 @@ katman durumlarını tek STATUS çağrısından okur — `ransomware_running` (s
 watcher canlı mı) ve `network_guard{}` özeti eklendi. Frontend hiçbir katman
 durumu için yerel engine varsaymaz; motor yoksa katman "KAPALI" gösterilir.
 
-### Additive resilience health — observe mode (contract 1.4.2)
+### Additive resilience health — observe mode (contract 1.4.2 + 1.4.5)
 
 Cloud `POST /api/health/report` içinde aşağıdaki opsiyonel blokları kabul edip
 son health snapshot + client effective settings içinde saklar:
@@ -167,25 +167,139 @@ son health snapshot + client effective settings içinde saklar:
     "binary_integrity": "valid|invalid|unknown",
     "stand_down_reason": "update|operator_pin|uninstall|null"
   },
-  "event_log_health": {},
-  "etw_shadow": {},
+  "event_log_health": {
+    "available": true,
+    "running": true,
+    "channels_active": 1,
+    "channels_total": 1,
+    "events_processed": 0,
+    "events_filtered": 0,
+    "errors": 0,
+    "watched_ids": [4625, 4723, 4724],
+    "password_burst": {
+      "mode": "observe",
+      "auto_lockout": false,
+      "window_sec": 300,
+      "threshold": 5,
+      "events": 0,
+      "unique_targets": 0,
+      "unique_actors": 0,
+      "failed_or_unknown": 0,
+      "peak_actor_events": 0,
+      "burst_detected": false
+    }
+  },
+  "etw_shadow": {
+    "available": false,
+    "provider_attached": false,
+    "mode": "shadow",
+    "source": "stub",
+    "fallback": "none",
+    "auto_containment": false,
+    "window_sec": 60.0,
+    "events_in_window": 0,
+    "ops": {},
+    "top_pids": [],
+    "dropped_events": 0,
+    "provider_restarts": 0,
+    "buffer_pressure": false,
+    "correlation": {
+      "mode": "shadow",
+      "auto_containment": false,
+      "candidates": [],
+      "candidate_count": 0,
+      "thresholds": {
+        "file_fanout": 25,
+        "rename_burst": 20,
+        "write_burst": 30
+      }
+    },
+    "error": "etw consumer not attached (shadow stub)"
+  },
   "command_signing": {
     "observe": true,
     "enforce": false,
+    "ok": 0,
     "missing": 0,
     "invalid": 0,
-    "last_error": null
-  }
+    "no_token": 0,
+    "disabled": 0,
+    "last_error": ""
+  },
+  "access_integrity": {
+    "observe": true,
+    "enforce": false,
+    "baseline_valid": true,
+    "entries_checked": 2,
+    "changed": 0,
+    "missing": 0,
+    "status": "healthy"
+  },
+  "device_identity": {
+    "mode": "observe",
+    "enrolled": false,
+    "tpm_present": true,
+    "tpm_ready": true,
+    "manufacturer_id": null,
+    "key_non_exportable": null,
+    "attestation": "not_implemented",
+    "reenrollment_required": false,
+    "error": ""
+  },
+  "canary_coverage": {
+    "mode": "observe",
+    "configured": true,
+    "files_total": 0,
+    "files_intact": 0,
+    "files_missing": 0,
+    "roots_covered": 0,
+    "coverage_ok": false
+  },
+  "deception_health": [
+    {
+      "service": "SSH",
+      "port": 22,
+      "status": "started",
+      "handler_limit": 48,
+      "handlers_rejected": 0,
+      "backlog": 0,
+      "rate_limit_per_ip_min": 10,
+      "resource_budgeted": true,
+      "protocol_aware": true,
+      "fingerprint_profile": "static_legacy",
+      "bypass_coverage_required": true
+    }
+  ]
 }
 ```
 
 Tüm bloklar additive/opsiyoneldir; missing = `legacy`, **failure değildir**.
-`etw_shadow` bu aşamada yalnız bounded sensor health/aggregate metadata taşır;
-raw unbounded file-I/O events cloud'a alınmaz. Restart storm, installed-but-not-
-running Guardian veya invalid binary integrity iki ardışık snapshot'ta
-görülürse cloud 30 dakika dedupe'lu `agent_resilience_degraded` observe alarmı
-üretir. Bu telemetri hiçbir process/network containment komutunu otomatik
-tetiklemez.
+
+- `binary_integrity`: `valid` = Authenticode publisher OK; `invalid` =
+  present-but-broken signature (tamper); `unknown` = unsigned/dev build or
+  check unavailable. Observe-only — never blocks startup.
+- `access_integrity`: path-free DACL fingerprint drift (`status` enum:
+  `healthy|degraded|baseline_created|baseline_unavailable|disabled`). Never
+  uploads paths, principals, or raw ACL text. Flag
+  `security.acl_drift_observe` (default off).
+- `etw_shadow`: bounded sensor health/aggregates only; raw unbounded file-I/O
+  events cloud'a alınmaz. `source` = `stub|psutil_io|…`, `fallback` =
+  `none|psutil`. `auto_containment` always false; never auto-dispatch
+  suspend/kill. Flag `threat_detection.etw_file_io_shadow` (default off);
+  optional `threat_detection.etw_psutil_fallback`.
+- `password_burst` (nested under `event_log_health`): wire SoT name — **not**
+  `identity_burst`. Counts only; `auto_lockout` always false.
+- `device_identity`: read-only TPM capability (`security.tpm_identity_observe`).
+  Missing TPM → `error: "tpm_unsupported"` / non-Windows → `"non_windows"`;
+  never hard-fails health; enrollment/attestation not implemented.
+- `canary_coverage` / `deception_health`: path-free / credential-free observe
+  only. Desktop canaries remain forbidden.
+
+Restart storm, installed-but-not-running Guardian veya invalid binary integrity
+iki ardışık snapshot'ta görülürse cloud 30 dakika dedupe'lu
+`agent_resilience_degraded` observe alarmı üretir. Bu telemetri hiçbir
+process/network containment komutunu otomatik tetiklemez.
+
 
 ### STATUS dependency invariant (client ≥4.7.4)
 

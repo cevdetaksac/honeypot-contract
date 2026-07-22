@@ -120,8 +120,18 @@ kendisi webhook göndermez.
 ## POST /api/health/report
 
 Ransomware alanları (snapshot): `canary_files_intact` (bool), `ransomware_shield_status`
-(`active|disabled|error`), `vss_shadow_count` (int) — **detay yok**; canary alert detayı
+(`active|disabled|error`), `vss_shadow_count` (int), optional path-free
+`canary_coverage{}` — **detay yok**; canary alert detayı
 `alerts/urgent`tedir → [`ransomware-shield.md`](./ransomware-shield.md) “Wire” bölümü.
+
+Additive observe blocks (contract 1.4.5; missing = legacy): `resilience`,
+`event_log_health` (+ nested `password_burst`), `etw_shadow`,
+`command_signing`, `access_integrity`, `device_identity`, `deception_health[]`.
+Full shapes: [`../api/08-architecture.md`](../api/08-architecture.md).
+
+Password-change visibility (ID-401/402): Security Event Log **4723** /
+**4724** may be watched. Burst aggregates are counts only
+(`password_burst.auto_lockout` always false). No automatic admin lockout.
 
 ```json
 {
@@ -132,7 +142,7 @@ Ransomware alanları (snapshot): `canary_files_intact` (bool), `ransomware_shiel
     "canary_ok": true,
     "vss_ok": true,
     "anomalies": [],
-    "agent_version": "4.5.65",
+    "agent_version": "4.9.1",
     "…": "…"
   }
 }

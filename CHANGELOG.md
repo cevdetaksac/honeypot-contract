@@ -1,5 +1,28 @@
 # Changelog — honeypot-contract
 
+## 1.4.5 — 2026-07-22 (P1 observe schemas promoted additive)
+
+- Promoted landed client P1 observe field shapes into canonical API/agent
+  docs without raising the production floor (**client ≥ 4.9.0**) or enabling
+  enforcement.
+- `api/08-architecture.md`: filled `etw_shadow` (source/fallback/correlation),
+  `event_log_health` (+ nested `password_burst`), `command_signing` counters
+  (`ok`/`no_token`/`disabled`), and added `access_integrity`,
+  `device_identity`, path-free `canary_coverage`, optional `deception_health[]`.
+  `binary_integrity` observe semantics clarified (`unknown` = unsigned/dev).
+- `api/01-auth.md`: optional `system_context.heartbeat_proof` (HMAC v1
+  candidate) with soft-accept cloud behavior.
+- `api/03-control-websocket.md`: additive hello `caps.command_envelope_v2`
+  (`off`|`observe` only); `network_restore` params `dry_run` /
+  `rollback_version` + dry-run result plan (mutate restore remains confirm-
+  gated; dry-run-only must not require destructive confirm).
+- `agent/network-guard.md`, `agent/ransomware-shield.md`,
+  `agent/threat-engine.md`: dry-run/rollback, canary coverage, 4723/4724 +
+  password-burst aggregates aligned.
+- Wire key SoT for identity burst is **`password_burst`** (not
+  `identity_burst`). Offline urgent ingest, operator key GET + verify, TPM
+  enrollment, and all enforce toggles remain **not promoted**.
+
 ## 1.4.4 — 2026-07-22 (client 4.9.1 WebRTC smoothness)
 
 - Client 4.9.1 implements strict JPEG suppression while ICE+DTLS media is

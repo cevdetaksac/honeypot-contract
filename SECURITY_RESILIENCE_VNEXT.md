@@ -1,14 +1,14 @@
 # Security & Resilience vNext — Shared Delivery Plan
 
-> Contract planning version: **1.4.3**
+> Contract planning version: **1.4.5**
 > Baseline: client **4.9.0**, production floor remains **4.9.0**  
 > Audience: Windows client, Cloud/API, Dashboard and QA implementers  
-> Status: **planning / non-normative**
+> Status: **planning + promoted observe schemas** (enforce still off)
 
-This document coordinates parallel client and cloud work. It does **not**
-silently change current production wire behavior. Before a work item ships,
-its final schema and behavior must be promoted into the relevant normative
-contract file, followed by `CHANGELOG.md` + `VERSION` update.
+This document coordinates parallel client and cloud work. Observe field shapes
+for the P1 package are now normative in `api/08-architecture.md`,
+`api/01-auth.md`, `api/03-control-websocket.md` and related agent docs.
+Enforcement, enrollment, and offline ingest endpoints remain gated.
 
 Client-side analysis and complete backlog:
 `cloud-client/docs/SECURITY_RESILIENCE_ROADMAP.md`.
@@ -373,42 +373,37 @@ After P0 compatibility and telemetry are green:
 
 P2 is tenant opt-in and cannot raise the global floor by itself.
 
-## 7A. P1 client observe package — 2026-07-22
+## 7A. P1 client observe package — 2026-07-22 (schemas promoted 1.4.5)
 
 The client has landed the following **default-off / observe-only primitives**.
-They do not change production wire or the 4.9.0 floor:
+Exact wire shapes are now in canonical API/agent docs. Production floor
+remains **4.9.0**; no enforce toggles are on:
 
-- RES-103 candidate signed heartbeat (`heartbeat_proof`, HMAC v1);
-- RES-105/106 path-free DACL fingerprints + local HMAC baseline/drift summary;
-- RANS-302/303 bounded ETW loss/pressure health + fan-out/rename/write
-  correlation (no raw paths, no containment);
-- DEC-201/202 canary coverage counts and DEC-205/206 decoy capacity/saturation;
-- NET-501 restore dry-run plan and NET-502 signed retained-version selector;
-- OOB-501 DPAPI+HMAC bounded/idempotent local queue primitive;
-- ID-402/403 password reset/change burst aggregates (no identity/raw payload,
-  no automatic lockout);
-- ZT-602/603 public operator-key metadata/rotation scaffold (verify disabled);
-- DEV-601 read-only TPM capability probe (no key/enrollment/attestation).
+- RES-103 candidate signed heartbeat (`heartbeat_proof`, HMAC v1) —
+  `api/01-auth.md`;
+- RES-105/106 path-free DACL fingerprints + drift (`access_integrity`) —
+  `api/08-architecture.md`;
+- RANS-302/303 bounded ETW loss/pressure + correlation (`etw_shadow`) —
+  `api/08-architecture.md`;
+- DEC-201/202 `canary_coverage` + DEC-205/206/208/209 `deception_health[]`;
+- NET-501/502 `network_restore` `dry_run` / `rollback_version` —
+  `api/03-control-websocket.md` + `agent/network-guard.md`;
+- OOB-501 DPAPI+HMAC local queue primitive (**ingest endpoint not promoted**);
+- ID-402/403 `event_log_health.password_burst` (wire name SoT; not
+  `identity_burst`);
+- ZT-602/603 public operator-key metadata scaffold (**GET endpoint + verify
+  not promoted**);
+- DEV-601 read-only TPM probe (`device_identity`).
 
-**Cloud/dashboard work required before enabling any flag:**
+**Still cloud/dashboard gated before enabling flags / pilots:**
 
-1. Promote exact schemas for `heartbeat_proof`, `access_integrity`,
-   `identity_burst`, `device_identity`, ETW correlation and deception health.
-2. Define offline urgent-event ingest + ACK/idempotency endpoint, TTL, maximum
-   payload, replay result and redaction requirements.
-3. Extend `network_restore` params with `dry_run:boolean` and
-   `rollback_version:int|null`; dry-run must not require destructive dispatch,
-   actual restore remains confirm-gated.
-4. Promote operator public-key endpoint/key-set schema, exact algorithm,
-   canonical serialization, revocation/overlap and deterministic test vectors
-   before agent verification can be enabled.
-5. Define TPM enrollment/PoP/re-enrollment only after recovery and hardware
-   replacement UX exists. Missing TPM is `unsupported`, never hard failure.
-6. Add dashboard observe cards and rollback/emergency-disable controls before
-   a tenant pilot. Missing blocks remain `legacy`, not degraded.
-
-Canonical API files must be updated and VERSION/CHANGELOG bumped before any of
-these candidate fields are accepted as production behavior.
+1. Persist/display the promoted observe blocks; missing = `legacy`.
+2. Define offline urgent-event ingest + ACK/idempotency (OOB-501 wire).
+3. Operator public-key endpoint + algorithm + test vectors before ZT-603
+   verify.
+4. TPM enrollment/PoP/re-enrollment UX (DEV-601 beyond probe).
+5. Dashboard observe cards + emergency-disable before tenant pilot.
+6. Keep enforce / auto-contain / auto-lockout / Guardian reject-stale **off**.
 
 ## 8. Cloud implementation checklist
 

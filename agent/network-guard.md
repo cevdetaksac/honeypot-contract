@@ -135,8 +135,15 @@ verir; geri yükleme sonrası bağlantı doğrulanır (`connectivity` re-probe).
 persistent/OS-kayıtlı bağlantılar restore edilir.
 
 Dashboard komutları (control WS, [`../api/03-control-websocket.md`](../api/03-control-websocket.md)):
-`network_snapshot` (anlık baseline al), `network_restore` (baseline'dan geri yükle — `REQUIRES_CONFIRMATION`),
+`network_snapshot` (anlık baseline al), `network_restore` (baseline'dan geri yükle —
+**mutating** path `REQUIRES_CONFIRMATION`; `dry_run:true` plan-only ve confirm
+gerekmez; `rollback_version` retained signed baseline seçer),
 `list_network_baseline`.
+
+Dry-run result carries `plan[]` + current `connectivity`; mutate result carries
+`restore_actions[]` + post-restore connectivity. Errors:
+`no_baseline`, `baseline_signature_invalid`,
+`rollback_baseline_not_found_or_invalid`.
 
 ---
 
