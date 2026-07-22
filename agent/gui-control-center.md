@@ -29,14 +29,19 @@ Minimum ana bölümler:
   guardian, honeypot ve karantina chip'leri daemon `STATUS`'tan beslenir;
   her chip ilgili detay/sekmeye kısayoldur.
 - **Tehdit Merkezi:** olaylar, şüpheli süreçler, hesaplar, paylaşımlar, servisler,
-  komut geçmişi; satır aksiyonları.
+  komut geçmişi; satır aksiyonları. **Engellenen IP** kartı sayıyı engellenen
+  IP birleşiminden alır ve tıklanınca **IP Listeleri → Engellenen** sekmesini açar
+  (kafa karıştırıcı “izlenen” popup yok).
+- **IP Listeleri:** Aktivite / Engellenen / Whitelist tablosu (eskiden Anlık
+  Durum içindeydi). Kolon **Skor** (0–100 tehdit skoru); deneme sayısı değildir.
 - **Honeypot Servisleri:** her servis için durum + start/stop/detail.
 - **Güvenlik Katmanları:** açık/kapalı katmanlar, kısa insan-dili açıklaması,
   cloud sync durumu.
 - **Ayarlar (≥4.8.0):** e-posta bildirimleri, otomatik engelleme limitleri,
   sessiz saatler ve webhook. Kaydet → `POST /api/threats/config` (partial
   deep-merge) → effective config yeniden okunur. GUI hiçbir ayarı yerelde
-  saklamaz; bulut tek kaynaktır.
+  saklamaz; bulut tek kaynaktır. `auto_block_threshold` = **tehdit skoru eşiği
+  (1–100)**, deneme sayısı değil.
 
 ## Ayarlar sekmesi wire (≥4.8.0)
 
@@ -137,7 +142,8 @@ Tespit motoru hiçbir koşulda kendi kendine suspend/kill/network restore yapmaz
 
 ## IP Listeleri hızlı aksiyonları (≥4.8.3)
 
-IP tablosu başlığının sağ üstünde iki hızlı aksiyon butonu bulunur:
+IP Listeleri sekmesi (veya tablo başlığı) sağ üstünde iki hızlı aksiyon butonu
+bulunur:
 
 - **＋ IP Engelle** — IP adresi sorulur (modal input), geçerli IPv4/IPv6 ise
   satır aksiyonlarıyla aynı yol kullanılır (daemon IPC `block_ip`, yoksa lokal
