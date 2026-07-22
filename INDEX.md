@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.11** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK** + **Server Management inventory** + recommended **≥ 4.9.7** for `HP-INTEL-*` apply + bare-success no auto-block + whitelist enforce + cloud reject/lift ≥ **1.4.11**)
+> **VERSION 1.4.12** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK** + **Server Management inventory** + recommended **≥ 4.9.7** for `HP-INTEL-*` apply + bare-success no auto-block + whitelist enforce + cloud reject/lift ≥ **1.4.11** + **realtime presence** target **≥ 4.9.8** / contract **≥ 1.4.12**)
 
 
 ## Shared delivery plans
@@ -46,6 +46,7 @@
 | [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI IPC (`RS_*`) | ≥ **4.5.66** |
 | [api/09-threat-intel.md](api/09-threat-intel.md) | Intel bundle ETag/ACK/WS; normative `HP-INTEL-*` apply | ≥ **4.5.61** / push ≥4.5.66 / apply ≥ **4.9.7** |
 | [api/10-offline-urgent-queue.md](api/10-offline-urgent-queue.md) | OOB-501 urgent batch + idempotency ACK | cloud live; client flag default **off** |
+| [api/11-presence-realtime.md](api/11-presence-realtime.md) | Anlık presence: sleep/suspend/shutdown goodbye | cloud ≥ **1.4.12**; target client **≥ 4.9.8** |
 
 ## cloud/
 

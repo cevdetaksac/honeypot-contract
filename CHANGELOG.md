@@ -1,5 +1,19 @@
 # Changelog — honeypot-contract
 
+## 1.4.12 — 2026-07-22 (Realtime presence — sleep / shutdown)
+
+- New normative [`api/11-presence-realtime.md`](api/11-presence-realtime.md):
+  Control WS `presence` / `goodbye`, HTTP `POST /api/presence`, lifecycle
+  `host_sleep` / `host_hibernate` / `host_resume` / `host_shutdown` /
+  `daemon_stopping`. Dashboard states: `online` | `degraded` | `suspend` |
+  `offline` with `presence_reason`.
+- Security UX: intentional sleep/stop must flip dashboard within ~2s; GUI quit
+  alone must not mark host offline.
+- Cloud: 0s debounce on goodbye/suspend; ~12s on unexpected WS drop; idle
+  ping window ~75s. Target client **≥ 4.9.8** (additive).
+- [`agent/polling.md`](agent/polling.md) + [`api/03-control-websocket.md`](api/03-control-websocket.md)
+  cross-links updated.
+
 ## 1.4.11 — 2026-07-22 (Cloud whitelist lift + auto-block reject shapes)
 
 - Cloud normative: whitelist IP must never remain blocked. Rejects

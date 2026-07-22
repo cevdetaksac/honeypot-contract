@@ -27,7 +27,8 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 14. [`gui-control-center.md`](./gui-control-center.md) — dinamik GUI / güvenlik katmanları (≥4.7.3)  
 15. [`log-retention.md`](./log-retention.md) — günlük loglar / 7 gün retention (≥4.7.6)
 16. [`server-management.md`](./server-management.md) — Dashboard Sunucu Yönetimi inventory + mutates (target ≥4.9.4)
-17. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
+17. [`../api/11-presence-realtime.md`](../api/11-presence-realtime.md) — sleep/shutdown anlık presence (target ≥4.9.8)
+18. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
 
 ---
 

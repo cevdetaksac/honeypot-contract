@@ -59,7 +59,19 @@ command envelopes until ZT-603 key distribution + design gate promote. See
 | `threat_intel_updated` | hemen `GET /api/agent/threat-intel` |
 | `threat_config_updated` | security-layer ayarı değişti; hemen `GET /api/threats/config` + runtime apply (client ≥4.7.3) |
 | `pending_unblocks_updated` | whitelist lift / dashboard unblock; hemen `GET /api/agent/pending-unblocks` (+ `unblock_ip` komutu varsa uygula) (contract ≥1.4.11) |
+| `presence_ack` | cevap: agent `presence` / `goodbye` (contract ≥1.4.12) |
 | `error` | |
+
+### Agent → presence / goodbye (contract ≥1.4.12)
+
+Anlık sleep/shutdown sinyali — detay: [`api/11-presence-realtime.md`](11-presence-realtime.md).
+
+```json
+{ "v": 1, "t": "presence", "state": "suspend", "reason": "sleep", "ts": "…" }
+{ "v": 1, "t": "goodbye", "reason": "shutdown", "ts": "…" }
+```
+
+HTTP fallback: `POST /api/presence`.
 
 ### Command zarfı
 
