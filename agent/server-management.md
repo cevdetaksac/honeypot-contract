@@ -228,19 +228,19 @@ processes / services) so the next dashboard poll is current.
 
 ### Inventory
 
-- [ ] `list_local_users` with `include_disabled:true` returns disabled accounts
-- [ ] `list_sessions` + health `active_sessions` stay populated on live RDP/console
-- [ ] `list_processes` returns rich rows (path/username/cpu/memory) ≤150
-- [ ] **`list_services` implemented** — table fills on Services → Yenile
+- [x] `list_local_users` with `include_disabled:true` returns disabled accounts
+- [x] `list_sessions` + health `active_sessions` stay populated on live RDP/console
+- [x] `list_processes` returns rich rows (path/username/cpu/memory) ≤150
+- [x] **`list_services` implemented** — table fills on Services → Yenile
 - [ ] Cloud cache visible after completed result (`remote_local_users` /
-      `windows_services`)
+      `windows_services`) — verify on lab host after client ≥4.9.4
 
 ### Mutate
 
-- [ ] Users: create / enable / disable / reset_password / logoff / disable_all
-- [ ] Processes: kill / block (suspend/resume already ≥4.7.3)
-- [ ] Services: start / stop / restart accepting `name` **and** `service_name`
-- [ ] Every command returns terminal `commands/result` within TTL
+- [x] Users: create / enable / disable / reset_password / logoff / disable_all
+- [x] Processes: kill / block (suspend/resume already ≥4.7.3)
+- [x] Services: start / stop / restart accepting `name` **and** `service_name`
+- [x] Every command returns terminal `commands/result` within TTL
 
 ### UX smoke (one lab host)
 
