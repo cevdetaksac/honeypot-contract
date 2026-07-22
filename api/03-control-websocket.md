@@ -190,8 +190,8 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `suspend_process` | `pid`, `expected_image`, `expected_path?`, `process_start_time` | Açık onay sonrası exact-process suspend; PID reuse korumalı — ≥4.7.3 |
 | `resume_process` | `pid`, `expected_image`, `expected_path?`, `process_start_time` | Exact-process resume; non-destructive — ≥4.7.3 |
 | `block_process` | name/path | |
-| `list_sessions` / `list_processes` / `list_local_users` | — | Remote/IR UI |
-| `stop_service` / `start_service` / `restart_service` | `name` | |
+| `list_sessions` / `list_processes` / `list_local_users` / `list_services` | see [`../agent/server-management.md`](../agent/server-management.md) | Sunucu Yönetimi + Remote inventory (`list_services` additive ≥1.4.8) |
+| `stop_service` / `start_service` / `restart_service` | `name` **or** `service_name` | SCM control |
 | `enable_lockdown` / `disable_lockdown` | management_ip? | Acil |
 | `collect_diagnostics` | — | |
 | `remote_session_prepare` | `username`, `password`, `session_id?` | Active desktop |

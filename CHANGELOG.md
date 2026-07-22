@@ -1,6 +1,20 @@
 # Changelog — honeypot-contract
 
+## 1.4.8 — 2026-07-22 (Server Management — dashboard ↔ client)
+
+- New normative [`agent/server-management.md`](agent/server-management.md):
+  Dashboard **Sunucu Yönetimi** (users / processes / services) inventory +
+  mutate contract. Client must return full current lists and execute catalog
+  actions.
+- Additive **`list_services`** result shape (`name`, `display_name`, `status`,
+  `start_type`, `pid?`); cloud caches `windows_services`.
+- Service mutates accept **`name` or `service_name`**.
+- `list_local_users` for Server Management uses `include_disabled: true`.
+- Production floor unchanged (**client ≥ 4.9.0**); target ship **≥ 4.9.4**.
+- INDEX / FLEET / CLIENT / api/03 catalog cross-links updated.
+
 ## 1.4.7 — 2026-07-22 (OOB-501 promoted to api/)
+
 
 - Promoted offline urgent queue from design to normative
   [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md).

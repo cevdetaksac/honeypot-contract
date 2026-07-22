@@ -155,3 +155,12 @@ Bearer token auth also accepted (`Authorization: Bearer …`).
   (`offline_urgent_queue.oldest_dropped` on health/report; **accepted
   client 4.9.3**)
 - [x] No DNS/ICMP fallback (out of scope / rejected)
+
+### One-host live pilot (flag stays fleet-off)
+
+1. Pick **one** test host on client **≥ 4.9.3** (not production fleet).
+2. Set `security.offline_urgent_queue: true` **only on that host**; leave default **off** elsewhere.
+3. Block / drop cloud reachability ~10 minutes; trigger a canary (or other high-severity urgent).
+4. Restore network → heartbeat or control WS reconnect → expect `/api/alerts/urgent/batch` drain.
+5. Pass criteria: **one** dashboard incident for the stable `event_id`; health shows queue counters; no duplicate alert rows.
+6. After pass: turn flag **off** again on the pilot host (or leave on only that lab box).

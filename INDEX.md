@@ -1,8 +1,9 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.7** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK**)
+> **VERSION 1.4.8** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK** + **Server Management inventory**)
+
 
 ## Shared delivery plans
 
@@ -29,6 +30,7 @@
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block | — |
 | [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + persistent session helper (frame `inputs[]` baseline ≥4.5.55) | ≥ **4.9.0** |
+| [agent/server-management.md](agent/server-management.md) | Dashboard Sunucu Yönetimi: users / processes / services inventory + mutates (`list_services` additive) | target ≥ **4.9.4** |
 
 ## api/
 
