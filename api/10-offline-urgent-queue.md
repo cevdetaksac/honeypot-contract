@@ -146,9 +146,12 @@ Bearer token auth also accepted (`Authorization: Bearer …`).
 ## Acceptance
 
 - [x] Idempotent: double-delivery → one dashboard incident (cloud E2E)
-- [~] Offline 10m canary → appears after reconnect — **client harness green**
-  (`tests/test_offline_queue_pilot.py`); **live flag-on pilot** still required
-  once (`security.offline_urgent_queue=true` on one host)
+- [~] Offline 10m canary → appears after reconnect — **harness green**
+  (`tests/test_offline_queue_pilot.py`, client **4.9.3**); **one-host live
+  pilot** remains the final gate (`security.offline_urgent_queue=true` →
+  ~10m offline + canary → reconnect drain → single dashboard incident →
+  disable flag on that host; fleet default **off**)
 - [x] Full disk / 500 cap → oldest dropped with durable counter
-  (`offline_urgent_queue.oldest_dropped` on health/report; client harness)
+  (`offline_urgent_queue.oldest_dropped` on health/report; **accepted
+  client 4.9.3**)
 - [x] No DNS/ICMP fallback (out of scope / rejected)
