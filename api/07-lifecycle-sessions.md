@@ -68,6 +68,10 @@ Response 200:
 | `memory_restart_fallback` | warning | Direkt start fail, Background task ile denendi |
 | `memory_restart_failed` | error | Restart basarisiz (exe yok / stick olmadi) |
 | `memory_restart_skipped` | warning | Update lock nedeniyle atlandi |
+| `uninstall_requested` | warning | Control Panel / Uninstall.exe başlatıldı (`details.windows_user`) |
+| `uninstall_pin_failed` | warning | PIN hatalı / kilit / eksik — kaldırma iptal |
+| `uninstall_aborted` | info | Kullanıcı iptal veya gate hata |
+| `uninstall_authorized` | warning | PIN OK (veya PIN yok + onay) — dosya silme başlıyor |
 
 ---
 

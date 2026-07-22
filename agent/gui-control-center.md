@@ -155,11 +155,12 @@ Kurallar: giriş `ipaddress` ile doğrulanır (geçersiz → toast, işlem yok);
 her iki aksiyon da PIN gate'inden (`require_gui_unlock(reason="mutate")`)
 geçer; tablo içi satır aksiyonlarıyla aynı fonksiyonlar kullanılır (tek yol).
 
-### Whitelist SoT invariantı (≥4.8.4)
+### Whitelist SoT invariantı (≥4.8.4; enforce ≥4.9.7)
 
-Whitelist'in tek kaynağı **cloud `threats/config.whitelist_ips`**'tir.
-Frontend-only GUI'de engine nesneleri (`threat_engine` / `auto_response` /
-`event_watcher`) her zaman `None` olduğundan:
+Whitelist'in tek kaynağı **cloud `threats/config.whitelist_ips`**'tir
+(+ `whitelist_subnets`). Frontend-only GUI'de engine nesneleri
+(`threat_engine` / `auto_response` / `event_watcher`) her zaman `None`
+olduğundan:
 
 - **Persist asla kör overwrite yapmaz:** önce bulutun güncel seti okunur,
   yerel engine setleriyle birleştirilir, sonra açık add/remove deltası
@@ -169,7 +170,13 @@ Frontend-only GUI'de engine nesneleri (`threat_engine` / `auto_response` /
 - **Tablo render'ı cloud'u da okur:** whitelist sekmesi engine setleri ∪
   cloud `whitelist_ips` (60 sn cache; mutasyon sonrası effective response
   ile tazelenir). "Toast eklendi diyor ama Whitelist (0)" çelişkisi yasak —
-  bu, detay popup veri-kaynağı invariantının whitelist'e uygulanmış halidir.
+  bu, detay popup veri-kaynağı invariantının whitelist'e uygulanmış
+  halidir.
+- **Asla engelleme (≥4.9.7):** whitelist IP/subnet için `HP-BLOCK` /
+  `HP-INTEL` eklenmez. Config apply (`update_whitelist`) veya block
+  denemesi whitelist’e çarparsa client mevcut kuralları **derhal kaldırır**.
+  Bare successful logon zaten block üretmez
+  ([`threat-engine.md`](./threat-engine.md)).
 
 ## GUI PIN — dashboard yönetimi (≥4.8.3)
 

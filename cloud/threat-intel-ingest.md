@@ -1,9 +1,9 @@
 # CLOUD — Threat Intel & Security Layers Feed
 
 > **Audience:** Cloud / Dashboard API implementers  
-> **Client:** Cloud Honeypot Client ≥ **4.5.61**  
+> **Client:** ≥ **4.5.61** poll/ACK · **≥ 4.9.7** normative `HP-INTEL-*` apply  
 > **API base:** `https://honeypot.yesnext.com.tr`  
-> **Related client contract:** [`api/09-threat-intel.md`](api/09-threat-intel.md)
+> **Related client contract:** [`../api/09-threat-intel.md`](../api/09-threat-intel.md)
 
 Bu doküman, **cloud tarafında** yapılması gereken işleri tarif eder.
 Amaç: güncel tehditleri (ransomware IoC, KEV CVE, C2 IP, şüpheli process/cmdline, uzantılar)
@@ -206,13 +206,23 @@ Agent uyguladıktan sonra:
   "stats": {
     "firewall_added": 12,
     "firewall_skipped": 3,
+    "firewall_removed": 1,
     "ransomware_rules": 40,
+    "process_watch": 3,
+    "banners": 1,
     "errors": []
   }
 }
 ```
 
-Dashboard’da “son intel sync” kolonuna yazılır.
+| `stats` | Anlam (client ≥ 4.9.7) |
+|---------|-------------------------|
+| `firewall_added` | Yeni `HP-INTEL-*` |
+| `firewall_skipped` | severity / allowlist / expire / cap |
+| `firewall_removed` | orphan veya `auto_block_firewall=false` purge |
+
+Dashboard’da “son intel sync” kolonuna yazılır. Agent firewall yolu
+**`HP-INTEL-<id>`** (asla `HP-BLOCK-*` AutoResponse 24h).
 
 ### 3.3 Dashboard (cloud UI) — öneri
 

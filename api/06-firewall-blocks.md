@@ -10,9 +10,19 @@
 |--------|-----------|-------------|
 | Dashboard / cloud eval (`notification_rules`) | `HP-BLOCK-*` | `pending-blocks` / `block_ip` komutu |
 | Local threat engine auto-block | `HP-BLOCK-*` | Agent netsh + `POST /api/alerts/auto-block` |
-| Threat intel bundle | `HP-INTEL-*` | `GET /api/agent/threat-intel` apply |
+| Threat intel bundle | `HP-INTEL-*` | `GET /api/agent/threat-intel` apply (client ≥ **4.9.7**) |
 
 `ip_or_cidr`: tek IP, CIDR, veya `country:XX` (cloud destekliyorsa).
+
+### Whitelist — asla engelleme (client ≥ 4.9.7)
+
+`threats/config.whitelist_ips` / `whitelist_subnets`:
+
+- `block_ip` (auto / komut / intel) whitelist IP’ye **uygulanmaz**.
+- Whitelist güncellenince veya block denemesi whitelist’e çarparsa client
+  mevcut `HP-BLOCK-*` **ve** eşleşen `HP-INTEL-*` kurallarını **derhal siler**
+  (`enforce_whitelist_unblocks`).
+- Bare `successful_logon` zaten HP-BLOCK üretmez → [`../agent/threat-engine.md`](../agent/threat-engine.md).
 
 ---
 
@@ -52,11 +62,13 @@ Body (agent → cloud):
 
 ### sync-rules (özet)
 
-Agent `netsh` / HP-BLOCK taraması → JSON blocks listesi. Cloud SoT envanter için.
+Agent `netsh` / `HP-BLOCK-*` (+ envanterde `HP-INTEL-*` görünürlüğü) taraması →
+JSON blocks listesi. Cloud SoT envanter için. İsim önekleri karıştırılmaz.
 
 ### clear_firewall (komut)
 
 Params: `wipe_all_honeypot_rules` (default true), `ips[]`, `reason`.  
+Wipe **hem** `HP-BLOCK-*` **hem** `HP-INTEL-*` (ve legacy `HONEYPOT_*`) siler.
 Sonra sync-rules + isteğe clear-data scopes.
 
 ---
@@ -74,5 +86,6 @@ Agent eşikleri **local** `protection.block_rules` + cloud worker pending-blocks
 ## Acceptance
 
 - [ ] pending-block → HP-BLOCK → block-applied 200  
-- [ ] clear_firewall wipe → sync boş / cloud clear  
-- [ ] INTEL kuralları BLOCK ile isim çakışması yok
+- [ ] clear_firewall wipe → sync boş / cloud clear (HP-INTEL dahil)  
+- [ ] INTEL kuralları BLOCK ile isim çakışması yok (`HP-INTEL-*` ≠ `HP-BLOCK-*`)
+- [ ] Whitelist IP → block yok; engelli ise anında kaldırılır

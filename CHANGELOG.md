@@ -1,5 +1,27 @@
 # Changelog — honeypot-contract
 
+## 1.4.9 — 2026-07-22 (Threat intel HP-INTEL + bare-success no-block)
+
+- Normative client **≥ 4.9.7** behavior (production floor stays **≥ 4.9.0**):
+  - [`api/09-threat-intel.md`](api/09-threat-intel.md): `firewall_blocks` →
+    **`HP-INTEL-*`** (in+out), never AutoResponse `HP-BLOCK-*`; policy /
+    severity / allowlist / orphan reconcile; ACK `firewall_added` /
+    `firewall_skipped` / `firewall_removed`.
+  - [`api/06-firewall-blocks.md`](api/06-firewall-blocks.md): whitelist never
+    blocks; `clear_firewall` wipe includes `HP-INTEL-*`; sync may surface both
+    prefixes.
+  - [`agent/threat-engine.md`](agent/threat-engine.md): `should_auto_block()` —
+    bare `successful_logon*` → alert/challenge only (score cap ≤70 / silent ≤80,
+    never 100 alone); silent hours no FW block; whitelist enforce unblock.
+  - [`agent/gui-control-center.md`](agent/gui-control-center.md): whitelist
+    SoT + immediate clear of matching `HP-BLOCK` / `HP-INTEL`.
+  - [`cloud/threat-intel-ingest.md`](cloud/threat-intel-ingest.md): ACK stats
+    aligned with client 4.9.7.
+- INDEX / FLEET matrix rows for intel apply + auto-block policy.
+- [`api/07-lifecycle-sessions.md`](api/07-lifecycle-sessions.md): uninstall
+  PIN gate lifecycle events (`uninstall_requested` / `pin_failed` /
+  `aborted` / `authorized`).
+
 ## 1.4.8 — 2026-07-22 (Server Management — dashboard ↔ client)
 
 - New normative [`agent/server-management.md`](agent/server-management.md):

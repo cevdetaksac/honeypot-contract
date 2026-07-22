@@ -1,6 +1,7 @@
 # Threat engine (v4 HTTP) — local detection
 
 > **Contract VERSION:** root `VERSION`  
+> **Client policy:** bare-success / whitelist / silent-hours FW rules ≥ **4.9.7**  
 > **≠** cloud intel bundle → [`../api/09-threat-intel.md`](../api/09-threat-intel.md)  
 > **Auth:** Bearer  
 > **Kaynak:** `routes_v4.py`, `schemas.py`, archive v4 (normalize)
@@ -177,15 +178,51 @@ Cloud `auto_blocks` + `block_rules` upsert. Response `extend_duration` / `perman
 
 ---
 
-## Skor / auto-block (client)
+## Skor / auto-block (client ≥ **4.9.7**)
 
-| Kural (özet) | Not |
-|--------------|-----|
-| Threshold | `threats/config.auto_block_threshold` (default 80) |
+### `should_auto_block()` (normative)
+
+Bare successful logon **must not** create `HP-BLOCK-*`:
+
+| `threat_type` / category | Auto HP-BLOCK? |
+|--------------------------|----------------|
+| `successful_logon`, `successful_logon_rdp`, `successful_logon_network`, `sql_successful_logon`, `rdp_connection_succeeded`, `rdp_session_logon`, `rdp_login_success` | **Hayır** (alert / e-posta / logon_challenge) |
+| `brute_force_then_access` / `failed_then_success` (fail eşiği sonrası başarı) | **Evet** |
+| `honeypot_credential` / bilinen kötü IOC | **Evet** |
+| `protection.block_rules` eşiği (fail sayacı) | **Evet** |
+| Explicit operator `block_ip` komutu | **Evet** |
+| Canary / VSS / tamper / ransomware | **Evet** (`threat_score` 100 bu sınıflar için) |
+
+### Bare success skor tavanı
+
+| Durum | Tavan |
+|-------|------:|
+| Yeni / dış IP başarılı giriş | **40–70** (tipik RDP success ~55) |
+| Sessiz saat içinde başarı | **≤ 80** |
+| Bare success tek başına | **≥ 80 yasak**; **100 yasak** |
+| 100 | Yalnız canary / VSS / tamper / ransomware |
+
+`threat_score` alert alanında bare success için **kümülatif 100** üretilmez
+(stacked 1149+21+4624 → cap). Severity `critical` (≥81) bare success’ten
+gelmez; urgent delivery `high` + `notify_urgent` olabilir, `block_ip` olmaz.
+
+### Whitelist (zorunlu)
+
+- `whitelist_ips` / `whitelist_subnets` → skor düşürülür (**≤ ~25**) ve
+  **asla** `HP-BLOCK` / `HP-INTEL` eklenmez.
+- Zaten engelli bir whitelist IP tespit edilirse client **derhal kaldırır**
+  (`enforce_whitelist_unblocks` on config apply / `block_ip` skip path).
+- Cloud SoT: [`gui-control-center.md`](./gui-control-center.md) whitelist
+  invariantı.
+
+### Diğer
+
+| Kural | Not |
+|-------|-----|
+| Threshold (config) | `auto_block_threshold` (threat score 0–100; GUI) — bare success path’te block tetiklemez |
 | Rate limit | max per hour/day |
-| Whitelist | IP/subnet → block yok |
-| Silent hours | config’e göre agresif logoff/disable |
-| Brute fail | ayrıca `protection.block_rules` eşikleri |
+| Silent hours | Bare success → **alert / challenge**; firewall kesmez (≤4.9.6’da agresif block vardı) |
+| Brute fail | `protection.block_rules` eşikleri (4625 flood) → HP-BLOCK hâlâ geçerli |
 
 ---
 
@@ -272,5 +309,8 @@ motor sessizce ölürse **ikincil güvenlik ağıdır**; SoT tamper urgent’tir
 
 - [ ] Config poll → `protection.block_rules` + auto_block_* dolu
 - [ ] 4625 flood → urgent + (eş) auto-block → HP-BLOCK
+- [ ] Ofis IP başarılı RDP (4624/1149) → alert olabilir, **HP-BLOCK yok**, skor ≤70 (sessiz ≤80)
+- [ ] Whitelist IP → block yok; önceden engelli ise anında kaldırılır
+- [ ] Brute sonra başarı → yüksek skor + `brute_force_then_access` block hâlâ çalışır
 - [ ] health/report 200
 - [ ] ThreatFox/CISA’ya client isteği **yok** (sadece `09` bundle)

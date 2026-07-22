@@ -18,6 +18,8 @@
 | Dashboard Server Management (users/processes/services + `list_services`) | `agent/server-management.md` | target ≥ **4.9.4** (cloud UI live ≥ **1.4.8**) |
 | One GUI/session + motor watchdog | `api/08-architecture.md` | 4.5.58–59 |
 | Threat-intel GET/304/ACK | `api/09-threat-intel.md` | **4.5.61** |
+| Threat-intel `HP-INTEL-*` apply + orphan/policy reconcile + ACK skipped/removed | `api/09-threat-intel.md`, `api/06-firewall-blocks.md` | **4.9.7** |
+| Bare successful_logon no auto HP-BLOCK; silent-hours alert-only FW; whitelist enforce unblock | `agent/threat-engine.md`, `agent/gui-control-center.md` | **4.9.7** |
 | Canary sort-bait + quarantine IPC | `agent/ransomware-shield.md` | 4.5.62–64 |
 | Canary UX (no local scare, OneDrive skip) | `agent/ransomware-shield.md` | **4.5.65** |
 | `protection.block_rules` apply + WS intel push | `agent/register-protection.md`, `api/09` | **4.5.66** |
