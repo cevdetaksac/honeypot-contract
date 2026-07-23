@@ -1,5 +1,18 @@
 # Changelog — honeypot-contract
 
+## 1.4.15 — 2026-07-23 (Network Guard — operator maintenance mode)
+
+- [`agent/network-guard.md`](agent/network-guard.md): **maintenance mode** for
+  intentional VPN/IP/drive work:
+  1. `network_maintenance_start` — pause detect + `auto_restore_network`
+  2. operator changes network
+  3. optional `network_snapshot` / end with `snapshot:true`
+  4. `network_maintenance_end` — resume protection
+- Local file `network_guard_maintenance.json` survives restart; cloud
+  `enabled:true` sync must **not** clear maintenance.
+- STATUS `network_guard.maintenance` + GUI/IPC `NG_MAINT_*`.
+- Target client **≥ 4.9.12**.
+
 ## 1.4.14 — 2026-07-23 (Network Guard — dashboard panel + golden baseline + auto network restore)
 
 - [`agent/network-guard.md`](agent/network-guard.md) expanded for dashboard UX:

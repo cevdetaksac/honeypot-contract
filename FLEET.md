@@ -22,6 +22,7 @@
 | Realtime presence (`presence`/`goodbye` + `POST /api/presence`) | `api/11-presence-realtime.md` | cloud ≥ **1.4.12**; target client **≥ 4.9.8** |
 | System Recovery (policy/service/firewall allowlist snapshot + drift + confirm restore) | `agent/system-recovery.md` | cloud ≥ **1.4.13**; target client **≥ 4.9.12** |
 | Network Guard dashboard panel (live IP/adapters + golden baseline + diff + restore) + `auto_restore_network` | `agent/network-guard.md` | cloud ≥ **1.4.14**; target client **≥ 4.9.12** |
+| Network Guard maintenance mode (pause → change VPN/IP → snapshot → resume) | `agent/network-guard.md` | cloud ≥ **1.4.15**; target client **≥ 4.9.12** |
 | One GUI/session + motor watchdog | `api/08-architecture.md` | 4.5.58–59 |
 | Threat-intel GET/304/ACK | `api/09-threat-intel.md` | **4.5.61** |
 | Threat-intel `HP-INTEL-*` apply + orphan/policy reconcile + ACK skipped/removed | `api/09-threat-intel.md`, `api/06-firewall-blocks.md` | **4.9.7** |

@@ -219,10 +219,12 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `remote_logon` | `username`, `password`, `mode`, `reboot` | Kimlikle uzaktan oturum (reconnect / autologon+reboot) — ≥4.6.0 |
 | `set_autologon` / `clear_autologon` | `username`, `password`, `count` | Autologon arm/temizle — ≥4.6.0 |
 | `reboot` | `grace_sec`, `reason` | Onaylı yeniden başlatma — ≥4.6.0 |
-| `network_snapshot` | — | Golden ağ baseline al (bilinçli IP değişiminden **önce**) — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
+| `network_snapshot` | — | Golden ağ baseline al (bilinçli IP değişiminden **önce** veya bakımda) — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
 | `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Baseline'dan ağ/sürücü/IPv4 geri yükle. **Mutate** = confirm. `dry_run:true` = plan only. `targets`: adapter\|ipv4\|dns\|firewall\|mapped_drive. ≥4.7.0 |
 | `list_network_baseline` | — | Golden + **live** adapters (ipv4/dns) + history + drift — rich ≥4.9.12 |
 | `network_diff` | `version?` | Live vs golden (veya history sürümü) değişiklik listesi — ≥4.9.12 |
+| `network_maintenance_start` | `reason?` | Bakım: detect + auto_restore pause (VPN/IP işi) — ≥4.9.12 / contract 1.4.15 |
+| `network_maintenance_end` | `snapshot?` (default **true**) | Bakımı bitir; varsayılan yeni golden al + korumayı aç — ≥4.9.12 |
 | `system_recovery_snapshot` | — | Saldırı yüzeyi (policy/service/firewall) snapshot — ≥4.9.12 ([`../agent/system-recovery.md`](../agent/system-recovery.md)) |
 | `list_system_recovery` | — | Recovery baseline sürümleri/özeti — ≥4.9.12 |
 | `system_recovery_diff` | `version?` | Baseline vs canlı allowlist diff — ≥4.9.12 |

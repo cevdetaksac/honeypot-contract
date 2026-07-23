@@ -71,12 +71,22 @@ Kapsanan durum:
 
 ### Operatör iş akışı — bilinçli IP/DNS değişimi
 
-1. Dashboard → **Ağ yedeği al** (`network_snapshot`) — yeni golden (DHCP/DNS/IP kaydı)
-2. Host’ta IP/DNS’i değiştir (DHCP veya static)
-3. İsteğe bağlı ikinci snapshot (değişiklik sonrası “yeni iyi” durum)
-4. Client live ≈ golden → drift yok, `auto_restore_network` dokunmaz
+**Tercih edilen: bakım modu (1.4.15)**
 
-Saldırı senaryosu (snapshot atlanmadan IP bozulursa): live ≠ golden →
+1. Dashboard/GUI → **Korumayı durdur (bakım)** (`network_maintenance_start`)
+2. Host’ta VPN / IP / DNS / mapped drive değişikliklerini yap
+3. **Mevcut ayarları yedekle** (`network_snapshot`) veya doğrudan
+   **Yedekle ve korumayı başlat** (`network_maintenance_end` + `snapshot:true`)
+4. Client live ≈ yeni golden → drift yok
+
+Bakım açıkken: detect loop ve `auto_restore_network` **kapalı**. Bayrak
+`ProgramData\...\network_guard_maintenance.json` — reboot sonrası da kalır;
+cloud `protection.network_guard.enabled=true` sync bakımı **silmez**.
+
+**Kısa yol (bakım olmadan):** önce `network_snapshot`, sonra host değişikliği
+(hata riski: snapshot unutulursa auto-restore eski golden’a çeker).
+
+Saldırı senaryosu (bakım yok, snapshot yok): live ≠ golden →
 `auto_restore_network` (veya dashboard **Geri yükle**) golden’a döner.
 
 ---
@@ -326,6 +336,8 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir
   "auto_kill": false,
   "auto_restore": false,
   "auto_restore_network": true,
+  "maintenance": false,
+  "maintenance_started_at": null,
   "live": {
     "adapters": [
       { "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
