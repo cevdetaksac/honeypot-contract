@@ -1,5 +1,16 @@
 # Changelog — honeypot-contract
 
+## 1.4.16 — 2026-07-23 (VSS delete intent + ZT/branding decisions)
+
+- [`agent/ransomware-shield.md`](agent/ransomware-shield.md): **VSS wipe intent**
+  (`vssadmin delete shadows` / WMI / wbadmin) → immediate kill + quarantine arm
+  **without** waiting for shadow-count drop. Clarify: `HP-BLOCK` ≠ VSS deny.
+  No IFEO on admin VSS tools. Target client **≥ 4.9.14**.
+- [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md): asymmetric envelope /
+  operator-keyset remain **Design-only**; cloud must not emit `version:2` enforce yet.
+- [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md): no big-bang rename of
+  `HP-BLOCK` / `CloudHoneypot*` / API paths; marketing UI names are free.
+
 ## 1.4.15 — 2026-07-23 (Network Guard — operator maintenance mode)
 
 - [`agent/network-guard.md`](agent/network-guard.md): **maintenance mode** for

@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.15** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK** + **Server Management inventory** + recommended **≥ 4.9.7** for `HP-INTEL-*` apply + bare-success no auto-block + whitelist enforce + cloud reject/lift ≥ **1.4.11** + **realtime presence** target **≥ 4.9.8** / contract **≥ 1.4.12** + **system recovery** target **≥ 4.9.12** / contract **≥ 1.4.13** + **network guard panel / auto_restore_network** ≥ **1.4.14** + **network guard maintenance mode** ≥ **1.4.15**)
+> **VERSION 1.4.16** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + … + **network guard maintenance** ≥ **1.4.15** + **VSS delete intent** target **≥ 4.9.14** / contract **≥ 1.4.16**; ZT asymmetric still Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding wire IDs stable — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
@@ -11,6 +11,8 @@
 |-------|------|-------|
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
 | [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
+| [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT asymmetric envelope / keys: Design-only; cloud do/don’t | Decision (1.4.16) |
+| [cloud/PRODUCT_BRANDING.md](cloud/PRODUCT_BRANDING.md) | HP-BLOCK / CloudHoneypot wire identity stays; no big-bang rename | Decision (1.4.16) |
 | [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 operator public key distribution | Design-only |
 | [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 asymmetric envelope + TPM PoP gate | Design-only |
 

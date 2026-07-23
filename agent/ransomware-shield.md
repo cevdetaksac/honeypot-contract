@@ -33,8 +33,15 @@ Erken ransomware tespiti (canary / VSS / şüpheli process) — **günlük kulla
 | Canary MODIFIED / DELETED / SIZE | Score 100; dashboard urgent API |
 | | Yerel tray/toast: **suppress** (`suppress_local_notify`) |
 | | Quarantine **hemen arm**; suspect `open_files` ≤4s |
-| VSS silme | Critical + quarantine arm |
+| VSS silme (count drop) | Critical + quarantine arm |
+| **VSS silme intent** (`vssadmin delete shadows` / WMI / wbadmin) | **≥4.9.14 / contract 1.4.16:** score≥95 → **hemen** `taskkill` + quarantine arm — **gölge sayısı düşmesini bekleme**. `vssadmin`/`wmic`/`powershell`/`cmd`/`wbadmin` **IFEO yok** (kendi inventory’mizi kırar). |
 | Cloud intel alone | Lockdown **yok** (canary/VSS yerel otorite) |
+
+### VSS — Gemini düzeltmesi
+
+`HP-BLOCK-*` = Windows Firewall **IP** kuralı. VSS delete komutunu “bloklamaz”.  
+VSS yanıtı: process kill + quarantine + urgent `ransomware_vss_delete_intent`.  
+Önleyici WDAC/AppLocker deny = ilerideki paket (henüz normative değil).
 
 IFEO / kill: SearchIndexer, Defender, OneDrive, shell host’lar **korumalı**.
 
