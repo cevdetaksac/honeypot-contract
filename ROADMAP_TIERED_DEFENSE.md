@@ -1,6 +1,6 @@
 # Tiered Defense & Resilience Roadmap
 
-> **Status:** Planning (living document)  
+> **Status:** Planning (living document) — **final review 2026-07-23**  
 > **Audience:** Client · Cloud/API · Dashboard · QA  
 > **Related:** [`agent/network-guard.md`](agent/network-guard.md) · [`agent/ransomware-shield.md`](agent/ransomware-shield.md) · [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) · shipped soft surface inform **1.4.17 / client ≥4.9.15**  
 > **Repo:** https://github.com/cevdetaksac/honeypot-contract
@@ -22,11 +22,15 @@ Her özellik şu süzgeçten geçer:
 | Process suspend/kill+quarantine (kırmızı) | Temp’ten her EXE’yi dondurarak başlat |
 | Yanlış alarm çıkışı: resume / whitelist / unlock | `under_attack` panik her soft olayda |
 | Observe → Balanced → Paranoid (müşteri seçer) | Tek “herkese agresif” default |
+| **Saldırganın bilerek tetiklemesiyle self-DoS yok** | Tek sinyal → felç / ağ kes / “en agresif moda düş” |
 
 **Özet tez:**  
 LockBit insan onayını beklemez — **doğru**.  
 Ama “ağı öldür” default brick + müşteri paniğidir.  
 **Süreci dondurmak ≠ sunucuyu kör etmek.** OOB/cloud erişimi process karantinasını güvenli kılar; ağ izolasyonu yalnız bilinçli politika veya armed panic ile gelir.
+
+**Anti-bait tez:**  
+Saldırgan ürünü tanıyıp canary’ye dokunarak, imzayı bozarak veya alarm yorgunluğu yaratarak **bizi kendi silahımızla vurmamalı**. Otomasyon **saldırgan sürecini** durdurur; **sunucuyu ve yönetici erişimini** teslim etmez.
 
 ---
 
@@ -38,7 +42,7 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 |-------|---------------|--------------|
 | Impossible travel (alışılmadık geo/ASN + başarılı RDP) | Soft alarm uyumlu; bare `successful_logon` zaten soft | **P1** — `suspicious_session` |
 | Clipboard / süper hızlı yazım → auto-suspend | Yüksek FP (admin PS yapıştırır); brick | **P3 observe-only** — otomatik yok |
-| Canary / VSS → oto ağ izolasyonu (yalnız cloud IP) | Brick riski; internet-koruma hedefiyle çelişir | **P2** — yalnız Paranoid / armed panic |
+| Canary / VSS → oto ağ izolasyonu (yalnız cloud IP) | Brick + **self-DoS bait** | **P2** — yalnız Paranoid / armed; asla tek sinyal |
 | Temp/Public’ten bilinmeyen EXE → Suspended start | EDR FP; `auto_contain` hard-off dersi | **P3** — observe; default off |
 | Session JPEG snapshot (şüpheli anda) | Brick yok; RD stack hazır; rate-limit şart | **P0** |
 
@@ -50,6 +54,16 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 | Sarı = dondur + onay bekle | Doğru denge | **P1** |
 | Observe / Balanced / Paranoid politikalar | SaaS için zorunlu | **P0** (kontrat + cloud toggle) |
 
+### 1.3 Ürün ekibi — process-first otomasyon
+
+> Ağı öldürmeden, LockBit ihtimali aşırı yüksek süreçlerde anında **suspend**;  
+> meşruysa yönetici **resume / whitelist** ile devam ettirsin.
+
+**Karar:** Kabul. Ayrı bayrak `auto_suspend_critical` (balanced+).  
+Eski Network Guard bomb-path `auto_contain` ile karıştırılmaz.  
+Mevcut canary / VSS delete intent (kill + quarantine) kırmızı çekirdek olarak kalır.  
+Suspend **yalnız şüpheli PID** — korumalı sistem süreçleri asla.
+
 ### 1.4 Gemini — Policy delivery (JSON matris · sync · imza · tamper)
 
 | Öneri | Değerlendirme | Yol haritası |
@@ -58,8 +72,15 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 | WS push + boot/heartbeat **pull** `policy_version` | Mevcut `threat_config_updated` ile uyumlu | **P0-1b** |
 | Ajan “aptal itaatkâr” rule engine | Kabul; hard safety matris üstünde | **P0-1** |
 | İmzalı yerel policy cache | Kabul (HMAC) | **P0-1c** |
-| Tamper → en agresif + **ağı kes** | **Red** — brick vektörü; LKG/observe + alert | §6 · §3.1 Adım D |
+| Tamper → en agresif + **ağı kes** | **Red** — self-DoS / brick vektörü | §3.2 · §6 |
 | Balanced örnekte canary/VSS → `auto_isolate_network` | **Red default** — process `kill_quarantine` | §3.1 tablo |
+
+### 1.5 Ürün — adversarial self-DoS / “sinir ucu” bait
+
+> Saldırgan uygulamayı bilerek tetikleyip kendi kendimizi imha ettirmesin.
+
+**Karar:** Birinci sınıf tasarım kısıtı — §3.2.  
+Tek canary dokunuşu / imza bozma / alert spam → **asla** ağ kesme veya “paranoid’e düş”.
 
 ---
 
@@ -76,7 +97,8 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
    Mavi (Inform)           Sarı (Suspect)          Kırmızı (Critical)
    soft notify             suspend PID?            suspend/kill+Q
    no under_attack         network intact          network: default OFF
-   surface_inform          ask operator            (+ isolate only if armed)
+   surface_inform          ask operator            (+ isolate only if armed
+                                                   AND multi-signal / confirm)
 ```
 
 ### 2.1 Kırmızı — yüksek kesinlik
@@ -89,11 +111,11 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 
 **Aksiyon (Balanced+):**
 
-1. Process suspend **veya** kill (mevcut VSS/canary yolunu bozma)  
+1. Process suspend **veya** kill (**yalnız tetikleyen / şüpheli PID**)  
 2. Quarantine arm (IFEO — admin VSS araçlarına değil)  
 3. Urgent alert (`force_urgent` yalnız kırmızı)  
 4. Session JPEG snapshot (rate-limit)  
-5. **Ağ kesme: default kapalı**  
+5. **Ağ kesme: default kapalı** — tek kırmızı sinyal isolate etmez (§3.2)  
 
 **Çıkış kapıları:** `resume_process` · `allow_process` / whitelist · `unlock_ransomware_quarantine`
 
@@ -125,7 +147,7 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 |-----|---------|---------------|----------------|
 | **observe** | Alarm only | Off | İlk 1–2 hafta / lab |
 | **balanced** (önerilen) | Kırmızı: auto suspend/kill+Q; Sarı: suspend+onay | Off | Çoğu sunucu |
-| **paranoid** | Kırmızı+sarı agresif | Opsiyonel isolate (müşteri arm + risk onayı) | Kritik DB |
+| **paranoid** | Kırmızı+sarı agresif | Opsiyonel isolate (müşteri arm + risk onayı + tercihen multi-signal) | Kritik DB |
 
 **Cloud alan (taslak):** `protection.defense_policy` = `observe|balanced|paranoid`  
 
@@ -134,6 +156,7 @@ Ama “ağı öldür” default brick + müşteri paniğidir.
 - Yeni kurulumda UI **observe** önerir (1–2 hafta), sonra balanced’a geçiş CTA  
 - Paranoid network isolate kurulurken açık “brick/RDP kesilir” onayı  
 - Client: process `auto_contain` bomb-path hard-false kalır; kırmızı yol `auto_suspend_critical` / mevcut RS yolları ile gider  
+- **Hiçbir hata/tamper yolu sessizce paranoid+isolate’e yükseltmez**
 
 Preset’ler §3.1 **kural matrisine** derlenir; ileride Custom Policy aynı şemayı satabilir.
 
@@ -171,26 +194,23 @@ Mevcut `threat_config_updated` + `GET /api/threats/config` omurgası üzerine ot
 
 **Aksiyon sözlüğü (taslak):**  
 `alert_only` · `inform_only` · `suspend_process` · `kill_quarantine` ·
-`auto_isolate_network` (yalnız paranoid/armed — §0) · `ask_operator`
+`auto_isolate_network` (yalnız paranoid/armed — §0 / §3.2) · `ask_operator`
 
 | Gemini örnek kural | Bizim karar |
 |--------------------|-------------|
-| `honeytoken_access: auto_isolate_network` | **Red (balanced default)** → `kill_quarantine` / suspend; isolate ≠ default |
+| `honeytoken_access: auto_isolate_network` | **Red (balanced default)** → `kill_quarantine`; isolate ≠ default / ≠ tek sinyal |
 | `vss_deletion: auto_isolate_network` | **Red (balanced)** → mevcut `kill_quarantine` (4.9.14) |
 | `suspicious_rdp: suspend_process` | **P1** — balanced’ta önce `alert_only` veya `ask_operator`; paranoid’te suspend |
-| `high_io_rate: suspend_process` | **Red default** → `alert_only` (FP); skor+origin ile sarıya yükselir |
-| Custom “balanced ama X’te isolate” | **P2+** — override matrisi; UI risk onayı |
+| `high_io_rate: suspend_process` | **Red default** → `alert_only` (FP + bait) |
+| Custom “balanced ama X’te isolate” | **P2+** — override + risk onayı + audit |
 
 ### Adım B — Senkronizasyon push + pull (**Kabul**)
 
 | Mekanizma | Ne |
 |-----------|-----|
-| **Push** | Dashboard Kaydet → mevcut `threat_config_updated` (veya `defense_policy_updated`) → ajan `GET /api/threats/config` |
-| **Pull / fail-safe** | Boot + periyodik: ajan `policy_version` bildirir; cloud stale ise güncel matrisi döner (heartbeat/health veya config GET) |
+| **Push** | Dashboard Kaydet → mevcut `threat_config_updated` → ajan `GET /api/threats/config` |
+| **Pull / fail-safe** | Boot + periyodik: ajan `policy_version` bildirir; cloud stale ise güncel matrisi döner |
 | **Offline** | Son **imzalı** matris ProgramData’da; internet yokken o uygulanır |
-
-Yeni WS tipi şart değil; mevcut config push yeterli. İsim netliği için
-`defense_policy` bloğu threats/config içinde taşınabilir.
 
 ### Adım C — Karar ağacı / “aptal ama itaatkâr” ajan (**Kabul**)
 
@@ -199,118 +219,144 @@ Event → RuleEngine.lookup(event_type) → action from signed matrix
        → alert_only | suspend | kill_quarantine | inform_only | …
 ```
 
-- Zeka matriste; client kodu aksiyon primitiflerini uygular.  
-- Hard safety **matrisin üstünde** kalır: örn. `auto_contain` bomb-path,
-  IFEO-on-vssadmin yasakları, additive surface → asla isolate — cloud
-  `auto_isolate_network` gönderse bile balanced/observe **reddeder** (client invariant).
+Hard safety **matrisin üstünde**: bomb-path contain, IFEO-on-vssadmin yasak,
+additive → asla isolate, **§3.2 anti-bait**, korumalı PID listesi.
+Cloud `auto_isolate_network` gönderse bile observe/balanced **reddeder**.
 
 ### Adım D — Offline + imzalı config + tamper (**Kabul, fail-mode düzeltilerek**)
 
 | Gemini önerisi | Değerlendirme |
 |----------------|---------------|
-| Policy JSON yerel cache | **Kabul** — ProgramData (Registry şart değil) |
-| HMAC / imza ile bütünlük | **Kabul** — command/baseline ile aynı anahtar ailesi |
-| İmza bozuk → **en agresif + ağı kes** | **Red** — saldırgan imzayı bozarak brick tetikleyebilir; FP = felç |
+| Policy JSON yerel cache | **Kabul** — ProgramData |
+| HMAC / imza ile bütünlük | **Kabul** |
+| İmza bozuk → **en agresif + ağı kes** | **Red** — saldırgan bilinçli self-imha |
 
-**Bizim tamper fail-mode (zorunlu):**
+**Tamper fail-mode:** LKG → else **observe** → tamper alert → **ağ kesme yok**.
 
-1. İmza geçersiz / dosya yok → **last-known-good** imzalı kopya (varsa)  
-2. LKG yok → güvenli default **`observe`** (veya built-in balanced-without-isolate)  
-3. Urgent `agent_tamper` / `defense_policy_tamper` — `under_attack` yalnız politika ile  
-4. **Ağı kesme yok** (isolate yalnız §2 paranoid/armed)  
-5. DACL / self-protection mevcut persistence modeline yaslanır  
+### Bugünkü tamper durumu
 
-> Gemini’nin “bankaya satılır olgunluk” hedefi imza + sync ile gelir;  
-> “tamper = ağ öldür” ile değil.
+- Komut / baseline HMAC · guardian persistence · config apply var  
+- Defense rule matrix + signed policy cache → P0  
+- Full encrypt şart değil; imza + DACL + LKG yeterli başlangıç  
 
-### Bugünkü tamper durumu (kısa cevap)
+---
 
-- Komutlar: HMAC (`security.command_signing`)  
-- Network/System Recovery baseline: HMAC  
-- Guardian / motor stand-down: persistence-and-tamper  
-- Threats/config apply: var; **defense rule matrix + signed policy cache** henüz yol haritasında (P0/P1)  
-- Yerel config’i full encrypt şart değil; **imza + DACL + tamper alert** yeterli başlangıç
+## 3.2 Anti-bait / adversarial self-DoS (zorunlu tasarım)
+
+Saldırgan ürünü bilerek “sinir uçlarına” basabilir. Amaç çoğu zaman şifrelemek
+değil; **yanlış otomatizmle erişimi öldürmek**, alarm yormak veya restore savaşını
+başlatmak.
+
+### Tipik bait senaryoları
+
+| Bait | Saldırgan ne yapar | Tehlikeli otomatizm | Bizim yanıt |
+|------|--------------------|---------------------|-------------|
+| Canary dokunuşu | Bilinen tuzak dosyaya yazar | Ağ izolasyonu / tüm oturumu kes | Yalnız **yazar PID** kill/Q; RDP/DNS ayakta |
+| Policy imza boz | `defense_policy.json` truncate/edit | “En agresif + isolate” | LKG/observe + tamper alert |
+| Alert flood | Canary’ye tekrar tekrar dokun / sahte skor | Urgent spam → yorgunluk / auto-escalate | Dedupe · rate-limit · escalate yok |
+| VSS list spam | `vssadmin list` (silme değil) | Yanlış quarantine | Zaten list ≠ intent (hijyen) |
+| Korumalı süreci yemle | İsmi “encryptor” gibi gösteren ama kritik PID | Suspend lsass/services | **Protected images** hard deny |
+| Golden zehirleme | IP boz → periyodik baseline’a yazdır | Restore ile kalıcı hasar | Golden poison yasağı (1.4.14) — korunur |
+| Subtractive sahte | Adapter kapat → auto_restore döngüsü | Flap / DoS | Restore dedupe (≥5 dk); maintenance yolu |
+| Isolate armed host | Tek canary ile paranoid isolate | Yönetici kilit dışı | Isolate: **multi-signal veya insan arm**; tek canary yetmez |
+| Cloud’a sahte “daha agresif policy” | Çalıntı token ile matrix | Ani isolate | Command HMAC + destructive confirm; client balanced hard-reject isolate |
+
+### Tasarım kuralları (P0’dan itibaren invariant)
+
+1. **Blast radius = tetikleyen süreç** (mümkün olduğunca); asla “makineyi kör et”.  
+2. **Tek zayıf/bilinen bait sinyali → ağ aksiyonu yok** (canary tek başına isolate etmez).  
+3. **Fail-safe sakinleşir, kızışmaz:** hata/tamper/stale → observe/LKG, never paranoid.  
+4. **Rate-limit / dedupe** tüm auto aksiyonlarda (alert + suspend + snapshot + restore).  
+5. **Protected process / path** listesi aşılamaz (matrix bile).  
+6. **Auto-escalate yok:** N alert ≠ otomatik isolate.  
+7. **Paranoid isolate** için: müşteri arm + (tercihen) ikinci sinyal veya dashboard confirm.  
+8. **OOB hayatta:** ne olursa olsun cloud komut kanalı / motor yeniden bağlanma yolu korunur.
+
+> Canary’ye dokunmak saldırgan için **kendi dropper’ını yakmak** olmalı;  
+> **sunucuyu admin’den koparmak** değil.
 
 ---
 
 ## 4. Fazlar (uygulama sırası)
 
-### P0 — Güçlendirir, brick riski düşük *(sonraki sprint adayı)*
+### P0 — Güçlendirir, brick + self-DoS riski düşük
 
 | ID | İş | Client | Cloud | Kontrat |
 |----|-----|--------|-------|---------|
 | P0-1 | `defense_policy` preset + **rules matrix** (balanced defaults §3.1) | apply + hard safety | threats/config + UI | `agent/` + threats/config |
-| P0-1b | Push: `threat_config_updated` sonrası matrix apply; pull: boot/`policy_version` | CONFIG-SYNC | version compare | 03-control-websocket |
-| P0-1c | İmzalı yerel policy cache + LKG; tamper → observe/LKG (**not** isolate) | ProgramData + verify | sign on emit | persistence-and-tamper |
-| P0-2 | Kırmızı process netleştirme (canary/VSS + critical suspend bayrağı) | RS / NG ayrımı | alert routing | ransomware-shield + policy |
-| P0-3 | Operatör çıkış: resume / allow (whitelist path+hash) | komutlar | confirm UI | 03-control-websocket |
-| P0-4 | Session snapshot (1 JPEG, dedupe ≥5 dk, şüpheli tetik) | RD/capture | urgent attachment / store | api/05 + agent |
-| P0-5 | Soft vs urgent hijyen (kırmızı dışı `under_attack` yok) | alert pipeline | dashboard | hygiene doc |
+| P0-1b | Push/pull `policy_version` | CONFIG-SYNC | version compare | 03-control-websocket |
+| P0-1c | İmzalı cache + LKG; tamper → observe/LKG (**not** isolate) | verify | sign on emit | persistence-and-tamper |
+| P0-2 | Kırmızı process netleştirme (canary/VSS + critical suspend) | RS; yalnız şüpheli PID | alert routing | ransomware-shield |
+| P0-3 | resume / allow (whitelist path+hash) | komutlar | confirm UI | 03-control-websocket |
+| P0-4 | Session snapshot (1 JPEG, dedupe ≥5 dk) | RD/capture | store | api/05 + agent |
+| P0-5 | Soft vs urgent hijyen | alert pipeline | dashboard | hygiene |
+| P0-6 | **Anti-bait invariants** dokümante + test: tek canary≠isolate; tamper≠escalate; protected PID; action dedupe | unit/lab | — | bu roadmap §3.2 |
 
-**Kabul kriteri:** Balanced lab’de canary/VSS → process durur, RDP/internet ayakta, yönetici resume ile devam. Policy imzası bozulunca ağ kesilmez; tamper alert + observe/LKG.
+**Kabul:** Balanced lab — canary/VSS → şüpheli process durur, RDP/internet ayakta, resume çalışır. İmza bozulunca ağ kesilmez. Bilerek canary spam → isolate yok, alert dedupe.
 
-### P1 — Sarı bölge + kimlik + custom rules UI
+### P1 — Sarı + kimlik + custom rules UI
 
 | ID | İş |
 |----|-----|
-| P1-1 | Impossible travel / suspicious RDP (`suspicious_session`, soft) |
-| P1-2 | Sarı: tek-PID suspend + dashboard İzin ver / Öldür |
-| P1-3 | GUI chip: “Süreç donduruldu — devam ettir” (PIN yok; kill’de confirm) |
-| P1-4 | Geo/ASN baseline (host veya hesap) — privacy-min |
-| P1-5 | Dashboard rule matrix editor (preset + güvenli override; isolate risk banner) |
+| P1-1 | Impossible travel / `suspicious_session` (soft) |
+| P1-2 | Sarı: tek-PID suspend + İzin ver / Öldür |
+| P1-3 | GUI chip: donduruldu → devam ettir |
+| P1-4 | Geo/ASN baseline — privacy-min |
+| P1-5 | Rule matrix editor (isolate override = risk banner + audit) |
+| P1-6 | Alert-fatigue UX: aynı bait ailesi tek kartta birleşir |
 
-**Kabul kriteri:** Meşru admin PS yapıştırması ağ/RDP’yi düşürmez; sarı yanlış alarmda 1 tık resume.
-
-### P2 — Ağ izolasyonu (bilinçli)
+### P2 — Ağ izolasyonu (bilinçli, bait-resistant)
 
 | ID | İş |
 |----|-----|
 | P2-1 | `isolate_host` / `lift_isolation` (confirm) — cloud IP allowlist |
-| P2-2 | Yalnız `paranoid` **veya** armed panic; matrix’te `auto_isolate_network` yalnız bu modlarda apply |
-| P2-3 | Isolate sonrası OOB mesaj + NG/System Recovery geri dönüş |
-| P2-4 | Dual-NIC / VPN lab matrisi (Radmin vb.) |
-| P2-5 | Custom policy: “şu tetikte isolate” — zorunlu risk onayı + audit log |
-
-**Kabul kriteri:** Observe/Balanced’ta asla sürpriz ağ kesilmez; Paranoid’te tek tık lift.
+| P2-2 | Yalnız paranoid / armed; matrix isolate observe/balanced’ta **client reject** |
+| P2-3 | Isolate: **multi-signal veya insan confirm** (tek canary yetmez) |
+| P2-4 | OOB mesaj + NG/System Recovery geri dönüş |
+| P2-5 | Dual-NIC / VPN lab |
+| P2-6 | Custom isolate kuralı — risk onayı + audit; bait simülasyon testi zorunlu |
 
 ### P3 — Ertele / observe-only
 
 | ID | İş | Not |
 |----|-----|-----|
-| P3-1 | Clipboard / typing-speed | Otomatik aksiyon yok |
-| P3-2 | Temp/Public Suspended-start | Default off; shadow metrics |
-| P3-3 | Bilinen ransomware hash intel genişletme | P0 kırmızıya besler |
-| P3-4 | Marka/rename | Ayrı final iş (PRODUCT_BRANDING) |
-| P3-5 | Policy dosyası full encrypt (imza ötesi) | İsteğe bağlı; DACL+HMAC önce |
+| P3-1 | Clipboard / typing-speed | Otomatik yok |
+| P3-2 | Temp/Public Suspended-start | Default off |
+| P3-3 | Ransomware hash intel | P0 kırmızıya besler |
+| P3-4 | Marka/rename | PRODUCT_BRANDING final |
+| P3-5 | Policy full encrypt | İsteğe bağlı |
 
 ---
 
-## 5. Mevcut temel (zaten elimizi güçlendiren)
-
-Bunlar yol haritasının **önkoşulu**; yeniden icat edilmez:
+## 5. Mevcut temel (önkoşul)
 
 | Özellik | Sürüm / kontrat |
 |---------|-----------------|
-| VSS delete intent → kill + quarantine | client ≥4.9.14 / 1.4.16 |
-| Soft network surface inform (additive) | client ≥4.9.15 / 1.4.17 |
-| NG maintenance + golden baseline + subtractive restore | ≥4.9.12 / 1.4.14–15 |
-| System Recovery (policy/service/firewall) | ≥4.9.12 / 1.4.13 |
+| VSS delete intent → kill + quarantine | ≥4.9.14 / 1.4.16 |
+| Soft network surface inform | ≥4.9.15 / 1.4.17 |
+| NG maintenance + golden + subtractive restore | ≥4.9.12 / 1.4.14–15 |
+| Golden poison yasağı | 1.4.14 |
+| System Recovery | ≥4.9.12 / 1.4.13 |
 | Process contain hard-off (bomb-path) | ≥4.7.3 |
-| successful_logon soft skor / no bare auto-block | ≥4.9.7 / 1.4.9+ |
+| successful_logon soft / no bare auto-block | ≥4.9.7 |
 | Remote Desktop v2 / JPEG | ≥4.9.0 |
-| Alert signal hygiene | ≥4.9.11 |
+| Alert signal hygiene + dedupe | ≥4.9.11 |
+| Command HMAC + destructive confirm | api/03 |
 
 ---
 
-## 6. Bilinçli red listesi (şimdilik yapma)
+## 6. Bilinçli red listesi
 
 1. Default **oto Ethernet kes** (canary dokununca)  
 2. Clipboard / rubber-ducky **auto-suspend**  
 3. Her Temp EXE’yi **Suspended start** (fleet default)  
-4. Soft inform / DHCP / kablo takma → urgent / under_attack  
-5. Big-bang `HP-BLOCK` / path rename (branding finalde)  
-6. **Policy imza bozuk → en agresif + ağı kes** (Gemini fail-mode) — brick vektörü  
-7. Balanced preset’te `*_access` / `vss_deletion` → `auto_isolate_network`  
+4. Soft inform / DHCP / kablo → urgent / under_attack  
+5. Big-bang `HP-BLOCK` / path rename  
+6. **Policy imza bozuk → agresif + ağı kes**  
+7. Balanced’ta canary/VSS → `auto_isolate_network`  
+8. **Tek sinyal / bait → isolate veya paranoid’e auto-escalate**  
+9. **N alert sonra otomatik izolasyon** (fatigue escalate)  
+10. Korumalı sistem PID’lerine matrix ile bile suspend  
 
 ---
 
@@ -318,35 +364,59 @@ Bunlar yol haritasının **önkoşulu**; yeniden icat edilmez:
 
 | Metrik | Hedef |
 |--------|--------|
-| Kırmızı FP (meşru admin VSS list / yedek) | Quarantine yanlış arm ≈ 0 (IFEO admin tool yasağı korunur) |
-| Balanced brick olayı (RDP/DNS ölümü) | 0 (ağ izole default off) |
-| Sarı resume süresi (yönetici) | Dashboard’dan &lt; 30 sn |
-| Observe→Balanced geçiş | Kurulum +14 gün CTA |
-| Session snapshot boyutu / sıklık | ≤1 frame / 5 dk / tetik ailesi |
-| Policy tamper (imza bozuk) | Ağ kesilmez; tamper alert + LKG/observe ≤ 1 sn apply |
-| Stale `policy_version` (push kaçmış) | Boot/pull ile ≤ 1 config cycle’da düzelir |
+| Kırmızı FP (meşru VSS list / yedek) | Yanlış IFEO ≈ 0 |
+| Balanced brick (RDP/DNS ölümü) | 0 |
+| **Bait canary → isolate** | 0 (Balanced/Observe) |
+| **Tamper → isolate / paranoid** | 0 |
+| Sarı resume | &lt; 30 sn dashboard |
+| Observe→Balanced CTA | Kurulum +14 gün |
+| Snapshot | ≤1 / 5 dk / tetik ailesi |
+| Policy tamper | LKG/observe ≤1 sn; ağ ayakta |
+| Stale policy_version | ≤1 config cycle |
+| Alert flood (aynı canary) | Tek urgent penceresi / dedupe |
 
 ---
 
-## 8. Gelen öneriler kuyruğu *(sonra ekle)*
-
-> Yeni Gemini / ekip / müşteri önerileri buraya tarih + özet + (Tut/Ertele/Red) ile yazılır.  
-> Onaylananlar ilgili P0–P3 tablosuna ID ile taşınır.
+## 8. Gelen öneriler kuyruğu
 
 | Tarih | Kaynak | Özet | Karar | Faz |
 |-------|--------|------|-------|-----|
-| 2026-07-23 | Gemini | Impossible travel, clipboard, oto izolasyon, Temp suspend, session snapshot, tiered policy | Snapshot+policy+process-first kabul; ağ/clipboard/Temp ertele | P0–P3 |
+| 2026-07-23 | Gemini | Impossible travel, clipboard, oto izolasyon, Temp suspend, session snapshot, tiered policy | Snapshot+policy+process-first; ağ/clipboard/Temp ertele | P0–P3 |
 | 2026-07-23 | Ürün | Kırmızı process auto-suspend + resume/whitelist | Kabul | P0 |
-| 2026-07-23 | Gemini | Policy JSON matrisi, push/pull sync, rule engine, imzalı cache; tamper→agresif+ağ kes | Matris+sync+imza+LKG **kabul**; balanced isolate default **red**; tamper→isolate **red** | §3.1 · P0-1* · P1-5 · P2-5 |
+| 2026-07-23 | Gemini | Policy matris, push/pull, rule engine, imzalı cache; tamper→agresif+ağ kes | Matris+sync+imza+LKG kabul; tamper/isolate default red | §3.1 · P0-1* |
+| 2026-07-23 | Ürün | Saldırgan bilerek tetikleyerek self-imha / sinir ucu bait | Anti-bait birinci sınıf kısıt | §0 · §3.2 · P0-6 · P2-3 |
 | | | *(sonraki öneriler…)* | | |
 
 ---
 
 ## 9. Sonraki somut adım
 
-1. Bu belgeyi gözden geçir · §8’e yeni önerileri ekle  
-2. P0 kontrat taslağı: `defense_policy` + **rules matrix** + signed cache + snapshot + allow/resume  
-3. Client lab: Balanced + canary/VSS + resume; policy tamper smoke (ağ ayakta kalmalı)  
-4. Cloud UI: preset seçici → sonra P1 matrix editor  
+1. Bu belge **final review** onayından sonra P0 kontrat taslağı  
+2. P0: matrix + signed cache + resume/allow + snapshot + **anti-bait testleri**  
+3. Lab: Balanced canary/VSS + bilinçli canary spam + policy tamper (ağ ayakta)  
+4. Cloud UI: preset → sonra P1 matrix editor  
 
-**Uygulama başlamadan:** §0 filtresi + §6 red listesi ihlal edilmez.
+**Uygulama başlamadan:** §0 + §3.2 + §6 ihlal edilmez.
+
+---
+
+## 10. Final review checklist (2026-07-23)
+
+| # | Soru | Durum |
+|---|------|--------|
+| 1 | Process-first otomasyon (suspend/kill+Q) balanced’ta var mı? | Evet — P0 |
+| 2 | Ağ izolasyonu default off mu? | Evet — P2 / paranoid only |
+| 3 | Soft surface inform (mavi) shipped referansı var mı? | Evet — 1.4.17 / 4.9.15 |
+| 4 | Policy matris + push/pull + imza planlı mı? | Evet — §3.1 / P0-1* |
+| 5 | Tamper fail-mode brick üretmiyor mu? | Evet — LKG/observe |
+| 6 | Saldırgan bait / self-DoS ele alındı mı? | Evet — §3.2 / P0-6 |
+| 7 | Tek canary → isolate yasak mı? | Evet — red list #8 · P2-3 |
+| 8 | Resume/whitelist çıkış kapısı var mı? | Evet — P0-3 |
+| 9 | Observe onboarding panik azaltıyor mu? | Evet — §3 |
+| 10 | Clipboard/Temp auto-aksiyon ertelendi mi? | Evet — P3 |
+| 11 | Mevcut VSS/canary/NG/SR temeli yeniden icat edilmiyor mu? | Evet — §5 |
+| 12 | Faz sırası brick-safe mi? (P0 process → P1 sarı → P2 ağ) | Evet |
+
+**Review sonucu:** Yol haritası uygulama için yeterli olgunlukta.  
+İlk kod/kontrat sprint’i = **P0** (matrix + anti-bait + resume + snapshot).  
+P2 isolate, anti-bait testleri geçmeden production default olamaz.
