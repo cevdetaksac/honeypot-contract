@@ -1,112 +1,91 @@
 # Console Winlogon / pre-logon Remote Desktop
 
-> **Contract VERSION:** root `VERSION` (**1.4.22**)  
-> **Client target:** ≥ **4.9.21** (wire); **non-black Winlogon capture → target ≥ 4.9.26** (see § Client P0)  
+> **Contract VERSION:** root `VERSION` (**1.4.23**)  
+> **Client wire:** ≥ **4.9.21** · **sibling pre_logon + named Winlogon:** ≥ **4.9.26**  
 > **Canonical RD API:** [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
-> **Cloud site:** `https://honeypot.yesnext.com.tr` (dashboard remote + `/remote/app`)
+> **Cloud site:** `https://honeypot.yesnext.com.tr`
 
-Kimse logon değilken (veya kilit/Winlogon yüzeyinde) agent **console WinSta0** üzerinden
-`Winlogon` (veya input) desktop’unu mirror eder; operatör stream üzerinde k.adı/şifre yazar.
-
----
-
-## Cloud / dashboard (C-WL-*) — **shipped on cloud ≥ 1.4.22**
-
-| ID | İş | Cloud durum |
-|----|-----|-------------|
-| C-WL-1 | `list_sessions`: `pre_logon:true` / boş `username` + `protocol:Console` + `can_capture:true` → UI **“Logon ekranı”** | ✅ `normalize_sessions` + tek hedef select |
-| C-WL-2 | 0 kullanıcı oturumu → Start **bloklanmaz**; `prefer=winlogon` + console `session_id` (yoksa **1**) | ✅ prepare + stream start |
-| C-WL-3 | Prepare/start `method`/`desktop=Winlogon` / `winlogon_mode` → viewer ipucu | ✅ banner + toast |
-| C-WL-4 | CAD → yalnız `remote_send_sas` (**sentetik** `ctrl+alt+del` key **yok**) | ✅ |
-| C-WL-5 | Logon sonrası session list refresh | ✅ winlogon modunda periyodik refresh |
-
-### Cloud viewer davranışı (client’ın bilmesi gereken)
-
-1. **Tek hedef select** — kullanıcı + oturum ayrı dropdown yok. Değerler: `wl` | `s:<id>` | `u:<name>`.
-2. **Logon ekranı / 0 oturum → `startWinlogonFlow`:**
-   - `remote_stream_stop` (eski `gdi+black` stream’i kes)
-   - `remote_session_prepare` `{ prefer: "winlogon", timeout_sec: 30 }` (password opsiyonel)
-   - `remote_stream_start` `{ prefer: "winlogon", session_id: <console|1>, force: true, … }`
-3. **FPS / quality / WebRTC rozet yığını** header’da gizli; canlı rozet + alt **stats bar** (görüntü dışında).
-4. Agent `desktop=Winlogon` + `capture_method` içinde `black` → UI **“Winlogon bağlı — görüntü siyah”** (Session 0 mesajı değil).
-
-### Cloud API notları
-
-| Endpoint / komut | Not |
-|------------------|-----|
-| `POST /api/remote/prepare` | `prefer=winlogon` iken `username`/`password` **zorunlu değil** |
-| `POST /api/remote/session` start | `prefer=winlogon` → `params.prefer`; `session_id` yoksa **1** |
-| `POST /api/remote/cad` | yalnız `remote_send_sas` enqueue |
-| `normalize_sessions` | `pre_logon`, `can_capture` korunur; boş Console+can_capture → `pre_logon` |
+Kimse logon değilken **veya** kullanıcı oturumu varken kilit/Winlogon yüzeyi istenince
+agent console WinSta0 üzerinden `Winlogon` desktop’unu mirror eder; operatör stream’de
+kimlik yazar.
 
 ---
 
-## Lab kanıtı (2026-07-24 — host Gözmer-Web, client **4.9.25**)
+## Client 4.9.26 (lab bulguları → düzeltme)
 
-| Adım | Sonuç |
-|------|--------|
-| `remote_session_prepare` `{prefer:winlogon}` | ✅ `ready_for_stream (winlogon)`, `desktop=Winlogon`, `session_id=1` |
-| `remote_stream_start` `{prefer:winlogon, session_id:1}` | ⚠️ `winlogon_mode:true`, `desktop=Winlogon`, **`capture_method: gdi+black`**, `black_frames≥1`, JPEG fiilen siyah |
-| Dashboard | Rozet **Canlı · Winlogon**; logon UI **görünmüyor** (siyah) |
+Önceki lab (caksac Active): health boş username / bare console’u atıyordu → dashboard’da
+logon satırı yoktu; kullanıcı oturumu varken **sibling** `pre_logon` yoktu (aynı
+`session_id`); `OpenInputDesktop` önce gelince Default’a yapışılıyordu; aynı SID start
+user satırını seçiyordu (`prefer=winlogon` yok).
 
-**Sonuç:** Cloud wire + attach path çalışıyor. **Bloker agent capture** — Winlogon desktop açık ama GDI siyah bitmap.
+**4.9.26 düzeltmeleri:**
+- Health + `list_sessions`: her zaman **“Logon / Lock screen”** satırı (`pre_logon:true`)
+- Sibling örnek: `[('caksac', 2), ('', 2, pre_logon, 'Logon / Lock screen')]`
+- `remote_stream_start`: `prefer` / `desktop` / `pre_logon` dinle
+- Named Winlogon önce; hello’da `winlogon` / `pre_logon` capability
 
 ---
 
-## Client özeti (≥4.9.21 wire)
+## Cloud / dashboard (C-WL-*) — **shipped ≥ 1.4.23**
 
-- Session 0 → `SetProcessWindowStation(WinSta0)` + `OpenInputDesktop` / `OpenDesktop(Winlogon\|Default)`
-- `query user` boşken console session synthesize (`pre_logon`) — health/`list_sessions` ile cloud’a yaz
-- `remote_session_prepare` default: oturum yoksa Winlogon probe (eski `UNSUPPORTED` yerine)
-- `prefer=existing` hâlâ oturum zorunlu; `prefer=winlogon` zorla logon UI
-- Input: Winlogon attach + local SendInput (user-helper yok)
+| ID | İş | Cloud |
+|----|-----|-------|
+| C-WL-1 | Sibling `pre_logon` satırını göster (aynı `session_id` user ile yan yana) | ✅ hedef select: `s:<id>` + `wl:<id>` |
+| C-WL-2 | Start’ta `prefer=winlogon` (+ `pre_logon=true`, `desktop=Winlogon`); username **gönderme** | ✅ |
+| C-WL-3 | Winlogon ipucu | ✅ |
+| C-WL-4 | CAD → `remote_send_sas` only | ✅ |
+| C-WL-5 | Logon sonrası session refresh | ✅ |
 
-### Client P0 — non-black Winlogon mirror (target **≥ 4.9.26**)
+### Start wire (dashboard → agent)
 
-Cloud’un beklediği acceptance; **4.9.25 lab’de FAIL**:
-
-1. Prepare/start sonrası JPEG/WebRTC’de **gerçek logon UI** (siyah stub değil).
-2. `capture_method` **`gdi+black` olmamalı** — örn. `gdi` / `bitblt` / uygun path; `stats.black_frames` sürekli artmamalı.
-3. Capture thread: `OpenDesktop(Winlogon)` / input desktop sonrası **`SetThreadDesktop`** + BitBlt **o** desktop’tan. Session 0’dan “boş” BitBlt yasak (contract: sahte siyah JPEG yok → fail et veya düzelt).
-4. DXGI secure desktop’ta yetmeyebilir; Winlogon için GDI/BitBlt (doğru winsta/desktop) beklenir.
-5. Result/meta dürüst kalsın: `desktop`, `winlogon_mode`, `session_id`, `capture_method`, `stats.black_frames` / `frames_sent`.
-6. `list_sessions` / health `active_sessions`: oturum yokken `pre_logon` console satırı (C-WL-1).
-
-### Agent result alanları (cloud okur)
+Lock / Logon satırı seçiliyken:
 
 ```json
 {
-  "success": true,
-  "data": {
+  "command_type": "remote_stream_start",
+  "params": {
+    "prefer": "winlogon",
+    "pre_logon": true,
     "desktop": "Winlogon",
-    "winlogon_mode": true,
-    "session_id": 1,
-    "capture_method": "gdi",
-    "stats": { "frames_sent": 12, "black_frames": 0, "bytes_sent": 180000 }
-  },
-  "message": "ready_for_stream (winlogon)"
+    "session_id": 2,
+    "stream_id": "…",
+    "fps": 30, "quality": 40, "max_width": 1280
+  }
 }
 ```
 
-`capture_method: "gdi+black"` → cloud UI uyarı; **ürün acceptance fail**.
+- **`username` yok** — agent user Default’a yapışmasın.
+- User satırı (`s:2` + username) → normal start; sibling pre_logon yüzünden **otomatik
+  winlogon’a çevrilmez**.
+
+Prepare (0 oturum / Logon seçimi):
+
+```json
+{ "prefer": "winlogon", "pre_logon": true, "desktop": "Winlogon", "timeout_sec": 30 }
+```
+
+---
+
+## Lab notları
+
+| Client | Sonuç |
+|--------|--------|
+| ≤4.9.25 | Attach `desktop=Winlogon` ama sık `gdi+black` |
+| ≥4.9.26 | Sibling pre_logon + prefer/desktop; cloud C-WL ile birlikte doğrula |
 
 ---
 
 ## Acceptance
 
-### Cloud (1.4.22)
+### Cloud
+- [x] Sibling `pre_logon` + user aynı SID → iki ayrı select option
+- [x] Lock satırı Start → `prefer=winlogon` + `pre_logon` + `desktop` + SID, no username
+- [x] User satırı Start → username/session, **not** forced winlogon
+- [x] CAD = `remote_send_sas`
 
-- [x] 0 oturumda Start açık; `prefer=winlogon` + `session_id`
-- [x] Prepare password’suz winlogon probe
-- [x] CAD = `remote_send_sas` only
-- [x] Viewer Winlogon ipucu + siyah-kare ayrımı (`gdi+black`)
-- [x] Stats bar görüntü dışında; tek hedef select
-
-### Client
-
-- [ ] Logged-out host: prepare/start → **logon UI** JPEG/WebRTC görünür (**not** black)
-- [ ] Type username/password + Enter → user desktop (`desktop` → `Default`)
-- [ ] CAD via SendSAS
-- [ ] Logged-on host path unchanged
-- [ ] `pre_logon` session row when `query user` empty
-- [ ] Never report success with persistent `gdi+black` as healthy logon mirror
+### Client (≥4.9.26+)
+- [x] Always emit Logon/Lock `pre_logon` row (even when user Active)
+- [x] Honor `prefer` / `desktop` / `pre_logon` on start
+- [ ] Non-black Winlogon pixels (no persistent `gdi+black`)
+- [ ] Type creds on stream → Default desktop
+- [ ] CAD SendSAS

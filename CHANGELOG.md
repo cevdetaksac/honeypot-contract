@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.4.23 — 2026-07-24 (Winlogon sibling pre_logon + cloud Start wire)
+
+- [`cloud/REMOTE_DESKTOP_WINLOGON.md`](cloud/REMOTE_DESKTOP_WINLOGON.md): client
+  **≥4.9.26** always emits sibling “Logon / Lock screen” (`pre_logon`) even when a
+  user is Active (same `session_id`). Cloud C-WL: show both rows (`s:` / `wl:`);
+  Start on lock row sends `prefer=winlogon` + `pre_logon` + `desktop=Winlogon`
+  **without** `username` (so agent does not stick to Default).
+- INDEX / FLEET / VERSION.
+
 ## 1.4.22 — 2026-07-24 (Winlogon — cloud shipped + client capture P0)
 
 - [`cloud/REMOTE_DESKTOP_WINLOGON.md`](cloud/REMOTE_DESKTOP_WINLOGON.md): **cloud C-WL-1…5
