@@ -26,6 +26,8 @@ Kural: makinede **tek** SYSTEM motor. Guardian servisi ayrı bir *watchdog* baca
 │             │   CLEAR_FIREWALL         │ control WS                │
 │             │   BLOCK_IP / UNBLOCK_IP  │ threat-intel + ransomware │
 │             │   RS_STATUS / RS_UNLOCK  │ firewall / honeypots      │
+│             │   NG_MAINT_* / NG_SNAPSHOT│ network guard             │
+│             │   NG_ACCEPT_SURFACE      │                           │
 └─────────────┘                          └──────────────────────────┘
         │                                          │
         ▼                                          ▼
@@ -45,6 +47,11 @@ UNBLOCK_IP <ip>
 RS_STATUS
 RS_UNLOCK
 THREAT_TOP
+NG_MAINT_START
+NG_MAINT_END
+NG_MAINT_END_SNAPSHOT
+NG_SNAPSHOT
+NG_ACCEPT_SURFACE
 HONEYPOT START <SVC> <PORT>
 HONEYPOT STOP <SVC>
 HONEYPOT LIST
@@ -52,6 +59,13 @@ SHOW / QUIT   (daemon: SHOW→NOGUI; QUIT for installer)
 ```
 
 JSON replies start with `{`. Helpers: `client_daemon_ipc.py`.
+
+**Network Guard IPC (≥4.9.12 / accept ≥4.9.15):** GUI bakım ve “Bu bendim”
+akışı yerel IPC kullanır (`NG_MAINT_*`, `NG_SNAPSHOT`, `NG_ACCEPT_SURFACE`).
+Dashboard aynı işi Control WS komutlarıyla yapar
+(`network_maintenance_*`, `network_snapshot`, `network_accept_surface`) —
+[`../agent/network-guard.md`](../agent/network-guard.md). Soft inform yolunda
+PIN yok; `network_disable_adapter` yalnız WS + confirm.
 
 **`THREAT_TOP` (≥4.7.6):** frontend GUI kendi threat engine'ini tutmaz; "Toplam
 Saldırı" detay popup'ı boş kalmasın diye motor top saldırgan context'lerini
@@ -107,7 +121,10 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
 
 ---
 
-## STATUS örneği (≥4.5.66)
+## STATUS örneği (≥4.9.15 / contract 1.4.17)
+
+Normative `network_guard` alanları: [`../agent/network-guard.md`](../agent/network-guard.md).
+Aşağıdaki örnek cloud health persist + GUI koruma şeridi için yeterlidir.
 
 ```json
 {
@@ -116,32 +133,82 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
   "role": "daemon",
   "motor_ok": true,
   "remote_commands_running": true,
-  "version": "4.5.66",
+  "version": "4.9.15",
   "running_services": ["SSH"],
   "protection_mode": "monitoring",
   "token_present": true,
   "rs_quarantine": {
     "active": false,
     "entries": 0,
-    "canary_files": 138
+    "canary_files": 137
   },
   "ransomware_running": true,
   "network_guard": {
     "present": true,
     "enabled": true,
     "running": true,
+    "maintenance": false,
+    "maintenance_started_at": null,
     "suspended_processes": 0,
-    "baseline_version": 12,
-    "baseline_age_sec": 512,
+    "baseline_version": 14,
+    "baseline_age_sec": 120,
+    "baseline_captured_at": "2026-07-23T14:16:15Z",
+    "verified": true,
     "internet_ok": true,
     "drift": false,
+    "drift_count": 0,
+    "surface_inform": true,
+    "surface_inform_count": 1,
+    "surface_inform_changes": [
+      {
+        "id": "adapter_up.Ethernet",
+        "kind": "adapter_enabled",
+        "interface": "Ethernet",
+        "from": "disconnected",
+        "to": "up",
+        "ipv4": "192.168.1.21"
+      }
+    ],
+    "auto_contain": false,
+    "auto_kill": false,
+    "auto_restore": false,
     "auto_restore_network": true,
     "live": {
       "adapters": [
-        { "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
-          "gateway": "192.168.1.1", "dns": ["1.1.1.1"], "dhcp": true }
-      ]
+        {
+          "name": "Ethernet", "state": "up", "ipv4": "192.168.1.21",
+          "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true
+        },
+        {
+          "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+          "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true
+        }
+      ],
+      "mapped_drives": [],
+      "firewall": { "domain": "on", "private": "on", "public": "on" },
+      "connectivity": { "internet_ok": true, "dns_ok": true, "gateway_ok": true }
+    },
+    "baseline": {
+      "adapters": [
+        {
+          "name": "Ethernet", "state": "disconnected", "ipv4": "169.254.216.150",
+          "gateway": "", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true
+        },
+        {
+          "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+          "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true
+        }
+      ],
+      "mapped_drives": [],
+      "firewall": { "domain": "on", "private": "on", "public": "on" }
     }
+  },
+  "system_recovery": {
+    "present": true,
+    "enabled": true,
+    "baseline_version": 5,
+    "verified": true,
+    "drift": null
   },
   "persistence": {
     "service_ok": true,
@@ -152,10 +219,17 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
 }
 ```
 
-**STATUS zenginleştirme (≥4.8.0 / rich ≥4.9.12):** frontend GUI'nin "Koruma Durumu"
-şeridi katman durumlarını STATUS’tan okur. Contract **1.4.14**: `network_guard.live.adapters`
-(IPv4/DNS) + golden özeti dashboard **Ağ kurtarma** paneline yeter; tam history
-`list_network_baseline`. Frontend yerel engine varsaymaz; motor yoksa katman KAPALI.
+**STATUS zenginleştirme (≥4.8.0 / rich ≥4.9.12 / soft inform ≥4.9.15):** frontend
+GUI "Koruma Durumu" şeridi katman durumlarını STATUS’tan okur.
+
+- **1.4.14:** `network_guard.live.adapters` (IPv4/DNS) + golden özeti → dashboard
+  **Ağ kurtarma** paneli; tam history `list_network_baseline`.
+- **1.4.15:** `maintenance` — VPN/IP işi için koruma pause.
+- **1.4.17:** `surface_inform` + `surface_inform_count` + `surface_inform_changes`
+  (mavi / additive); kırmızı `drift` yalnız subtractive. Internet açıkken panik yok.
+  `network_accept_surface` / GUI `NG_ACCEPT_SURFACE` yeni golden yapar.
+
+Frontend yerel engine varsaymaz; motor yoksa katman KAPALI.
 
 ### Additive resilience health — observe mode (contract 1.4.2 + 1.4.5)
 

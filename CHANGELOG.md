@@ -18,6 +18,8 @@
   Destructive gate for `network_disable_adapter` + cloud UX notes.
 - [`INDEX.md`](INDEX.md) / [`FLEET.md`](FLEET.md) / [`agent/CLIENT.md`](agent/CLIENT.md):
   entry points bumped to **1.4.17** / client **≥4.9.15**.
+- [`api/08-architecture.md`](api/08-architecture.md): STATUS örneği + IPC
+  `NG_MAINT_*` / `NG_ACCEPT_SURFACE` (soft inform alanları dahil).
 - Target client **≥ 4.9.15**.
 
 ## 1.4.16 — 2026-07-23 (VSS delete intent + ZT/branding decisions)
