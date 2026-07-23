@@ -9,6 +9,7 @@
 
 | Dosya | Konu | Statü |
 |-------|------|-------|
+| [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma (kırmızı/sarı/mavi), defense_policy, Gemini+ekip değerlendirme, P0–P3 fazları | Planning (living) |
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
 | [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
 | [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT asymmetric envelope / keys: Design-only; cloud do/don’t | Decision (1.4.16) |
