@@ -2,7 +2,7 @@
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
 > **VERSION 1.4.15** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + **network guard maintenance mode** contract **≥ 1.4.15**)
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + bounded logs + GUI control center v2 + consistent detail popups + cloud-managed webhook + dashboard PIN yönetimi + IP hızlı aksiyonları + whitelist cloud SoT + block-removed ACK ips + **Remote Desktop v2**: WS/JPEG healthy path, input protocol 2, persistent session helper, optional WebRTC signaling + **P1 observe schemas additive** + **OOB urgent batch ACK** + **Server Management inventory** + recommended **≥ 4.9.7** for `HP-INTEL-*` apply + bare-success no auto-block + whitelist enforce + cloud reject/lift ≥ **1.4.11** + **realtime presence** target **≥ 4.9.8** / contract **≥ 1.4.12** + **system recovery** target **≥ 4.9.12** / contract **≥ 1.4.13** + **network guard panel / auto_restore_network** ≥ **1.4.14** + **network guard maintenance mode** ≥ **1.4.15**)
 
 
 ## Shared delivery plans
