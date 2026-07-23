@@ -2,6 +2,7 @@
 
 > **Canonical:** `honeypot-contract/agent/remote-input.md`
 > **Min client (input protocol 2 + persistent session helper):** ≥ **4.9.0**
+> **Smoothness (move budget / short critical ACK / DC preferred):** ≥ **4.9.20** — see [`../cloud/REMOTE_DESKTOP_SMOOTHNESS.md`](../cloud/REMOTE_DESKTOP_SMOOTHNESS.md)
 > **Legacy floor (frame-ACK `inputs[]` piggyback):** ≥ **4.5.55**
 > **Related:** [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md) (canonical Remote Desktop v2)
 

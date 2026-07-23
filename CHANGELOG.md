@@ -1,5 +1,15 @@
 # Changelog — honeypot-contract
 
+## 1.4.20 — 2026-07-23 (Remote Desktop — WebRTC smoothness + input)
+
+- [`api/05-remote-desktop.md`](api/05-remote-desktop.md): Client TODO promoted —
+  raw RGB WebRTC path (no JPEG double-encode), HW H.264 when available,
+  idle frame skip, input fluidity; target client **≥ 4.9.20**.
+- New [`cloud/REMOTE_DESKTOP_SMOOTHNESS.md`](cloud/REMOTE_DESKTOP_SMOOTHNESS.md):
+  cloud/dashboard must-do (C-RD-1…8) — DC input priority, no JPEG while WebRTC
+  connected, encoder telemetry badge, TURN hygiene.
+- INDEX / FLEET links.
+
 ## 1.4.19 — 2026-07-23 (Defense Policy — observe default + auto-promote)
 
 - [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md): **product model** —

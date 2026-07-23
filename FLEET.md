@@ -12,6 +12,7 @@
 | Remote Desktop v2: WS/JPEG healthy path + adaptive telemetry + latest-frame coalescing | `api/05-remote-desktop.md` | **4.9.0** |
 | Remote input protocol 2 + mobile gestures + ACK + persistent session helper | `agent/remote-input.md` | **4.9.0** |
 | Remote Desktop optional WebRTC signaling (protocol=1, non-trickle, H264, data-channel input, cloud-supplied `ice_servers` in offer) | `api/05-remote-desktop.md` | **4.9.0** |
+| Remote Desktop WebRTC smoothness (raw RGB, HW H.264, input fluidity) | `api/05-remote-desktop.md`, `cloud/REMOTE_DESKTOP_SMOOTHNESS.md` | client **≥ 4.9.20** / contract **1.4.20** |
 | WebRTC strict JPEG suppression, 30–60 fps media pacing, optional DXGI capture and effective media telemetry | `api/05-remote-desktop.md` | **4.9.1** |
 | P1 observe schemas: heartbeat_proof, access_integrity, etw_shadow correlation, password_burst, device_identity, canary_coverage, deception_health, network_restore dry_run/rollback | `api/08-architecture.md`, `api/01-auth.md`, `api/03-control-websocket.md` | **4.9.1** (flags default off) |
 | OOB-501 offline urgent queue: `POST /api/alerts/urgent/batch` + soft idempotency on urgent | `api/10-offline-urgent-queue.md` | cloud live ≥ **1.4.7**; client flag `security.offline_urgent_queue` default **off** |
