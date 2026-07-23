@@ -1,5 +1,13 @@
 # Changelog — honeypot-contract
 
+## 1.4.21 — 2026-07-23 (Remote Desktop — console Winlogon / pre-logon)
+
+- [`api/05-remote-desktop.md`](api/05-remote-desktop.md): oturum yokken console
+  Winlogon mirror; `prefer=winlogon`; `pre_logon` session row; target client **≥ 4.9.21**.
+- New [`cloud/REMOTE_DESKTOP_WINLOGON.md`](cloud/REMOTE_DESKTOP_WINLOGON.md): cloud/viewer
+  must-do (C-WL-1…5).
+- INDEX / FLEET links.
+
 ## 1.4.20 — 2026-07-23 (Remote Desktop — WebRTC smoothness + input)
 
 - [`api/05-remote-desktop.md`](api/05-remote-desktop.md): Client TODO promoted —

@@ -511,7 +511,7 @@ Dashboard “Bağlan” — one-shot `password` (RAM only, loglanmaz).
 |--------|----------|
 | Active + desktop | `ready_for_stream: true` |
 | Disconnected | `WTSConnectSession` / `tscon` → Active + JPEG probe |
-| Oturum yok | `UNSUPPORTED` (Session 0’dan fresh logon yok; bir kez RDP/console gerekir) |
+| Oturum yok / pre-logon | **≥4.9.21:** console **Winlogon** probe → `method=winlogon`, `pre_logon` (type credentials on stream). `prefer=existing` → hâlâ `UNSUPPORTED`. See [`../cloud/REMOTE_DESKTOP_WINLOGON.md`](../cloud/REMOTE_DESKTOP_WINLOGON.md). |
 | Yanlış şifre | `AUTH_FAILED` / `ACCOUNT_LOCKED` / `ACCOUNT_DISABLED` |
 
 Başarı: `data.ready_for_stream`, `session_id`, `screen.w/h`, `method`.  
@@ -604,7 +604,7 @@ WS varsa HTTP input poll şart değil.
 
 | Durum | Dashboard | Agent |
 |--------|-----------|--------|
-| **0** interaktif oturum | Uyarı: açık masaüstü yok → RDP ile oturum açın. Start **blocked**. | Stream başlatma; `NO_INTERACTIVE_SESSION` |
+| **0** interaktif oturum | **≥4.9.21:** console Winlogon / logon UI (`pre_logon`) — Start allowed. Older clients: uyarı + `NO_INTERACTIVE_SESSION`. | Stream Winlogon; type credentials on viewer |
 | **1** oturum | Otomatik seç + start | O `session_id` desktop’ını capture + input |
 | **2+** oturum | Dropdown (Console > Active > diğer). Kullanıcı değiştirebilir. | Seçilen `session_id` |
 
