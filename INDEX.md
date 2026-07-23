@@ -10,11 +10,10 @@
 | Dosya | Konu | Statü |
 |-------|------|-------|
 | [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma (kırmızı/sarı/mavi), defense_policy, Gemini+ekip, P0–P3, anti-bait | Planning (living) |
-| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Cloud/dashboard must-do: policy matrix, config sync, alert routing, isolate gates, C-P0…C-P2 | Normative (1.4.18) |
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
 | [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
 | [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT asymmetric envelope / keys: Design-only; cloud do/don’t | Decision (1.4.16) |
-| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered defense_policy / rules matrix / anti-bait — cloud must-do | Normative (1.4.18) |
+| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered defense_policy / rules matrix / anti-bait — cloud must-do (C-P0…C-P2) | Normative (1.4.18) |
 | [cloud/PRODUCT_BRANDING.md](cloud/PRODUCT_BRANDING.md) | HP-BLOCK / CloudHoneypot wire identity stays; no big-bang rename | Decision (1.4.16) |
 | [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 operator public key distribution | Design-only |
 | [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 asymmetric envelope + TPM PoP gate | Design-only |
