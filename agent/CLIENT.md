@@ -23,12 +23,13 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 10. [`remote-input.md`](./remote-input.md) + [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md)  
 11. [`persistence-and-tamper.md`](./persistence-and-tamper.md) — survival + tamper (≥4.6.0)  
 12. [`disaster-recovery.md`](./disaster-recovery.md) — `create_user` / `remote_logon` (≥4.6.0)  
-13. [`network-guard.md`](./network-guard.md) — offline şüpheli alarm + onaylı suspend (≥4.7.3)  
-14. [`gui-control-center.md`](./gui-control-center.md) — dinamik GUI / güvenlik katmanları (≥4.7.3)  
-15. [`log-retention.md`](./log-retention.md) — günlük loglar / 7 gün retention (≥4.7.6)
-16. [`server-management.md`](./server-management.md) — Dashboard Sunucu Yönetimi inventory + mutates (target ≥4.9.4)
-17. [`../api/11-presence-realtime.md`](../api/11-presence-realtime.md) — sleep/shutdown anlık presence (target ≥4.9.8)
-18. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
+13. [`network-guard.md`](./network-guard.md) — golden ağ baseline + dashboard panel + `auto_restore_network`; süreç contain onaylı (≥4.7.3 / panel ≥4.9.12)  
+14. [`system-recovery.md`](./system-recovery.md) — saldırı yüzeyi policy/service/firewall snapshot + drift + onaylı restore (target ≥4.9.12)  
+15. [`gui-control-center.md`](./gui-control-center.md) — dinamik GUI / güvenlik katmanları (≥4.7.3)  
+16. [`log-retention.md`](./log-retention.md) — günlük loglar / 7 gün retention (≥4.7.6)
+17. [`server-management.md`](./server-management.md) — Dashboard Sunucu Yönetimi inventory + mutates (target ≥4.9.4)
+18. [`../api/11-presence-realtime.md`](../api/11-presence-realtime.md) — sleep/shutdown anlık presence (target ≥4.9.8)
+19. [`../api/06-firewall-blocks.md`](../api/06-firewall-blocks.md) · [`04-self-update.md`](../api/04-self-update.md) · [`07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md) · [`08-architecture.md`](../api/08-architecture.md) · [`02-account.md`](../api/02-account.md)
 
 ---
 

@@ -219,9 +219,14 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `remote_logon` | `username`, `password`, `mode`, `reboot` | Kimlikle uzaktan oturum (reconnect / autologon+reboot) — ≥4.6.0 |
 | `set_autologon` / `clear_autologon` | `username`, `password`, `count` | Autologon arm/temizle — ≥4.6.0 |
 | `reboot` | `grace_sec`, `reason` | Onaylı yeniden başlatma — ≥4.6.0 |
-| `network_snapshot` | — | Anlık ağ baseline al — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
-| `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Baseline'dan ağ/sürücü geri yükle. **Mutate** = confirm. `dry_run:true` = plan only (no confirm). `rollback_version` selects a retained signed baseline. ≥4.7.0 / dry-run+rollback observe ≥4.9.1 |
-| `list_network_baseline` | — | Baseline sürümleri/özeti — ≥4.7.0 |
+| `network_snapshot` | — | Golden ağ baseline al (bilinçli IP değişiminden **önce**) — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
+| `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Baseline'dan ağ/sürücü/IPv4 geri yükle. **Mutate** = confirm. `dry_run:true` = plan only. `targets`: adapter\|ipv4\|dns\|firewall\|mapped_drive. ≥4.7.0 |
+| `list_network_baseline` | — | Golden + **live** adapters (ipv4/dns) + history + drift — rich ≥4.9.12 |
+| `network_diff` | `version?` | Live vs golden (veya history sürümü) değişiklik listesi — ≥4.9.12 |
+| `system_recovery_snapshot` | — | Saldırı yüzeyi (policy/service/firewall) snapshot — ≥4.9.12 ([`../agent/system-recovery.md`](../agent/system-recovery.md)) |
+| `list_system_recovery` | — | Recovery baseline sürümleri/özeti — ≥4.9.12 |
+| `system_recovery_diff` | `version?` | Baseline vs canlı allowlist diff — ≥4.9.12 |
+| `system_recovery_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Allowlist yüzeyi geri yükle. **Mutate** = confirm. `dry_run:true` = plan only. ≥4.9.12 |
 | `set_gui_pin` | `pin` (4-12 hane, yalnız rakam) | Dashboard'dan yerel GUI PIN tanımla/değiştir (confirm; result PIN içermez) — ≥4.8.3 |
 | `clear_gui_pin` | — | Dashboard'dan yerel GUI PIN'i sıfırla/kaldır (confirm) — ≥4.8.3 |
 
@@ -231,29 +236,32 @@ Params:
 
 ```json
 {
-  "targets": ["adapter", "dns", "firewall", "mapped_drive"],
+  "targets": ["adapter", "ipv4", "dns", "firewall", "mapped_drive"],
   "dry_run": true,
   "rollback_version": null
 }
 ```
 
 - `dry_run: true` → client returns a bounded plan; **no** adapter/DNS/firewall/
-  drive mutation. Cloud must not require `confirm:true` for dry-run-only.
+  drive/IPv4 mutation. Cloud must not require `confirm:true` for dry-run-only.
 - Mutating restore (`dry_run` absent/false) remains in
   `DESTRUCTIVE_COMMAND_TYPES` and needs `confirm:true`.
 - `rollback_version: int` loads that retained signed baseline; missing/invalid
   → result error `rollback_baseline_not_found_or_invalid`. Other errors:
   `no_baseline`, `baseline_signature_invalid`.
+- Dashboard panel also uses `list_network_baseline` + `network_diff` (read-only).
+  Intentional IP change: call `network_snapshot` **before** changing the host.
 
 Dry-run result `data` example:
 
 ```json
 {
   "dry_run": true,
-  "baseline_version": 7,
+  "baseline_version": 12,
   "plan": [
     {"target": "adapter", "action": "enable", "interface": "Ethernet"},
-    {"target": "dns", "action": "set", "interface": "Ethernet", "servers": ["1.1.1.1"]},
+    {"target": "ipv4", "action": "dhcp", "interface": "Wi-Fi"},
+    {"target": "dns", "action": "set", "interface": "Wi-Fi", "servers": ["1.1.1.1"]},
     {"target": "firewall", "action": "enable_profiles", "profiles": ["domain", "private"]},
     {"target": "mapped_drive", "action": "reconnect", "letter": "Z:", "unc": "\\\\srv\\share"}
   ],

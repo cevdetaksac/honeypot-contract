@@ -1,5 +1,32 @@
 # Changelog — honeypot-contract
 
+## 1.4.14 — 2026-07-23 (Network Guard — dashboard panel + golden baseline + auto network restore)
+
+- [`agent/network-guard.md`](agent/network-guard.md) expanded for dashboard UX:
+  - **Live** adapters (name/state/IPv4/gateway/DNS/dhcp) + mapped drives visible
+  - **Golden baseline** (last signed backup) + history N=10 + `network_diff`
+  - Operator workflow: intentional IP/DNS change → `network_snapshot` **first**,
+    then change host — avoids false restore
+  - Periodic loop must **not** poison golden baseline with attacker-changed IP/DNS
+  - `auto_restore_network` (default **on**): network-surface only (adapter/DNS/
+    IPv4 mode/mapped drive/firewall) — **not** process contain/kill
+  - Process `auto_contain` / `auto_kill` remain hard-off
+- Control WS: `network_diff` added; `list_network_baseline` returns full
+  baseline + live + history; STATUS/health `network_guard` rich payload
+- Target client **≥ 4.9.12** (additive; ship with System Recovery)
+
+## 1.4.13 — 2026-07-23 (System Recovery — attack-surface snapshot / restore)
+
+- New normative [`agent/system-recovery.md`](agent/system-recovery.md):
+  allowlist policy/registry + critical services + firewall profile snapshot,
+  drift alert `system_recovery_drift`, dashboard commands
+  `system_recovery_snapshot` / `list_system_recovery` / `system_recovery_diff` /
+  `system_recovery_restore` (dry_run + confirm). **No** full registry dump.
+- Complements [`agent/network-guard.md`](agent/network-guard.md) (network/drive
+  baseline). Target client **≥ 4.9.12** (additive).
+- [`api/03-control-websocket.md`](api/03-control-websocket.md) command table
+  updated.
+
 ## 1.4.12 — 2026-07-22 (Realtime presence — sleep / shutdown)
 
 - New normative [`api/11-presence-realtime.md`](api/11-presence-realtime.md):

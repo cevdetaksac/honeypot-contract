@@ -23,35 +23,61 @@ alarm & istihbarat.
 
 ---
 
-## A) Ağ baseline yedeği
+## A) Ağ baseline yedeği (golden)
 
-Motor boot'ta ve periyodik (öneri **≤ 30 dk**) ağ durumunu snapshot'lar. Anlamlı değişiklikte
-yeni sürüm yazılır (son **N=10** sürüm saklanır). Dosya: `ProgramData\...\network_baseline.json`,
-`sig` = HMAC (aynı `security.command_signing` anahtarı) ile imzalı (kötücül üzerine yazma tespiti).
+Motor boot'ta **ilk** golden baseline'ı yazar. Son **N=10** sürüm saklanır.
+Dosya: `ProgramData\...\network_baseline.json`,
+`sig` = HMAC (aynı `security.command_signing` anahtarı).
+
+### Golden vs live
+
+| Kavram | Kim yazar | Amaç |
+|--------|-----------|------|
+| **Golden baseline** | Boot (yoksa) + operatör `network_snapshot` | Geri yükleme kaynağı — “bilinen iyi” ağ |
+| **Live** | Her STATUS / `list` / `diff` anında toplanır | Dashboard’da görünen anlık IP/adaptör/sürücü |
+| **Periyodik loop** | Yalnız `connectivity` probe yeniler | **Saldırganın bozduğu IP/DNS’i golden’a yazmaz** |
+
+> **Zehirlenme yasağı:** Periyodik baseline loop, adapter/IPv4/DNS/mapped-drive
+> değişikliğini otomatik yeni golden sürüm yapamaz. Aksi halde saldırgan IP’yi
+> bozar → 30 dk sonra “bozuk” hali “iyi” sayılır. Bilinçli IP/DNS değişiminde
+> operatör **önce** `network_snapshot` alır (aşağıdaki iş akışı).
 
 Kapsanan durum:
 
 | Alan | Kaynak | İçerik |
 |------|--------|--------|
-| `mapped_drives[]` | `HKCU\Network\*` (aktif kullanıcılar) + `net use` | harf, UNC, kullanıcı, persistent bayrağı |
-| `shares[]` | `net share` / `HKLM\...\LanmanServer\Shares` | ad, path, izinler |
-| `adapters[]` | `Get-NetIPConfiguration` / WMI | ad, durum (up/down), IPv4, gateway, DNS, metric |
-| `routes[]` | route table | hedef, mask, gateway, metric |
-| `firewall` | `netsh advfirewall` profilleri | domain/private/public state + default in/out policy |
-| `connectivity` | ping/DNS probe | internet_ok, dns_ok, gateway_ok |
+| `mapped_drives[]` | `net use` (+ mümkünse `HKCU\Network\*`) | harf, UNC, persistent |
+| `shares[]` | `net share` | ad, path (admin$ hariç) |
+| `adapters[]` | `Get-NetIPConfiguration` | ad, state, ipv4, gateway, dns[], dhcp, prefix_length |
+| `firewall` | `netsh advfirewall` | domain/private/public state |
+| `connectivity` | TCP/DNS probe | internet_ok, dns_ok, gateway_ok |
 
 ```json
 {
-  "version": 7,
-  "captured_at": "2026-07-21T08:00:00Z",
-  "mapped_drives": [{ "letter": "Z:", "unc": "\\\\srv\\share", "user": "…", "persistent": true }],
+  "version": 12,
+  "captured_at": "2026-07-23T12:30:00Z",
+  "mapped_drives": [{ "letter": "Z:", "unc": "\\\\srv\\share", "persistent": true }],
   "shares": [{ "name": "Data", "path": "D:\\Data" }],
-  "adapters": [{ "name": "Ethernet", "state": "up", "ipv4": "10.0.0.5", "gateway": "10.0.0.1", "dns": ["10.0.0.1"] }],
+  "adapters": [{
+    "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+    "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"],
+    "dhcp": true, "prefix_length": 24
+  }],
   "firewall": { "domain": "on", "private": "on", "public": "on" },
   "connectivity": { "internet_ok": true, "dns_ok": true, "gateway_ok": true },
   "sig": "<hmac>"
 }
 ```
+
+### Operatör iş akışı — bilinçli IP/DNS değişimi
+
+1. Dashboard → **Ağ yedeği al** (`network_snapshot`) — yeni golden (DHCP/DNS/IP kaydı)
+2. Host’ta IP/DNS’i değiştir (DHCP veya static)
+3. İsteğe bağlı ikinci snapshot (değişiklik sonrası “yeni iyi” durum)
+4. Client live ≈ golden → drift yok, `auto_restore_network` dokunmaz
+
+Saldırı senaryosu (snapshot atlanmadan IP bozulursa): live ≠ golden →
+`auto_restore_network` (veya dashboard **Geri yükle**) golden’a döner.
 
 ---
 
@@ -117,32 +143,96 @@ entry'lerine `state: "suspended"` ile eklenir.
 
 ## D) Ağ / bağlantı kurtarma
 
-Malware `interneti kesti` durumunu tersine çevir — **daemon buluta yeniden bağlanıp
-alarm atabilsin** diye:
+Malware ağ sürücülerini keser / IPv4-DNS bozar / adapter kapatır → golden’a dön:
 
 | Adım | Aksiyon | Kaynak |
 |------|---------|--------|
-| Adapter | down/disable edilmiş adapter'ı enable et | baseline `adapters[].state` |
-| DNS | değiştirilmiş DNS'i baseline'a geri al | baseline `adapters[].dns` |
-| Firewall | flush/kapatılmış profili baseline'a geri al | baseline `firewall` |
-| Route | silinen default route'u geri ekle | baseline `routes[]` |
-| Mapped drive | kopan `net use` bağlantılarını baseline'dan yeniden kur | baseline `mapped_drives[]` |
-| Shares | silinen paylaşımları geri kur | baseline `shares[]` |
+| Adapter | down/disable → enable | baseline `adapters[].state==up` |
+| IPv4 | DHCP ise `dhcp`; static ise ipv4+prefix+gateway | baseline `adapters[].dhcp/ipv4/...` |
+| DNS | baseline DNS listesine al | baseline `adapters[].dns` |
+| Firewall | kapatılmış profili aç | baseline `firewall` |
+| Mapped drive | persistent `net use` yeniden | baseline `mapped_drives[]` |
+| Shares | (best-effort) silinen paylaşımları kur | baseline `shares[]` |
 
-Ağ geri yükleme de otomatik değildir. Operatör `network_restore` için açık onay
-verir; geri yükleme sonrası bağlantı doğrulanır (`connectivity` re-probe).
+### `auto_restore_network` (network-surface only)
+
+| Bayrak | Default | Anlam |
+|--------|---------|--------|
+| `auto_restore_network` | **true** (≥4.9.12) | Live≠golden (adapter/DNS/IPv4 mode/mapped drive/firewall) → client **anında** restore |
+| `auto_contain` / `auto_kill` | hard **false** | Süreç dondurma/öldürme asla otomatik değil |
+| Legacy `auto_restore` | hard **false** wire uyumu | Eski bomb-path alanı; cloud `auto_restore_network` kullanır |
+
+- Intentional IP change: önce `network_snapshot` (yukarı). Snapshot yoksa auto-restore
+  eski golden’a çeker — bu **istenen** güvenlik davranışıdır.
+- Auto-restore sonrası alert: `threat_type` `network_surface_restored` (veya mevcut
+  suspect alarmında `network.restored=true` + `restore_actions[]`).
+- Dedupe: aynı yüzey için ≥ **5 dk** (flap yok).
+
+### Dashboard / manuel restore
+
+Operatör `network_restore` için açık onay verir (`confirm:true`);
+`dry_run:true` plan-only (confirm yok); `rollback_version` history’den seçer.
 `mapped_drives` yeniden kurulurken **kimlik bilgisi güvensiz saklanmaz**; yalnız
 persistent/OS-kayıtlı bağlantılar restore edilir.
 
-Dashboard komutları (control WS, [`../api/03-control-websocket.md`](../api/03-control-websocket.md)):
-`network_snapshot` (anlık baseline al), `network_restore` (baseline'dan geri yükle —
-**mutating** path `REQUIRES_CONFIRMATION`; `dry_run:true` plan-only ve confirm
-gerekmez; `rollback_version` retained signed baseline seçer),
-`list_network_baseline`.
+### Dashboard panel (cloud zorunlu UI — contract 1.4.14)
 
-Dry-run result carries `plan[]` + current `connectivity`; mutate result carries
-`restore_actions[]` + post-restore connectivity. Errors:
-`no_baseline`, `baseline_signature_invalid`,
+Dashboard host detayında **Ağ kurtarma** paneli:
+
+1. **Canlı** — adaptör tablosu (ad, state, IPv4, gateway, DNS, dhcp)
+2. **Son yedek (golden)** — version, `captured_at`, aynı tablo alanları, imza OK
+3. **Diff** — `network_diff` sonucu (kırmızı satırlar)
+4. **Aksiyonlar** — Yedek al (`network_snapshot`) · Plan (`network_restore` dry_run) ·
+   Geri yükle (confirm) · Geçmiş sürüm seç (`rollback_version`)
+
+Veri kaynağı: health/STATUS `network_guard.live` + `network_guard.baseline` **veya**
+Control WS `list_network_baseline` / `network_diff` (tercihen komut — tam payload).
+
+### Komutlar
+
+| `type` | Params | Confirm | Min |
+|--------|--------|---------|-----|
+| `network_snapshot` | — | hayır | ≥4.7.0 |
+| `list_network_baseline` | — | hayır | ≥4.7.0 (rich ≥4.9.12) |
+| `network_diff` | `version?` | hayır | ≥4.9.12 |
+| `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | mutate evet / dry_run hayır | ≥4.7.0 |
+
+`targets[]`: `adapter` | `ipv4` | `dns` | `firewall` | `mapped_drive`
+
+#### `list_network_baseline` result (rich)
+
+```json
+{
+  "success": true,
+  "data": {
+    "version": 12,
+    "captured_at": "2026-07-23T12:30:00Z",
+    "verified": true,
+    "baseline": {
+      "adapters": [{ "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+                     "gateway": "192.168.1.1", "dns": ["1.1.1.1"], "dhcp": true }],
+      "mapped_drives": [],
+      "shares": [],
+      "firewall": { "domain": "on", "private": "on", "public": "on" }
+    },
+    "live": {
+      "adapters": [{ "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+                     "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true }],
+      "mapped_drives": [],
+      "firewall": { "domain": "on", "private": "on", "public": "on" },
+      "connectivity": { "internet_ok": true, "dns_ok": true, "gateway_ok": true }
+    },
+    "drift": false,
+    "changes": [],
+    "history": [
+      { "version": 11, "captured_at": "…", "verified": true }
+    ]
+  }
+}
+```
+
+Dry-run / mutate result: `plan[]` + `connectivity`; mutate + `restore_actions[]`.
+Errors: `no_baseline`, `baseline_signature_invalid`,
 `rollback_baseline_not_found_or_invalid`.
 
 ---
@@ -201,39 +291,69 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
   plan-only, confirm gerekmez — contract 1.4.5).
 - Host'u `under_attack` yalnız doğrulanmış/operatör-contain edilmiş `_bomb` olayında
   işaretle; `_suspect` warning tek başına bu bayrağı açmaz.
-- `protection.network_guard{}` threats/config poll + update. **Alanlar (client ≥4.7.3):**
-  `enabled`, `auto_contain`, `auto_kill`, `auto_restore`, `require_strong_signal`,
+- `protection.network_guard{}` threats/config poll + update. **Alanlar:**
+  `enabled`, `auto_contain`, `auto_kill`, `auto_restore` (legacy hard-false),
+  `auto_restore_network` (default **true**, cloud toggle), `require_strong_signal`,
   `score_threshold`, `fs_write_bytes_per_sec`, `fs_write_count_per_sec`.
-  `auto_contain`, `auto_kill`, `auto_restore` alanları wire compatibility için
-  kalır ama client bunları hard-false yapar; cloud ile açılamaz.
+  `auto_contain` / `auto_kill` client hard-false; `auto_restore_network` cloud ile
+  kapatılabilir (bilinçli bakım penceresi).
 - Health snapshot `network_guard` + `persistence` → settings persist (client_status rozeti).
+- Dashboard panel: §D — live IP/adaptör + golden + diff + restore (1.4.14).
 
 ---
 
 ## STATUS / health genişletmesi
 
-Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
+Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir
+(≥4.9.12 rich; eski client’lar kısa özet gönderebilir):
 
 ```json
 "network_guard": {
+  "present": true,
   "enabled": true,
-  "baseline_version": 7,
+  "running": true,
+  "baseline_version": 12,
   "baseline_age_sec": 540,
+  "baseline_captured_at": "2026-07-23T12:30:00Z",
+  "verified": true,
   "internet_ok": true,
-  "mapped_drives": 2,
+  "drift": false,
+  "drift_count": 0,
+  "mapped_drives": 0,
   "suspended_processes": 0,
   "last_trigger_ts": null,
   "auto_contain": false,
+  "auto_kill": false,
   "auto_restore": false,
-  "auto_kill": false
+  "auto_restore_network": true,
+  "live": {
+    "adapters": [
+      { "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+        "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true }
+    ],
+    "mapped_drives": [],
+    "connectivity": { "internet_ok": true, "dns_ok": true, "gateway_ok": true }
+  },
+  "baseline": {
+    "adapters": [
+      { "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+        "gateway": "192.168.1.1", "dns": ["1.1.1.1", "8.8.8.8"], "dhcp": true }
+    ],
+    "mapped_drives": [],
+    "firewall": { "domain": "on", "private": "on", "public": "on" }
+  }
 }
 ```
+
+Cloud health persist: `live.adapters` + `baseline` saklanır ki dashboard panel
+komut beklemeden son bilinen IP’yi göstersin. Tam history için `list_network_baseline`.
 
 ---
 
 ## Acceptance
 
-- [x] Boot + periyodik ağ baseline yazılır, imzalı, N sürüm saklanır
+- [x] Boot golden baseline yazılır, imzalı, N sürüm saklanır
+- [x] Periyodik loop golden adapter/IP/DNS’i saldırı ile zehirlemez (1.4.14)
 - [x] `net_cut` yalnız gerçek internet erişim kaybında True (adapter/VPN churn tek başına tetiklemez) — **FP koruması (client ≥4.7.2)**
 - [x] FS fırtınası (yazma hız) eşik aşımı tespit edilir (yüksek eşik; salt sinyal olarak)
 - [x] Ağ kesme + FS fırtınası → canary beklemeden **ALARM** (`ransomware_offline_suspect`, warning) — containment DEĞİL
@@ -241,8 +361,11 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir:
 - [x] Client `suspend_process` / `resume_process`: PID+image+path+start-time doğrulamalı; suspend confirm-gated
 - [x] Cloud popup/satır: açık onaylı **Suspend/Resume** butonu + exact-identity (pid+image+start-time) — cloud implemented; canlı client ile uçtan uca doğrulama bekliyor
 - [ ] Acil VSS snapshot yalnız ayrı/onaylı aksiyon sırasında best-effort alınır
-- [x] Ağ restore: mutating `network_restore` açık onayıyla; `dry_run:true` plan-only (confirm yok)
-- [x] Geri yükleme sonrası bağlantı doğrulanır ve `ransomware_offline_bomb` urgent alarmı gider (dashboard popup detaylı, `restored` işaretli)
+- [x] Ağ restore: manuel `network_restore` confirm; `dry_run:true` plan-only
+- [x] `auto_restore_network` (default on): mapped drive / DNS / adapter / IPv4 mode drift → anında golden restore (1.4.14)
+- [x] Bilinçli IP değişimi: önce `network_snapshot` (dashboard panel)
+- [x] Dashboard panel: live IP/adaptör + golden + diff + restore (cloud ≥1.4.14)
+- [x] Geri yükleme sonrası bağlantı doğrulanır
 - [ ] Yedekleme/AV whitelist + `_PROTECTED_IMAGES` skorlamadan muaf (FP koruması)
-- [x] `network_snapshot` / `network_restore` / `list_network_baseline` komutları çalışır (mutate confirm; dry-run exempt)
-- [x] STATUS/health `network_guard` bloğu dolu
+- [x] `network_snapshot` / `network_restore` / `list_network_baseline` / `network_diff` komutları
+- [x] STATUS/health `network_guard` rich bloğu (adapters ipv4/dns)

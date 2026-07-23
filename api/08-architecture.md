@@ -131,8 +131,17 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
     "enabled": true,
     "running": true,
     "suspended_processes": 0,
+    "baseline_version": 12,
     "baseline_age_sec": 512,
-    "internet_ok": true
+    "internet_ok": true,
+    "drift": false,
+    "auto_restore_network": true,
+    "live": {
+      "adapters": [
+        { "name": "Wi-Fi", "state": "up", "ipv4": "192.168.1.30",
+          "gateway": "192.168.1.1", "dns": ["1.1.1.1"], "dhcp": true }
+      ]
+    }
   },
   "persistence": {
     "service_ok": true,
@@ -143,10 +152,10 @@ Threat intel: tek worker + coalesce (paralel PS fırtınası yok). Servis toggle
 }
 ```
 
-**STATUS zenginleştirme (≥4.8.0):** frontend GUI'nin "Koruma Durumu" şeridi tüm
-katman durumlarını tek STATUS çağrısından okur — `ransomware_running` (shield
-watcher canlı mı) ve `network_guard{}` özeti eklendi. Frontend hiçbir katman
-durumu için yerel engine varsaymaz; motor yoksa katman "KAPALI" gösterilir.
+**STATUS zenginleştirme (≥4.8.0 / rich ≥4.9.12):** frontend GUI'nin "Koruma Durumu"
+şeridi katman durumlarını STATUS’tan okur. Contract **1.4.14**: `network_guard.live.adapters`
+(IPv4/DNS) + golden özeti dashboard **Ağ kurtarma** paneline yeter; tam history
+`list_network_baseline`. Frontend yerel engine varsaymaz; motor yoksa katman KAPALI.
 
 ### Additive resilience health — observe mode (contract 1.4.2 + 1.4.5)
 
