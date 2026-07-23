@@ -25,7 +25,7 @@
 | Network Guard maintenance mode (pause → change VPN/IP → snapshot → resume) | `agent/network-guard.md` | cloud ≥ **1.4.15**; target client **≥ 4.9.12** |
 | VSS delete intent (kill + quarantine without shadow-count wait) | `agent/ransomware-shield.md` | cloud ≥ **1.4.16**; target client **≥ 4.9.14** |
 | Network Guard soft surface inform (additive adapter/DHCP notify; Accept/Disable; no panic while online) | `agent/network-guard.md` | cloud ≥ **1.4.17**; target client **≥ 4.9.15** |
-| Defense Policy (tiered response) — cloud presets/rules matrix/sync/anti-bait UI | `cloud/DEFENSE_POLICY.md`, `ROADMAP_TIERED_DEFENSE.md` | cloud ≥ **1.4.18**; client apply target **≥ 4.9.16** |
+| Defense Policy (tiered + observe default + auto-promote) | `cloud/DEFENSE_POLICY.md`, `agent/defense-policy-client.md`, `ROADMAP_TIERED_DEFENSE.md` | cloud ≥ **1.4.19**; client **≥ 4.9.17** (matrix ≥ **4.9.16**) |
 | One GUI/session + motor watchdog | `api/08-architecture.md` | 4.5.58–59 |
 | Threat-intel GET/304/ACK | `api/09-threat-intel.md` | **4.5.61** |
 | Threat-intel `HP-INTEL-*` apply + orphan/policy reconcile + ACK skipped/removed | `api/09-threat-intel.md`, `api/06-firewall-blocks.md` | **4.9.7** |

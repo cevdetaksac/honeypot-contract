@@ -24,7 +24,7 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 11. [`persistence-and-tamper.md`](./persistence-and-tamper.md) — survival + tamper (≥4.6.0)  
 12. [`disaster-recovery.md`](./disaster-recovery.md) — `create_user` / `remote_logon` (≥4.6.0)  
 13. [`network-guard.md`](./network-guard.md) — golden ağ baseline + dashboard panel + `auto_restore_network`; soft surface inform (`network_surface_changed` / accept / disable); süreç contain onaylı (≥4.7.3 / panel ≥4.9.12 / soft inform ≥4.9.15 / contract 1.4.17)  
-13b. [`../cloud/DEFENSE_POLICY.md`](../cloud/DEFENSE_POLICY.md) — cloud tiered `defense_policy` / rules matrix / anti-bait (contract **1.4.18**; client apply ≥4.9.16)  
+13b. [`../cloud/DEFENSE_POLICY.md`](../cloud/DEFENSE_POLICY.md) + [`defense-policy-client.md`](./defense-policy-client.md) — tiered policy; observe default + auto-promote (contract **1.4.19**; client ≥4.9.17)  
 14. [`system-recovery.md`](./system-recovery.md) — saldırı yüzeyi policy/service/firewall snapshot + drift + onaylı restore (target ≥4.9.12)  
 15. [`gui-control-center.md`](./gui-control-center.md) — dinamik GUI / güvenlik katmanları (≥4.7.3)  
 16. [`log-retention.md`](./log-retention.md) — günlük loglar / 7 gün retention (≥4.7.6)

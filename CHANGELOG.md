@@ -1,6 +1,19 @@
 # Changelog — honeypot-contract
 
+## 1.4.19 — 2026-07-23 (Defense Policy — observe default + auto-promote)
+
+- [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md): **product model** —
+  detection/alerts always on; aggressive actions mode-gated; **new host default
+  `observe`**; configurable **auto-promote observe→balanced** (default **3 days**,
+  dashboard lock/disable); education copy for three modes; C-P0-9/10; handoff §9.
+  Auto-promote never opens paranoid / `isolate_armed` (anti-bait intact).
+- New [`agent/defense-policy-client.md`](agent/defense-policy-client.md): client
+  apply, onboarding CTA, local promote backup, STATUS fields.
+- [`ROADMAP_TIERED_DEFENSE.md`](ROADMAP_TIERED_DEFENSE.md): onboarding section.
+- Target client **≥ 4.9.17**.
+
 ## 1.4.18 — 2026-07-23 (Defense Policy — cloud normative)
+
 
 - New [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md): **cloud/dashboard**
   must-do for tiered response — `defense_policy` presets, rules matrix in

@@ -49,9 +49,10 @@ Cloud curated IoC → ayrı poll (`09`).
   `auto_restore_network` (cloud toggle; default on; subtractive-only),
   `require_strong_signal`, `score_threshold`, `fs_write_*`
 - **`protection.defense_policy` + `defense_rules` + `defense_policy_version`**
-  (+ opsiyonel `isolate_armed`) — tiered response; **cloud normative**
-  [`../cloud/DEFENSE_POLICY.md`](../cloud/DEFENSE_POLICY.md) (contract **1.4.18**).
-  Observe/balanced must not emit `auto_isolate_network`. Client apply target ≥4.9.16.
+  (+ `isolate_armed`, observe onboarding fields) — tiered response; **cloud normative**
+  [`../cloud/DEFENSE_POLICY.md`](../cloud/DEFENSE_POLICY.md) (contract **1.4.19**).
+  New host default **observe**; auto-promote → balanced (default 3 days).
+  Observe/balanced must not emit `auto_isolate_network`. Client ≥4.9.17.
 
 ## POST /api/threats/config (GUI / dashboard write)
 

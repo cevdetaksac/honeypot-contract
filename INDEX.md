@@ -1,19 +1,19 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.18** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + soft network surface inform **≥ 4.9.15** / **1.4.17** + **Defense Policy cloud** normative **1.4.18** → client apply target **≥ 4.9.16**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.19** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Defense Policy **1.4.18–1.4.19** → client **≥ 4.9.16** matrix / **≥ 4.9.17** observe-default+onboarding; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
 
 | Dosya | Konu | Statü |
 |-------|------|-------|
-| [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma (kırmızı/sarı/mavi), defense_policy, Gemini+ekip, P0–P3, anti-bait | Planning (living) |
+| [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma, observe→balanced onboarding, P0–P3, anti-bait | Planning (living) |
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
 | [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
 | [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT asymmetric envelope / keys: Design-only; cloud do/don’t | Decision (1.4.16) |
-| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered defense_policy / rules matrix / anti-bait — cloud must-do (C-P0…C-P2) | Normative (1.4.18) |
+| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered policy + observe default + auto-promote — cloud must-do (C-P0…C-P2) | Normative (1.4.19) |
 | [cloud/PRODUCT_BRANDING.md](cloud/PRODUCT_BRANDING.md) | HP-BLOCK / CloudHoneypot wire identity stays; no big-bang rename | Decision (1.4.16) |
 | [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 operator public key distribution | Design-only |
 | [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 asymmetric envelope + TPM PoP gate | Design-only |
@@ -34,6 +34,7 @@
 | [agent/log-retention.md](agent/log-retention.md) | Günlük yerel loglar, 7 gün retention, updater uyumluluğu | ≥ **4.7.6** |
 | [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block; bare success no HP-BLOCK + whitelist enforce | ≥ **4.9.7** (policy) |
+| [agent/defense-policy-client.md](agent/defense-policy-client.md) | defense_rules apply, observe default, onboarding CTA / promote backup | ≥ **4.9.17** |
 | [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + persistent session helper (frame `inputs[]` baseline ≥4.5.55) | ≥ **4.9.0** |
 | [agent/server-management.md](agent/server-management.md) | Dashboard Sunucu Yönetimi: users / processes / services inventory + mutates (`list_services` additive) | target ≥ **4.9.4** |
 

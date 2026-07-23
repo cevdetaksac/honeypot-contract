@@ -1,8 +1,8 @@
 # Tiered Defense & Resilience Roadmap
 
-> **Status:** Planning (living document) — **final review 2026-07-23** · cloud normative **1.4.18** → [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md)  
+> **Status:** Planning (living document) — **onboarding 2026-07-23** · cloud normative **1.4.19** → [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) · client [`agent/defense-policy-client.md`](agent/defense-policy-client.md)  
 > **Audience:** Client · Cloud/API · Dashboard · QA  
-> **Related:** [`agent/network-guard.md`](agent/network-guard.md) · [`agent/ransomware-shield.md`](agent/ransomware-shield.md) · [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) · [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) · shipped soft surface inform **1.4.17 / client ≥4.9.15**  
+> **Related:** [`agent/network-guard.md`](agent/network-guard.md) · [`agent/ransomware-shield.md`](agent/ransomware-shield.md) · [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) · [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) · soft inform **1.4.17 / ≥4.9.15** · matrix **≥4.9.16** · observe-default **≥4.9.17**  
 > **Repo:** https://github.com/cevdetaksac/honeypot-contract
 
 Bu dosya Gemini + ürün ekibi değerlendirmelerinin **birleşik yol haritasıdır**.  
@@ -18,8 +18,10 @@ Her özellik şu süzgeçten geçer:
 | Tut | Bırak / ertele |
 |-----|----------------|
 | Soft alarm, dashboard karar | Varsayılan oto ağ kesme (Ethernet öldürme) |
+| **Algı her modda açık; agresif tepki moda bağlı** | Observe’da sessiz/kör kalmak |
+| **Kurulum observe → 2–3 gün auto balanced** (kilitleme var) | Sessizce paranoid / isolate |
 | Dar, kanıtlı tetik (canary / VSS wipe / intel) | “Disk I/O yüksek” / clipboard / typing-speed → auto-suspend |
-| Process suspend/kill+quarantine (kırmızı) | Temp’ten her EXE’yi dondurarak başlat |
+| Process suspend/kill+quarantine (kırmızı, balanced+) | Temp’ten her EXE’yi dondurarak başlat |
 | Yanlış alarm çıkışı: resume / whitelist / unlock | `under_attack` panik her soft olayda |
 | Observe → Balanced → Paranoid (müşteri seçer) | Tek “herkese agresif” default |
 | **Saldırganın bilerek tetiklemesiyle self-DoS yok** | Tek sinyal → felç / ağ kes / “en agresif moda düş” |
@@ -145,20 +147,37 @@ Tek canary dokunuşu / imza bozma / alert spam → **asla** ağ kesme veya “pa
 
 | Mod | Process | Ağ izolasyonu | Tipik kullanım |
 |-----|---------|---------------|----------------|
-| **observe** | Alarm only | Off | İlk 1–2 hafta / lab |
-| **balanced** (önerilen) | Kırmızı: auto suspend/kill+Q; Sarı: suspend+onay | Off | Çoğu sunucu |
+| **observe** (kurulum default) | Alarm only — **uyarılar açık** | Off | İlk günler / temkin |
+| **balanced** (önerilen üretim) | Kırmızı: auto suspend/kill+Q; Sarı: suspend+onay | Off | Çoğu sunucu |
 | **paranoid** | Kırmızı+sarı agresif | Opsiyonel isolate (müşteri arm + risk onayı + tercihen multi-signal) | Kritik DB |
 
-**Cloud alan (taslak):** `protection.defense_policy` = `observe|balanced|paranoid`  
+**Cloud alan:** `protection.defense_policy` = `observe|balanced|paranoid`  
++ onboarding: `observe_started_at`, `observe_auto_promote_days` (default **3**),  
+`observe_auto_promote_enabled`, `defense_policy_locked` —  
+[`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) §1.4.
 
 **Kurallar:**
 
-- Yeni kurulumda UI **observe** önerir (1–2 hafta), sonra balanced’a geçiş CTA  
+- Yeni kurulum **observe**; süre dolunca (default 3 gün) otomatik **balanced**  
+  (dashboard kilitleyebilir / gün sayısını değiştirebilir)  
+- Client + dashboard: üç mod için **eğitim metinleri** (algı açık, tepki moda bağlı)  
+- CTA: “Sorun yoksa Denge’ye geçin”  
 - Paranoid network isolate kurulurken açık “brick/RDP kesilir” onayı  
-- Client: process `auto_contain` bomb-path hard-false kalır; kırmızı yol `auto_suspend_critical` / mevcut RS yolları ile gider  
-- **Hiçbir hata/tamper yolu sessizce paranoid+isolate’e yükseltmez**
+- Client: process `auto_contain` bomb-path hard-false; kırmızı yol matrix ile  
+- **Tamper / canary spam asla paranoid+isolate’e yükseltmez**  
+- Observe→balanced auto-promote **ürün onboarding**dır; anti-bait “escalate” değildir  
 
 Preset’ler §3.1 **kural matrisine** derlenir; ileride Custom Policy aynı şemayı satabilir.
+
+---
+
+## 3.0a Onboarding acceptance
+
+- Fresh host: observe + alerts fire, no kill/isolate  
+- Day N (config): balanced without user click (unless locked)  
+- Locked observe stays observe  
+- Promote never sets paranoid / isolate_armed  
+- Education visible on client GUI + dashboard  
 
 ---
 
@@ -385,19 +404,19 @@ başlatmak.
 | 2026-07-23 | Ürün | Kırmızı process auto-suspend + resume/whitelist | Kabul | P0 |
 | 2026-07-23 | Gemini | Policy matris, push/pull, rule engine, imzalı cache; tamper→agresif+ağ kes | Matris+sync+imza+LKG kabul; tamper/isolate default red | §3.1 · P0-1* |
 | 2026-07-23 | Ürün | Saldırgan bilerek tetikleyerek self-imha / sinir ucu bait | Anti-bait birinci sınıf kısıt | §0 · §3.2 · P0-6 · P2-3 |
+| 2026-07-23 | Ürün | Algı her modda; default observe; 2–3g auto→balanced; dashboard yönetir; eğitim CTA | Kabul | §0 · §3 · 1.4.19 |
 | | | *(sonraki öneriler…)* | | |
 
 ---
 
 ## 9. Sonraki somut adım
 
-1. Cloud: [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) **C-P0-*** paketini uygula  
-2. Client P0: matrix apply + signed cache + resume/allow + snapshot + anti-bait testleri (≥4.9.16)  
-3. Lab: Balanced canary/VSS + canary spam + policy tamper (ağ ayakta)  
-4. Dashboard: preset UI → sonra P1 matrix editor  
+1. Cloud: [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) **C-P0-1…C-P0-10** (observe default + auto-promote)  
+2. Client ≥4.9.17: observe hydrate + CTA + promote backup ([`agent/defense-policy-client.md`](agent/defense-policy-client.md))  
+3. Lab: observe canary (alert only) → promote → balanced kill/Q; ağ ayakta  
+4. Dashboard: eğitim + kilitle + gün sayısı  
 
-**Uygulama başlamadan:** §0 + §3.2 + §6 ihlal edilmez. Cloud §0 invariants
-([`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md)) ile aynı hizada kalır.
+**Uygulama:** §0 + §3.2 + §6 ihlal edilmez. Auto-promote ≠ anti-bait ihlali.
 
 ---
 
