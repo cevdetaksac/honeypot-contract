@@ -86,8 +86,66 @@ cloud `protection.network_guard.enabled=true` sync bakımı **silmez**.
 **Kısa yol (bakım olmadan):** önce `network_snapshot`, sonra host değişikliği
 (hata riski: snapshot unutulursa auto-restore eski golden’a çeker).
 
-Saldırı senaryosu (bakım yok, snapshot yok): live ≠ golden →
+Saldırı senaryosu (bakım yok, snapshot yok): live ≠ golden **ve** değişiklik
+**subtractive** (adapter down / DNS hijack / firewall off / static gasp) →
 `auto_restore_network` (veya dashboard **Geri yükle**) golden’a döner.
+
+### Additive vs subtractive (contract 1.4.17) — kullanıcıyı darlama
+
+Ürün hedefi: **internete bağlı kalındığından emin olmak.**  
+`connectivity.internet_ok == true` iken Ethernet kablosu / DHCP lease / yeni
+adapter ayağa kalkması **panik değildir** — soft bilgilendirme yeter.
+
+| Sınıf | Örnek | Client davranışı | Cloud / dashboard |
+|-------|-------|------------------|-------------------|
+| **Additive (inform)** | Adapter `disconnected→up`, yeni NIC, DHCP lease IP değişimi | Soft alert `network_surface_changed` (**info**, `force_urgent=false`); **asla** auto-disable; **asla** auto_restore | Soft banner / diff (mavi); **under_attack yok**; **Yeni golden kabul** / isteğe bağlı **Adaptörü kapat** (confirm) |
+| **Subtractive (restore)** | Baseline’da `up` olan düştü, DNS değişti, firewall off, static IP gasp | `auto_restore_network` (default on) | Kırmızı drift; restore sonucu `network_surface_restored` |
+| **Panic (net_cut)** | `internet_ok` true→false (≥ persist) | Offline skor / suspect alarm | Gerçek kesinti — panik burada |
+
+Kurallar:
+
+1. Additive değişiklik **otomatik adaptör kapatmaz** ve golden’ı zehirlemez.
+2. Operatör / kullanıcı “bu bendim” derse → `network_accept_surface`
+   (= `network_snapshot`) → live yeni golden olur.
+3. Dashboard “bu adaptör enable kalmasın” derse → yalnız
+   `network_disable_adapter` (**confirm**); client asla kendi başına disable etmez.
+4. Yerel GUI: soft chip/toast + **Bu bendim → yedeği güncelle**. Inform yolunda
+   **PIN / geri sayımlı zorlama yok** (kullanıcıyı darlama). PIN yalnız
+   cloud confirm’li yıkıcı komutlarda (disable/restore) kalır.
+5. Soft alert dedupe: aynı değişiklik parmak izi ≥ **15 dk** (flap yok).
+
+```json
+{
+  "severity": "info",
+  "threat_type": "network_surface_changed",
+  "title": "Ağ yüzeyi genişledi (internet açık)",
+  "description": "Ethernet up · 192.168.1.21",
+  "threat_score": 15,
+  "force_urgent": false,
+  "recommended_action": "review_network",
+  "system_context": {
+    "network_guard": {
+      "trigger": "surface_inform",
+      "internet_ok": true,
+      "inform_changes": [
+        {"id": "adapter_up.Ethernet", "kind": "adapter_enabled",
+         "interface": "Ethernet", "from": "disconnected", "to": "up",
+         "ipv4": "192.168.1.21"}
+      ]
+    }
+  }
+}
+```
+
+**Cloud talimatı (zorunlu):**
+
+- `network_surface_changed` → soft panel / toast; host’u `under_attack` yapma.
+- Butonlar: **Yeni golden kabul et** (`network_accept_surface`) ·
+  **Adaptörü kapat** (`network_disable_adapter`, confirm+PIN) · Yoksay.
+- `internet_ok=false` / `ransomware_offline_*` / subtractive restore ayrı kanallar —
+  soft inform ile karıştırma.
+- Health: `network_guard.surface_inform` + `surface_inform_changes` göster;
+  kırmızı `drift` yalnız subtractive.
 
 ---
 
@@ -168,7 +226,7 @@ Malware ağ sürücülerini keser / IPv4-DNS bozar / adapter kapatır → golden
 
 | Bayrak | Default | Anlam |
 |--------|---------|--------|
-| `auto_restore_network` | **true** (≥4.9.12) | Live≠golden (adapter/DNS/IPv4 mode/mapped drive/firewall) → client **anında** restore |
+| `auto_restore_network` | **true** (≥4.9.12) | Live≠golden **subtractive** (adapter down / DNS / IPv4 mode / mapped drive / firewall) → client **anında** restore. **Additive** (adapter up / DHCP lease) restore **etmez** (1.4.17). |
 | `auto_contain` / `auto_kill` | hard **false** | Süreç dondurma/öldürme asla otomatik değil |
 | Legacy `auto_restore` | hard **false** wire uyumu | Eski bomb-path alanı; cloud `auto_restore_network` kullanır |
 
@@ -203,9 +261,11 @@ Control WS `list_network_baseline` / `network_diff` (tercihen komut — tam payl
 | `type` | Params | Confirm | Min |
 |--------|--------|---------|-----|
 | `network_snapshot` | — | hayır | ≥4.7.0 |
+| `network_accept_surface` | — | hayır | ≥4.9.15 (1.4.17) — additive “bu bendim”; `network_snapshot` ile aynı etki |
 | `list_network_baseline` | — | hayır | ≥4.7.0 (rich ≥4.9.12) |
-| `network_diff` | `version?` | hayır | ≥4.9.12 |
+| `network_diff` | `version?` | hayır | ≥4.9.12 — `changes` (subtractive) + `inform_changes` (additive, ≥4.9.15) |
 | `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | mutate evet / dry_run hayır | ≥4.7.0 |
+| `network_disable_adapter` | `name` (zorunlu), `dry_run?` | mutate evet / dry_run hayır | ≥4.9.15 — asla otomatik |
 
 `targets[]`: `adapter` | `ipv4` | `dns` | `firewall` | `mapped_drive`
 
@@ -294,6 +354,8 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
 - `suspend_process` komutu `confirm:true` olmadan kuyruğa/push'a yazılmaz.
 - `ransomware_offline_bomb` yalnız operatör containment sonucunu temsil eder;
   tespit pipeline'ı bu tipi kendi başına üretmez.
+- `network_surface_changed` (1.4.17): soft banner only; Accept / optional Disable;
+  never `under_attack`; never auto-queue disable.
 - `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
 - Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) +
@@ -329,6 +391,13 @@ Motor STATUS (`:58632`) ve `POST /api/health/report` snapshot'ına eklenir
   "internet_ok": true,
   "drift": false,
   "drift_count": 0,
+  "surface_inform": true,
+  "surface_inform_count": 1,
+  "surface_inform_changes": [
+    {"id": "adapter_up.Ethernet", "kind": "adapter_enabled",
+     "interface": "Ethernet", "from": "disconnected", "to": "up",
+     "ipv4": "192.168.1.21"}
+  ],
   "mapped_drives": 0,
   "suspended_processes": 0,
   "last_trigger_ts": null,
@@ -374,7 +443,8 @@ komut beklemeden son bilinen IP’yi göstersin. Tam history için `list_network
 - [x] Cloud popup/satır: açık onaylı **Suspend/Resume** butonu + exact-identity (pid+image+start-time) — cloud implemented; canlı client ile uçtan uca doğrulama bekliyor
 - [ ] Acil VSS snapshot yalnız ayrı/onaylı aksiyon sırasında best-effort alınır
 - [x] Ağ restore: manuel `network_restore` confirm; `dry_run:true` plan-only
-- [x] `auto_restore_network` (default on): mapped drive / DNS / adapter / IPv4 mode drift → anında golden restore (1.4.14)
+- [x] `auto_restore_network` (default on): mapped drive / DNS / adapter / IPv4 mode drift → anında golden restore (1.4.14); **additive adapter-up / DHCP lease restore etmez** (1.4.17)
+- [x] Soft `network_surface_changed` + `network_accept_surface` / `network_disable_adapter` (confirm) — internet açıkken panik yok (1.4.17)
 - [x] Bilinçli IP değişimi: önce `network_snapshot` (dashboard panel)
 - [x] Dashboard panel: live IP/adaptör + golden + diff + restore (cloud ≥1.4.14)
 - [x] Geri yükleme sonrası bağlantı doğrulanır

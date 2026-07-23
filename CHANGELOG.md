@@ -1,5 +1,22 @@
 # Changelog — honeypot-contract
 
+## 1.4.17 — 2026-07-23 (Network Guard — soft surface inform, no panic while online)
+
+- [`agent/network-guard.md`](agent/network-guard.md): **additive vs subtractive**
+  network surface model. Goal: cloud must know the host stays **internet-reachable**;
+  while `internet_ok=true` there is **no panic** / no `under_attack` for benign
+  enrichment (Ethernet plug-in, DHCP lease, new adapter up).
+  - Soft alert `network_surface_changed` (info, non-urgent) for additive changes
+  - `auto_restore_network` remains **subtractive-only** (down/DNS hijack/firewall off)
+  - Never auto-disable a newly-up adapter
+  - Commands: `network_accept_surface` (new golden), `network_disable_adapter`
+    (confirm — operator choice only)
+  - STATUS: `surface_inform` + `surface_inform_changes` (separate from red `drift`)
+  - Local GUI: soft chip/toast + “This was me → snapshot”; **no PIN** on inform
+- [`api/03-control-websocket.md`](api/03-control-websocket.md): command table +
+  cloud UX notes for soft banner / Accept / Disable.
+- Target client **≥ 4.9.15**.
+
 ## 1.4.16 — 2026-07-23 (VSS delete intent + ZT/branding decisions)
 
 - [`agent/ransomware-shield.md`](agent/ransomware-shield.md): **VSS wipe intent**

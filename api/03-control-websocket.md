@@ -225,6 +225,8 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `network_diff` | `version?` | Live vs golden (veya history sürümü) değişiklik listesi — ≥4.9.12 |
 | `network_maintenance_start` | `reason?` | Bakım: detect + auto_restore pause (VPN/IP işi) — ≥4.9.12 / contract 1.4.15 |
 | `network_maintenance_end` | `snapshot?` (default **true**) | Bakımı bitir; varsayılan yeni golden al + korumayı aç — ≥4.9.12 |
+| `network_accept_surface` | — | Additive yüzey değişimini **yeni golden** kabul et (`network_snapshot` alias) — ≥4.9.15 / 1.4.17 |
+| `network_disable_adapter` | `name` (zorunlu), `dry_run?` | Belirli adaptörü disable. **Mutate = confirm.** Otomatik çağrılmaz — ≥4.9.15 |
 | `system_recovery_snapshot` | — | Saldırı yüzeyi (policy/service/firewall) snapshot — ≥4.9.12 ([`../agent/system-recovery.md`](../agent/system-recovery.md)) |
 | `list_system_recovery` | — | Recovery baseline sürümleri/özeti — ≥4.9.12 |
 | `system_recovery_diff` | `version?` | Baseline vs canlı allowlist diff — ≥4.9.12 |
@@ -252,7 +254,10 @@ Params:
   → result error `rollback_baseline_not_found_or_invalid`. Other errors:
   `no_baseline`, `baseline_signature_invalid`.
 - Dashboard panel also uses `list_network_baseline` + `network_diff` (read-only).
-  Intentional IP change: call `network_snapshot` **before** changing the host.
+  Intentional IP change: prefer maintenance mode, or call `network_snapshot` /
+  `network_accept_surface` after a soft `network_surface_changed` inform.
+  While `internet_ok`, cloud must **not** panic / `under_attack` for additive
+  adapter-up / DHCP lease (contract 1.4.17).
 
 Dry-run result `data` example:
 
