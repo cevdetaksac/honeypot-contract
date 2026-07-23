@@ -1,5 +1,15 @@
 # Changelog — honeypot-contract
 
+## 1.4.22 — 2026-07-24 (Winlogon — cloud shipped + client capture P0)
+
+- [`cloud/REMOTE_DESKTOP_WINLOGON.md`](cloud/REMOTE_DESKTOP_WINLOGON.md): **cloud C-WL-1…5
+  shipped** (honeypot.yesnext.com.tr); lab evidence **4.9.25** —
+  `desktop=Winlogon` / `winlogon_mode` OK but **`capture_method=gdi+black`**
+  (logon UI invisible). Client P0: non-black Winlogon mirror → target **≥ 4.9.26**.
+- Cloud viewer notes: stop→prepare(`prefer=winlogon`)→start(`session_id`),
+  single target select, CAD=`remote_send_sas` only, honest black-frame UI.
+- INDEX / FLEET matrix updated.
+
 ## 1.4.21 — 2026-07-23 (Remote Desktop — console Winlogon / pre-logon)
 
 - [`api/05-remote-desktop.md`](api/05-remote-desktop.md): oturum yokken console

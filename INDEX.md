@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.21** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Winlogon pre-logon **1.4.21** / client **≥ 4.9.21**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.22** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Winlogon pre-logon **1.4.21–1.4.22** / wire ≥ **4.9.21**, non-black capture target **≥ 4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
@@ -10,7 +10,7 @@
 | Dosya | Konu | Statü |
 |-------|------|-------|
 | [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma, observe→balanced onboarding, P0–P3, anti-bait | Planning (living) |
-| [cloud/REMOTE_DESKTOP_WINLOGON.md](cloud/REMOTE_DESKTOP_WINLOGON.md) | Console Winlogon / pre-logon RD — cloud/viewer must-do (C-WL-*) | Normative (1.4.21) |
+| [cloud/REMOTE_DESKTOP_WINLOGON.md](cloud/REMOTE_DESKTOP_WINLOGON.md) | Console Winlogon / pre-logon — cloud **shipped** C-WL-*; client P0 non-black capture | Normative (1.4.22) |
 | [cloud/REMOTE_DESKTOP_SMOOTHNESS.md](cloud/REMOTE_DESKTOP_SMOOTHNESS.md) | WebRTC raw/HW encode + input fluidity — cloud/viewer must-do (C-RD-*) | Normative (1.4.20) |
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
 | [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
