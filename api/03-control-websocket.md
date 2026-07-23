@@ -284,6 +284,17 @@ Dry-run result `data` example:
 }
 ```
 
+### `network_disable_adapter` (contract 1.4.17)
+
+```json
+{ "name": "Ethernet", "dry_run": true }
+```
+
+- `name` (or `interface`) required.
+- `dry_run: true` → plan only; **no** confirm.
+- Mutating disable → `DESTRUCTIVE_COMMAND_TYPES` + `confirm:true`. Never
+  auto-queued from soft `network_surface_changed`.
+
 **GUI PIN semantiği (≥4.8.3):** PIN store `ProgramData/.../gui_lock.json` — SYSTEM daemon komutu uygular, GUI süreci dosya mtime'ından değişikliği otomatik algılar (restart gerekmez) ve aktif oturum kilidini düşürür. Hesap bağlıysa GUI PIN diyalogları "dashboard üzerinden tanımlayabilir/sıfırlayabilirsiniz" ipucu gösterir (`is_account_linked()`), böylece PIN unutulduğunda kurtarma yolu görünürdür. Client doğrulaması: `pin` eksik → `missing_pin`, format dışı → `invalid_pin_format`.
 
 Detay: self-update → [`04-self-update.md`](./04-self-update.md); remote → [`05-remote-desktop.md`](./05-remote-desktop.md) + [`../agent/remote-input.md`](../agent/remote-input.md); firewall → [`06-firewall-blocks.md`](./06-firewall-blocks.md); kurtarma → [`../agent/disaster-recovery.md`](../agent/disaster-recovery.md); kalıcılık/tamper → [`../agent/persistence-and-tamper.md`](../agent/persistence-and-tamper.md).
