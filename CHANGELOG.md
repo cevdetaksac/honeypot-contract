@@ -1,5 +1,16 @@
 # Changelog — honeypot-contract
 
+## 1.4.18 — 2026-07-23 (Defense Policy — cloud normative)
+
+- New [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md): **cloud/dashboard**
+  must-do for tiered response — `defense_policy` presets, rules matrix in
+  `threats/config`, push/pull version sync, HMAC-signed emit, soft vs urgent
+  routing, Resume/Allow/Unlock UI, anti-bait (no auto-isolate from canary /
+  tamper / alert fatigue), P0–P2 cloud work packages + acceptance.
+- Cross-links: [`ROADMAP_TIERED_DEFENSE.md`](ROADMAP_TIERED_DEFENSE.md),
+  [`agent/threat-engine.md`](agent/threat-engine.md), INDEX / FLEET.
+- Target client apply **≥ 4.9.16** (plan); soft inform already **≥ 4.9.15**.
+
 ## 1.4.17 — 2026-07-23 (Network Guard — soft surface inform, no panic while online)
 
 - [`agent/network-guard.md`](agent/network-guard.md): **additive vs subtractive**

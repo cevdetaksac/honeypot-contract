@@ -1,8 +1,8 @@
 # Tiered Defense & Resilience Roadmap
 
-> **Status:** Planning (living document) — **final review 2026-07-23**  
+> **Status:** Planning (living document) — **final review 2026-07-23** · cloud normative **1.4.18** → [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md)  
 > **Audience:** Client · Cloud/API · Dashboard · QA  
-> **Related:** [`agent/network-guard.md`](agent/network-guard.md) · [`agent/ransomware-shield.md`](agent/ransomware-shield.md) · [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) · shipped soft surface inform **1.4.17 / client ≥4.9.15**  
+> **Related:** [`agent/network-guard.md`](agent/network-guard.md) · [`agent/ransomware-shield.md`](agent/ransomware-shield.md) · [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) · [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) · shipped soft surface inform **1.4.17 / client ≥4.9.15**  
 > **Repo:** https://github.com/cevdetaksac/honeypot-contract
 
 Bu dosya Gemini + ürün ekibi değerlendirmelerinin **birleşik yol haritasıdır**.  
@@ -391,12 +391,13 @@ başlatmak.
 
 ## 9. Sonraki somut adım
 
-1. Bu belge **final review** onayından sonra P0 kontrat taslağı  
-2. P0: matrix + signed cache + resume/allow + snapshot + **anti-bait testleri**  
-3. Lab: Balanced canary/VSS + bilinçli canary spam + policy tamper (ağ ayakta)  
-4. Cloud UI: preset → sonra P1 matrix editor  
+1. Cloud: [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md) **C-P0-*** paketini uygula  
+2. Client P0: matrix apply + signed cache + resume/allow + snapshot + anti-bait testleri (≥4.9.16)  
+3. Lab: Balanced canary/VSS + canary spam + policy tamper (ağ ayakta)  
+4. Dashboard: preset UI → sonra P1 matrix editor  
 
-**Uygulama başlamadan:** §0 + §3.2 + §6 ihlal edilmez.
+**Uygulama başlamadan:** §0 + §3.2 + §6 ihlal edilmez. Cloud §0 invariants
+([`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md)) ile aynı hizada kalır.
 
 ---
 
