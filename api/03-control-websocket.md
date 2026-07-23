@@ -5,15 +5,19 @@
 > **Kim:** yalnızca SYSTEM daemon (`mode=daemon`)  
 > **RD video:** `/ws/remote/agent` — ayrı kanal  
 
-Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (42 tip).  
+Kod SoT (cloud whitelist): `helpers.VALID_COMMAND_TYPES` (catalog below — recount
+when adding types; must include `network_accept_surface` + `network_disable_adapter`
+for contract ≥1.4.17).  
 `contain_user` **whitelist’te yok** — client/dashboard `logoff_user` + `reset_password` (+ opsiyonel `disable_account`) birleşimi kullanır.
 
 > **Cloud implemented (≥1.3.11, 2026-07-21):** `set_gui_pin` + `clear_gui_pin` →
-> `VALID_COMMAND_TYPES` (42 tip) + `DESTRUCTIVE_COMMAND_TYPES` (confirm gate) +
+> `VALID_COMMAND_TYPES` + `DESTRUCTIVE_COMMAND_TYPES` (confirm gate) +
 > `scrub_command_params` (`pin` → `***`, sonuç sonrası DB'den de maskelenir).
 > Sunucu tarafı format doğrulaması: `pin` 4-12 hane yalnız rakam → aksi 400.
 > Dashboard: Tehdit Merkezi → Remote Commands → **GUI PIN** modalı
 > (PIN tanımla / PIN sıfırla, confirm dialoglu). Client ≥4.8.3 uygular.
+> **1.4.17 cloud checklist:** whitelist `network_accept_surface` (no confirm) +
+> `network_disable_adapter` (mutating confirm; `dry_run:true` exempt).
 
 ---
 
@@ -164,6 +168,9 @@ Aşağıdakiler **dashboard’da açık onay** olmadan cloud kuyruğa yazılmaz 
   [`../agent/network-guard.md`](../agent/network-guard.md)). Dry-run-only
   (`params.dry_run=true` and no mutate) **must not** require destructive
   `confirm:true`.
+- `network_disable_adapter` (belirli adaptörü disable — **mutating** only,
+  contract **1.4.17**). Asla otomatik kuyruklanmaz. `params.dry_run=true`
+  **must not** require `confirm:true`.
 - `suspend_process` (şüpheli süreci askıya al — açık kullanıcı onayı zorunlu)
 - `set_gui_pin` / `clear_gui_pin` (yerel GUI anti-tamper PIN'ini ez/sıfırla — ≥4.8.3)
 
@@ -222,7 +229,7 @@ Client ayrıca whitelist + protected targets uygular; onay **sunucu tarafı** zo
 | `network_snapshot` | — | Golden ağ baseline al (bilinçli IP değişiminden **önce** veya bakımda) — ≥4.7.0 ([`../agent/network-guard.md`](../agent/network-guard.md)) |
 | `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | Baseline'dan ağ/sürücü/IPv4 geri yükle. **Mutate** = confirm. `dry_run:true` = plan only. `targets`: adapter\|ipv4\|dns\|firewall\|mapped_drive. ≥4.7.0 |
 | `list_network_baseline` | — | Golden + **live** adapters (ipv4/dns) + history + drift — rich ≥4.9.12 |
-| `network_diff` | `version?` | Live vs golden (veya history sürümü) değişiklik listesi — ≥4.9.12 |
+| `network_diff` | `version?` | Live vs golden: `changes` (subtractive) + `inform_changes` (additive, ≥4.9.15) + `surface_inform` — ≥4.9.12 / inform ≥4.9.15 |
 | `network_maintenance_start` | `reason?` | Bakım: detect + auto_restore pause (VPN/IP işi) — ≥4.9.12 / contract 1.4.15 |
 | `network_maintenance_end` | `snapshot?` (default **true**) | Bakımı bitir; varsayılan yeni golden al + korumayı aç — ≥4.9.12 |
 | `network_accept_surface` | — | Additive yüzey değişimini **yeni golden** kabul et (`network_snapshot` alias) — ≥4.9.15 / 1.4.17 |

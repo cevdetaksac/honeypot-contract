@@ -1,6 +1,6 @@
 # Product branding & protocol identity
 
-> **Contract VERSION:** root `VERSION` (**1.4.16** — branding karar; soft surface inform için bkz. **1.4.17** / `agent/network-guard.md`)  
+> **Contract VERSION:** root `VERSION` (branding karar stamp **1.4.16**; soft surface inform → **1.4.17** / `agent/network-guard.md`)  
 > Statü: **normative decision** (not a rename migration plan)
 
 ## Karar (Gemini “Honeypot → Core/Agent/Shield” tavsiyesi)

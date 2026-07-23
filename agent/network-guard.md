@@ -2,7 +2,7 @@
 
 > **Contract VERSION:** root `VERSION`
 > **API base:** `https://honeypot.yesnext.com.tr`
-> **Min client:** **≥ 4.7.0** (Network Guard)
+> **Min client:** **≥ 4.7.0** (Network Guard); dashboard panel / `auto_restore_network` ≥ **4.9.12**; soft surface inform ≥ **4.9.15** (contract **1.4.17**)
 > İlgili: [`ransomware-shield.md`](ransomware-shield.md) · [`persistence-and-tamper.md`](persistence-and-tamper.md) · Mimari: [`../api/08-architecture.md`](../api/08-architecture.md)
 
 Amaç: **fire-and-forget + offline** fidye yazılımına karşı savunma. Saldırgan (veya
@@ -249,12 +249,16 @@ Dashboard host detayında **Ağ kurtarma** paneli:
 
 1. **Canlı** — adaptör tablosu (ad, state, IPv4, gateway, DNS, dhcp)
 2. **Son yedek (golden)** — version, `captured_at`, aynı tablo alanları, imza OK
-3. **Diff** — `network_diff` sonucu (kırmızı satırlar)
-4. **Aksiyonlar** — Yedek al (`network_snapshot`) · Plan (`network_restore` dry_run) ·
-   Geri yükle (confirm) · Geçmiş sürüm seç (`rollback_version`)
+3. **Diff** — `network_diff`: kırmızı `changes` (subtractive) + mavi
+   `inform_changes` (additive, 1.4.17)
+4. **Aksiyonlar** — Yedek al (`network_snapshot`) · **Yeni golden kabul**
+   (`network_accept_surface`) · Plan (`network_restore` dry_run) ·
+   Geri yükle (confirm) · isteğe bağlı **Adaptörü kapat**
+   (`network_disable_adapter`, confirm) · Geçmiş sürüm (`rollback_version`) ·
+   Bakım start/end
 
-Veri kaynağı: health/STATUS `network_guard.live` + `network_guard.baseline` **veya**
-Control WS `list_network_baseline` / `network_diff` (tercihen komut — tam payload).
+Veri kaynağı: health/STATUS `network_guard.live` + `network_guard.baseline` +
+`surface_inform*` **veya** Control WS `list_network_baseline` / `network_diff`.
 
 ### Komutlar
 
@@ -262,10 +266,12 @@ Control WS `list_network_baseline` / `network_diff` (tercihen komut — tam payl
 |--------|--------|---------|-----|
 | `network_snapshot` | — | hayır | ≥4.7.0 |
 | `network_accept_surface` | — | hayır | ≥4.9.15 (1.4.17) — additive “bu bendim”; `network_snapshot` ile aynı etki |
-| `list_network_baseline` | — | hayır | ≥4.7.0 (rich ≥4.9.12) |
-| `network_diff` | `version?` | hayır | ≥4.9.12 — `changes` (subtractive) + `inform_changes` (additive, ≥4.9.15) |
+| `list_network_baseline` | — | hayır | ≥4.7.0 (rich ≥4.9.12; inform ≥4.9.15) |
+| `network_diff` | `version?` | hayır | ≥4.9.12 — `changes` + `inform_changes` (≥4.9.15) |
 | `network_restore` | `targets[]?`, `dry_run?`, `rollback_version?` | mutate evet / dry_run hayır | ≥4.7.0 |
 | `network_disable_adapter` | `name` (zorunlu), `dry_run?` | mutate evet / dry_run hayır | ≥4.9.15 — asla otomatik |
+| `network_maintenance_start` | `reason?` | hayır | ≥4.9.12 (1.4.15) |
+| `network_maintenance_end` | `snapshot?` (default **true**) | hayır | ≥4.9.12 |
 
 `targets[]`: `adapter` | `ipv4` | `dns` | `firewall` | `mapped_drive`
 
@@ -294,9 +300,36 @@ Control WS `list_network_baseline` / `network_diff` (tercihen komut — tam payl
     },
     "drift": false,
     "changes": [],
+    "surface_inform": true,
+    "inform_changes": [
+      {"id": "adapter_up.Ethernet", "kind": "adapter_enabled",
+       "interface": "Ethernet", "from": "disconnected", "to": "up",
+       "ipv4": "192.168.1.21"}
+    ],
     "history": [
       { "version": 11, "captured_at": "…", "verified": true }
     ]
+  }
+}
+```
+
+#### `network_diff` result (≥4.9.15)
+
+```json
+{
+  "baseline_version": 14,
+  "drift": false,
+  "changes": [],
+  "surface_inform": true,
+  "inform_changes": [
+    {"id": "adapter_up.Ethernet", "kind": "adapter_enabled",
+     "interface": "Ethernet", "from": "disconnected", "to": "up",
+     "ipv4": "192.168.1.21"}
+  ],
+  "live": {
+    "adapters": [],
+    "mapped_drives": [],
+    "connectivity": {"internet_ok": true, "dns_ok": true, "gateway_ok": true}
   }
 }
 ```
@@ -356,6 +389,10 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
   tespit pipeline'ı bu tipi kendi başına üretmez.
 - `network_surface_changed` (1.4.17): soft banner only; Accept / optional Disable;
   never `under_attack`; never auto-queue disable.
+- `network_surface_restored` (subtractive auto/manual restore sonucu):
+  `severity=warning`, `force_urgent=false`, `threat_score≈55`. Cloud: soft/warning
+  rozet (“bağlantı otomatik kurtarıldı”); **`under_attack` açma**; bomb/critical
+  ile karıştırma.
 - `network_restored` + `network_restore_actions` dashboard-live alanları → modalda “bağlantı otomatik kurtarıldı” rozeti.
 - Dedupe: aynı `trigger` için **60 sn** pencere (`routes_v4._find_recent_duplicate_urgent`).
 - Komutlar: `network_snapshot` / `list_network_baseline` (whitelist) +
@@ -369,8 +406,11 @@ Canary/tamper ile aynı taşıyıcı. Ek `system_context.network_guard` bloğu:
   `score_threshold`, `fs_write_bytes_per_sec`, `fs_write_count_per_sec`.
   `auto_contain` / `auto_kill` client hard-false; `auto_restore_network` cloud ile
   kapatılabilir (bilinçli bakım penceresi).
+  **Ayırım:** süreç yolu = alert-only (asla auto-suspend). `auto_restore_network`
+  ayrı bayrak — yalnızca subtractive ağ yüzeyi (1.4.17); cloud `false` gönderirse
+  client restore etmez (lab’de `mode=alert_only` sync ile görülebilir).
 - Health snapshot `network_guard` + `persistence` → settings persist (client_status rozeti).
-- Dashboard panel: §D — live IP/adaptör + golden + diff + restore (1.4.14).
+- Dashboard panel: §D — live IP/adaptör + golden + diff + restore + soft inform (1.4.14/1.4.17).
 
 ---
 
@@ -445,6 +485,8 @@ komut beklemeden son bilinen IP’yi göstersin. Tam history için `list_network
 - [x] Ağ restore: manuel `network_restore` confirm; `dry_run:true` plan-only
 - [x] `auto_restore_network` (default on): mapped drive / DNS / adapter / IPv4 mode drift → anında golden restore (1.4.14); **additive adapter-up / DHCP lease restore etmez** (1.4.17)
 - [x] Soft `network_surface_changed` + `network_accept_surface` / `network_disable_adapter` (confirm) — internet açıkken panik yok (1.4.17)
+- [x] `network_maintenance_start` / `network_maintenance_end` (1.4.15)
+- [x] STATUS/list/diff: `surface_inform` + `surface_inform_count` / `inform_changes` (1.4.17)
 - [x] Bilinçli IP değişimi: önce `network_snapshot` (dashboard panel)
 - [x] Dashboard panel: live IP/adaptör + golden + diff + restore (cloud ≥1.4.14)
 - [x] Geri yükleme sonrası bağlantı doğrulanır

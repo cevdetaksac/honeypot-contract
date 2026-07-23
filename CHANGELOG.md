@@ -10,11 +10,14 @@
   - `auto_restore_network` remains **subtractive-only** (down/DNS hijack/firewall off)
   - Never auto-disable a newly-up adapter
   - Commands: `network_accept_surface` (new golden), `network_disable_adapter`
-    (confirm — operator choice only)
-  - STATUS: `surface_inform` + `surface_inform_changes` (separate from red `drift`)
+    (confirm — operator choice only; dry_run exempt)
+  - STATUS: `surface_inform` + `surface_inform_count` + `surface_inform_changes`
+    (separate from red `drift`); list/diff also expose `inform_changes`
   - Local GUI: soft chip/toast + “This was me → snapshot”; **no PIN** on inform
 - [`api/03-control-websocket.md`](api/03-control-websocket.md): command table +
-  cloud UX notes for soft banner / Accept / Disable.
+  Destructive gate for `network_disable_adapter` + cloud UX notes.
+- [`INDEX.md`](INDEX.md) / [`FLEET.md`](FLEET.md) / [`agent/CLIENT.md`](agent/CLIENT.md):
+  entry points bumped to **1.4.17** / client **≥4.9.15**.
 - Target client **≥ 4.9.15**.
 
 ## 1.4.16 — 2026-07-23 (VSS delete intent + ZT/branding decisions)

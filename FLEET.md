@@ -24,6 +24,7 @@
 | Network Guard dashboard panel (live IP/adapters + golden baseline + diff + restore) + `auto_restore_network` | `agent/network-guard.md` | cloud ≥ **1.4.14**; target client **≥ 4.9.12** |
 | Network Guard maintenance mode (pause → change VPN/IP → snapshot → resume) | `agent/network-guard.md` | cloud ≥ **1.4.15**; target client **≥ 4.9.12** |
 | VSS delete intent (kill + quarantine without shadow-count wait) | `agent/ransomware-shield.md` | cloud ≥ **1.4.16**; target client **≥ 4.9.14** |
+| Network Guard soft surface inform (additive adapter/DHCP notify; Accept/Disable; no panic while online) | `agent/network-guard.md` | cloud ≥ **1.4.17**; target client **≥ 4.9.15** |
 | One GUI/session + motor watchdog | `api/08-architecture.md` | 4.5.58–59 |
 | Threat-intel GET/304/ACK | `api/09-threat-intel.md` | **4.5.61** |
 | Threat-intel `HP-INTEL-*` apply + orphan/policy reconcile + ACK skipped/removed | `api/09-threat-intel.md`, `api/06-firewall-blocks.md` | **4.9.7** |

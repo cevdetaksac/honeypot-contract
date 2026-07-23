@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.16** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + … + **network guard maintenance** ≥ **1.4.15** + **VSS delete intent** target **≥ 4.9.14** / contract **≥ 1.4.16**; ZT asymmetric still Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding wire IDs stable — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.17** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (safe containment + healthy IPC + … + **network guard maintenance** ≥ **1.4.15** + **VSS delete intent** ≥ **4.9.14** / **1.4.16** + **soft network surface inform** target **≥ 4.9.15** / contract **≥ 1.4.17**; ZT asymmetric still Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding wire IDs stable — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
@@ -26,7 +26,7 @@
 | [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |
 | [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian servisi, çapraz watchdog, tamper wire | ≥ **4.6.0** |
 | [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` (autologon break-glass) | ≥ **4.6.0** |
-| [agent/network-guard.md](agent/network-guard.md) | Offline fidye alarmı, golden ağ baseline, dashboard panel (IP/adaptör), `auto_restore_network`; süreç contain onaylı | ≥ **4.7.3** (panel/auto network ≥ **4.9.12**) |
+| [agent/network-guard.md](agent/network-guard.md) | Offline fidye alarmı, golden ağ baseline, dashboard panel (IP/adaptör), `auto_restore_network`; soft surface inform; süreç contain onaylı | ≥ **4.7.3** (panel/auto network ≥ **4.9.12**; soft inform ≥ **4.9.15**) |
 | [agent/system-recovery.md](agent/system-recovery.md) | Saldırı yüzeyi (policy/service/firewall) snapshot, drift, onaylı restore — full registry yok | target ≥ **4.9.12** |
 | [agent/gui-control-center.md](agent/gui-control-center.md) | Dinamik GUI, güvenlik katmanları, koruma şeridi + Ayarlar sekmesi, sayaç/action + detay popup veri-kaynağı invariant'ları | ≥ **4.7.3** (şerit/Ayarlar ≥ **4.8.0**, popup kaynağı ≥ **4.8.1**) |
 | [agent/log-retention.md](agent/log-retention.md) | Günlük yerel loglar, 7 gün retention, updater uyumluluğu | ≥ **4.7.6** |
