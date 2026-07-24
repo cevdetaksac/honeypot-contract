@@ -4,45 +4,52 @@
 
 | | |
 |--|--|
-| **VERSION** | See [`VERSION`](VERSION) |
+| **VERSION** | [`VERSION`](VERSION) (**1.4.25**) |
+| **Index** | [`INDEX.md`](INDEX.md) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
-| **Security & Resilience vNext** | [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md) — shared client/cloud delivery plan |
-| **Fleet** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.9.0** |
+| **Fleet matrix** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.9.0** |
 | **API base** | `https://honeypot.yesnext.com.tr` |
-| **Auth** | `Authorization: Bearer <token>` — agent API’de `?token=` **yok** (geçiş dual-read cloud’da olabilir; client göndermez) |
+| **Auth** | `Authorization: Bearer <token>` — agent API must not rely on `?token=` query |
 
-## Bu repo kimler için?
+## Who uses this?
 
-| Taraf | Ne yapar |
-|-------|----------|
-| **Windows client** | Sözleşmeye uyum kodu; contract’a aykırı endpoint uydurmaz |
-| **Cloud / API** | Aynı MD’leri implement eder; PM2/nginx/dashboard HTML bu repoda **yok** |
-| **Cursor / agent** | Her görevde `VERSION` + `INDEX.md` → ilgili MD |
+| Party | Role |
+|-------|------|
+| **Windows client** | Implements the contract; does not invent endpoints |
+| **Cloud / API** | Implements the same MDs; PM2/nginx/dashboard HTML are **not** in this repo |
+| **Cursor / agents** | Read `VERSION` → `INDEX.md` → relevant MD before coding |
 
-## Kurallar (zorunlu)
+## Rules
 
-1. API / davranış değişikliği → **önce** bu repoda MD + CHANGELOG + VERSION bump → sonra kod.
-2. Belirsizlik → contract’a `## Open questions` notu; tahmin etme.
-3. Client harici threat feed çekmez; sadece cloud `threat-intel` bundle.
-4. Min client sürümü ilgili MD’de yazar (ör. threat-intel ≥ 4.5.61).
-5. Cloud-only (PM2, nginx, dashboard HTML) varsayma / buraya koyma.
+1. Behavior / API change → **first** MD + CHANGELOG + VERSION bump here → then code.
+2. Ambiguity → add `## Open questions` in the MD; do not guess.
+3. Client does not pull external threat feeds; only the cloud threat-intel bundle.
+4. Minimum client version is stated per MD (see `FLEET.md`).
+5. No cloud-only ops (PM2, nginx, dashboard HTML) in this repo.
 
 ## Clone
 
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: see VERSION file (currently 1.4.9)
+# pin: cat VERSION   # currently 1.4.25
 ```
 
-`CONTRACT_ROOT` = bu dizin. Client: `cloud-client/contract/README.md` pointer.  
-`docs/api/*` client tarafında stub — SoT yalnızca bu repo.
+Client workspace pointer: `cloud-client/contract/README.md` → this repo.
 
-Cloud sunucu:
+## Layout
+
+| Path | Content |
+|------|---------|
+| `api/` | HTTP / WS wire contracts |
+| `agent/` | Client-side behavior |
+| `cloud/` | Dashboard / cloud must-do (C-* checklists) |
+
+## Cloud publish (operators)
 
 ```bash
 cd /data/honeypot.yesnext.com.tr/contract && git pull && ../scripts/publish_contract.sh
 ```
 
-HTTPS mirror (cloud): `https://honeypot.yesnext.com.tr/static/shared-contract.zip`  
+HTTPS mirror: `https://honeypot.yesnext.com.tr/static/shared-contract.zip`  
 Meta: `GET /api/public/contract`
