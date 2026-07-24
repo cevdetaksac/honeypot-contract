@@ -1,12 +1,13 @@
 # Server Management — Dashboard ↔ Client
 
-> Contract **1.4.8** · Status: **normative (additive)**  
+> Contract **1.4.8** (+ cloud Users **1.4.24**) · Status: **normative (additive)**  
 > Production floor unchanged: **client ≥ 4.9.0**  
 > Target ship: client **≥ 4.9.4** (or next patch that lands this package)  
 > Related: [`api/03-control-websocket.md`](../api/03-control-websocket.md),
 > [`api/07-lifecycle-sessions.md`](../api/07-lifecycle-sessions.md),
 > [`api/05-remote-desktop.md`](../api/05-remote-desktop.md) (`list_local_users`),
-> [`disaster-recovery.md`](./disaster-recovery.md) (`create_user`)
+> [`disaster-recovery.md`](./disaster-recovery.md) (`create_user`),
+> cloud Users must-do: [`../cloud/SERVER_USER_MANAGEMENT.md`](../cloud/SERVER_USER_MANAGEMENT.md) (**C-USER-1…7**)
 
 Cloud dashboard **Sunucu Yönetimi** surfaces three pages. The agent must
 **return full current inventory** on refresh and **execute** every mutate
@@ -260,3 +261,5 @@ processes / services) so the next dashboard poll is current.
 - Command whitelist includes `list_services` + existing mutates
 - Caches `list_local_users` / `list_services` results for UI
 - Confirm modal + signing degrade gate for destructive IR
+- Users page cloud checklist: [`../cloud/SERVER_USER_MANAGEMENT.md`](../cloud/SERVER_USER_MANAGEMENT.md)
+  (always `include_disabled: true`, Active+Disabled, toggle, refresh, PROTECTED)

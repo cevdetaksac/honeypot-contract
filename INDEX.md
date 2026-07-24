@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.23** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Winlogon **1.4.21–1.4.23** / sibling pre_logon ≥ **4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.24** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Server Users **C-USER** **1.4.24**; Winlogon **1.4.21–1.4.23** / sibling pre_logon ≥ **4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
@@ -10,6 +10,7 @@
 | Dosya | Konu | Statü |
 |-------|------|-------|
 | [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma, observe→balanced onboarding, P0–P3, anti-bait | Planning (living) |
+| [cloud/SERVER_USER_MANAGEMENT.md](cloud/SERVER_USER_MANAGEMENT.md) | Users sayfası — cloud C-USER-1…7 (`include_disabled`, toggle, cache, PROTECTED) | Normative (1.4.24) |
 | [cloud/REMOTE_DESKTOP_WINLOGON.md](cloud/REMOTE_DESKTOP_WINLOGON.md) | Winlogon / sibling pre_logon — cloud C-WL shipped; client ≥4.9.26 | Normative (1.4.23) |
 | [cloud/REMOTE_DESKTOP_SMOOTHNESS.md](cloud/REMOTE_DESKTOP_SMOOTHNESS.md) | WebRTC raw/HW encode + input fluidity — cloud/viewer must-do (C-RD-*) | Normative (1.4.20) |
 | [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
@@ -38,7 +39,7 @@
 | [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block; bare success no HP-BLOCK + whitelist enforce | ≥ **4.9.7** (policy) |
 | [agent/defense-policy-client.md](agent/defense-policy-client.md) | defense_rules apply, observe default, onboarding CTA / promote backup | ≥ **4.9.17** |
 | [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + persistent session helper (frame `inputs[]` baseline ≥4.5.55) | ≥ **4.9.0** |
-| [agent/server-management.md](agent/server-management.md) | Dashboard Sunucu Yönetimi: users / processes / services inventory + mutates (`list_services` additive) | target ≥ **4.9.4** |
+| [agent/server-management.md](agent/server-management.md) | Dashboard Sunucu Yönetimi: users / processes / services inventory + mutates (`list_services` additive); cloud Users → [`cloud/SERVER_USER_MANAGEMENT.md`](cloud/SERVER_USER_MANAGEMENT.md) | target ≥ **4.9.4** |
 
 ## api/
 
@@ -61,6 +62,7 @@
 | Dosya | Konu |
 |-------|------|
 | [cloud/overview.md](cloud/overview.md) | Mimari özet (agent-visible) |
+| [cloud/SERVER_USER_MANAGEMENT.md](cloud/SERVER_USER_MANAGEMENT.md) | Users C-USER-1…7 (1.4.24) |
 | [cloud/threat-intel-ingest.md](cloud/threat-intel-ingest.md) | Harici feed → bundle (agent çekmez) |
 | [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 v2 envelope + TPM/WebAuthn design gate (wire değil) |
 

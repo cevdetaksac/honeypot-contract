@@ -18,6 +18,7 @@
 | P1 observe schemas: heartbeat_proof, access_integrity, etw_shadow correlation, password_burst, device_identity, canary_coverage, deception_health, network_restore dry_run/rollback | `api/08-architecture.md`, `api/01-auth.md`, `api/03-control-websocket.md` | **4.9.1** (flags default off) |
 | OOB-501 offline urgent queue: `POST /api/alerts/urgent/batch` + soft idempotency on urgent | `api/10-offline-urgent-queue.md` | cloud live ≥ **1.4.7**; client flag `security.offline_urgent_queue` default **off** |
 | Dashboard Server Management (users/processes/services + `list_services`) | `agent/server-management.md` | target ≥ **4.9.4** (cloud UI live ≥ **1.4.8**) |
+| Dashboard Users — disabled inventory + enable/disable (`include_disabled:true`, C-USER) | `cloud/SERVER_USER_MANAGEMENT.md`, `agent/server-management.md` | cloud ≥ **1.4.24**; client list/mutate already ≥ **4.9.4** |
 | Uninstall PIN lifecycle (`uninstall_*` + `windows_user`) | `api/07-lifecycle-sessions.md` | cloud ≥ **1.4.9**; client with uninstall PIN gate |
 | Bare `successful_logon` score ≤70 + no auto-block (cloud reject shapes) | `agent/threat-engine.md` | cloud ≥ **1.4.11**; target client **≥4.9.7** |
 | Whitelist never stays blocked (reject + `unblock_ip` + pending-unblocks) | `api/06-firewall-blocks.md`, `agent/threat-engine.md` | cloud ≥ **1.4.11**; client must ACK `block-removed` |

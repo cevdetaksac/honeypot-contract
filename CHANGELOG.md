@@ -1,5 +1,14 @@
 # Changelog — honeypot-contract
 
+## 1.4.24 — 2026-07-24 (Server Users — cloud C-USER-1…7)
+
+- New [`cloud/SERVER_USER_MANAGEMENT.md`](cloud/SERVER_USER_MANAGEMENT.md):
+  dashboard Users must-do (**C-USER-1…7**) — always `include_disabled: true`,
+  Active+Disabled together, enable/disable toggle, post-mutate refresh, cache
+  keeps disabled rows, confirm + `PROTECTED_ACCOUNT`, active/disabled counts.
+- Cross-links: [`agent/server-management.md`](agent/server-management.md),
+  INDEX / FLEET.
+
 ## 1.4.23 — 2026-07-24 (Winlogon sibling pre_logon + cloud Start wire)
 
 - [`cloud/REMOTE_DESKTOP_WINLOGON.md`](cloud/REMOTE_DESKTOP_WINLOGON.md): client
