@@ -35,7 +35,7 @@ Dashboard “Bağlan” — one-shot `password` (RAM only, loglanmaz).
 |--------|----------|
 | Active + desktop | `ready_for_stream: true` |
 | Disconnected | `WTSConnectSession` / `tscon` → Active + JPEG probe |
-| Oturum yok / pre-logon | **≥4.9.21** Winlogon probe; **≥4.9.26** always sibling `pre_logon` (“Logon / Lock screen”) even when user Active (same `session_id`). Cloud Start on that row: `prefer=winlogon` + `pre_logon` + `desktop=Winlogon`, no `username`. See [`../cloud/REMOTE_DESKTOP_WINLOGON.md`](../cloud/REMOTE_DESKTOP_WINLOGON.md) (**1.4.23**). |
+| Oturum yok / pre-logon | **≥4.9.21** Winlogon probe; **≥4.9.26** always sibling `pre_logon` (“Logon / Lock screen”) even when user Active (same `session_id`). Cloud Start on that row: `prefer=winlogon` + `pre_logon` + `desktop=Winlogon`, no `username`. See [`../cloud/REMOTE_DESKTOP_WINLOGON.md`](../../cloud/REMOTE_DESKTOP_WINLOGON.md) (**1.4.23**). |
 | Yanlış şifre | `AUTH_FAILED` / `ACCOUNT_LOCKED` / `ACCOUNT_DISABLED` |
 
 Başarı: `data.ready_for_stream`, `session_id`, `screen.w/h`, `method`.  

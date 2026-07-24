@@ -1,6 +1,6 @@
 # Offline urgent queue — design archive (OOB-501)
 
-> Status: **promoted** → [`../api/10-offline-urgent-queue.md`](../api/10-offline-urgent-queue.md)  
+> Status: **promoted** → [`../api/10-offline-urgent-queue.md`](../../api/10-offline-urgent-queue.md)  
 > Contract: **1.4.7**  
 > This file is retained as design history only. Normative wire lives under `api/`.
 

@@ -296,7 +296,7 @@ Lockdown = canary hit / VSS wipe / kritik local process (mevcut shield).
 | Ransomware shield | extensions / cmdline merge from bundle |
 | Firewall agent | `HP-INTEL-*` rules from `firewall_blocks` |
 
-Detaylı client sözleşmesi: [`api/09-threat-intel.md`](api/09-threat-intel.md).
+Detaylı client sözleşmesi: [`api/09-threat-intel.md`](../api/09-threat-intel.md).
 
 ---
 
