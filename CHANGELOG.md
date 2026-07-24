@@ -1,5 +1,13 @@
 # Changelog — honeypot-contract
 
+## 1.4.26 — 2026-07-24 (Hardware-bound machine_id — clone split)
+
+- [`api/01-auth.md`](api/01-auth.md): `machine_id`/`hwid` = SHA-256 hardware
+  fingerprint (MachineGuid + NIC MACs + SMBIOS UUID + volume serial), not raw
+  MachineGuid alone. Additive `machine_guid`. Documents CHP2 / `device_binding`
+  clone split + one-time schema v2 re-enroll (client ≥ **4.9.28**).
+- INDEX / FLEET / VERSION.
+
 ## 1.4.25 — 2026-07-24 (Account unlink from agent Settings)
 
 - [`api/02-account.md`](api/02-account.md): `POST /api/agent/unlink-account`

@@ -22,13 +22,26 @@ WS: Bearer header veya `Sec-WebSocket-Protocol: bearer, <token>`.
 {
   "server_name": "HOST (1.2.3.4)",
   "ip": "1.2.3.4",
-  "machine_id": "{Windows-MachineGuid}",
-  "hwid": "{Windows-MachineGuid}",
+  "machine_id": "{sha256-hardware-fingerprint}",
+  "hwid": "{sha256-hardware-fingerprint}",
+  "machine_guid": "{Windows-MachineGuid}",
   "existing_token": null
 }
 ```
 
+**`machine_id` / `hwid` (client ≥ 4.9.28):** SHA-256 over
+`v2|{MachineGuid}|{sorted-MACs}|{SMBIOS-UUID}|{C-volume-serial}`.
+Not raw MachineGuid alone — unsysprep’d VM clones often share MachineGuid and
+would otherwise upsert to the **same** agent token.
+
+**`machine_guid`:** additive telemetry (optional). Cloud may store it; upsert key
+remains `machine_id`.
+
 **Upsert:** aynı `machine_id` → **aynı token** (`reused: true`). First-run → yeni token.
+
+**Clone / shared token:** Client binds `token.dat` (CHP2) + `device_binding.json`
+to the fingerprint. Mismatch → quarantine local identity + fresh `/register`.
+One-time schema v2 upgrade also re-enrolls under the fingerprint (re-link Account).
 
 **200:**
 
@@ -45,7 +58,8 @@ WS: Bearer header veya `Sec-WebSocket-Protocol: bearer, <token>`.
 ```
 
 `protection` → [`../agent/register-protection.md`](../agent/register-protection.md).  
-Token: `%ProgramData%\YesNext\CloudHoneypotClient\token.dat` — immutable; decrypt fail → otomatik re-register **yok**.
+Token: `%ProgramData%\YesNext\CloudHoneypotClient\token.dat` — immutable; decrypt fail → otomatik re-register **yok**.  
+Hardware bind: `device_binding.json` + CHP2 fingerprint in `token.dat` (client ≥ 4.9.28).
 
 ---
 

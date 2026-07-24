@@ -20,6 +20,7 @@
 | Dashboard Server Management (users/processes/services + `list_services`) | `agent/server-management.md` | target ≥ **4.9.4** (cloud UI live ≥ **1.4.8**) |
 | Dashboard Users — disabled inventory + enable/disable (`include_disabled:true`, C-USER) | `cloud/SERVER_USER_MANAGEMENT.md`, `agent/server-management.md` | cloud ≥ **1.4.24**; client list/mutate already ≥ **4.9.4** |
 | Account unlink from client Settings (`POST /api/agent/unlink-account`) | `api/02-account.md` | cloud ≥ **1.4.25**; client **≥ 4.9.26** |
+| Hardware-bound `machine_id` (MAC+MachineGuid fingerprint; clone split) | `api/01-auth.md` | contract **1.4.26**; client **≥ 4.9.28** |
 | Uninstall PIN lifecycle (`uninstall_*` + `windows_user`) | `api/07-lifecycle-sessions.md` | cloud ≥ **1.4.9**; client with uninstall PIN gate |
 | Bare `successful_logon` score ≤70 + no auto-block (cloud reject shapes) | `agent/threat-engine.md` | cloud ≥ **1.4.11**; target client **≥4.9.7** |
 | Whitelist never stays blocked (reject + `unblock_ip` + pending-unblocks) | `api/06-firewall-blocks.md`, `agent/threat-engine.md` | cloud ≥ **1.4.11**; client must ACK `block-removed` |
