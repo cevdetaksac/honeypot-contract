@@ -226,8 +226,8 @@ Observe→balanced promote **bilinçli ürün yolu**dır; anti-bait listesindeki
 - [ ] Canary/VSS → process komutları OK; **isolate_host auto-queue yok**  
 - [ ] Alert count → isolate yok  
 - [ ] Tamper → bildirim; paranoid+isolate push yok  
-- [ ] observe/balanced `auto_isolate_network` strip/reject  
-- [ ] Auto-promote **yalnız** observe→balanced; paranoid/armed açmaz  
+- [x] observe/balanced `auto_isolate_network` strip/reject  
+- [x] Auto-promote **yalnız** observe→balanced; paranoid/armed açmaz  
 - [ ] Fatigue: duplicate urgent merge  
 
 ---
@@ -257,14 +257,14 @@ Observe→balanced promote **bilinçli ürün yolu**dır; anti-bait listesindeki
 
 ## 7. Acceptance (cloud)
 
-- [ ] Yeni host `defense_policy=observe`  
-- [ ] Balanced effective rules asla `auto_isolate_network` içermez  
+- [x] Yeni host `defense_policy=observe` (unit ensure_default)  
+- [x] Balanced effective rules asla `auto_isolate_network` içermez  
 - [ ] Policy save → WS ≤ 2s; stale version pull düzelir  
 - [ ] Canary urgent → isolate komutu oluşmaz (observe’da kill de yok)  
 - [ ] Soft surface → `under_attack=false`  
-- [ ] `observe_auto_promote_days=3` → süre dolunca balanced + WS + audit  
-- [ ] Locked / disabled promote → observe’da kalır  
-- [ ] Auto-promote paranoid veya armed açmaz  
+- [x] `observe_auto_promote_days=3` → süre dolunca balanced + WS + audit (unit)  
+- [x] Locked / disabled promote → observe’da kalır (unit)  
+- [x] Auto-promote paranoid veya armed açmaz  
 - [ ] Resume/Allow/Unlock dashboard’dan çalışır  
 - [ ] Eğitim metinleri üç modda görünür  
 

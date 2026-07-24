@@ -21,6 +21,8 @@
 
 ### `POST /api/agent/unlink-account`
 
+> **Cloud shipped ≥ 1.4.26** — client Settings UI ≥4.9.26.
+
 Auth: **yok** (email/password body'de). Agent token body'de — link ile simetrik.
 
 ```json

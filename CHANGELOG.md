@@ -1,5 +1,21 @@
 # Changelog — honeypot-contract
 
+## 1.4.27 — 2026-07-24 (Unlink live + realtime presence)
+
+### Cloud
+- **`POST /api/agent/unlink-account`** shipped (contract 1.4.25 P0b) — email+password+token,
+  idempotent AccountClient remove; client ≥4.9.26 Settings consumer.
+- **Realtime presence (api/11) actually wired:** Control WS `presence` / `goodbye` +
+  `POST /api/presence` HTTP fallback; `client_status` returns `presence_reason` /
+  `presence_source` / `presence_at`. Unexpected WS-drop debounce **12s** (was 40s).
+- Defense Policy unit suite green (observe/balanced strip `auto_isolate_network`,
+  auto-promote observe→balanced only).
+
+### Client (unchanged open)
+- Winlogon non-black pixels / creds→Default / CAD SendSAS still open (≥4.9.26 lab).
+- Defense-policy client acceptance (CTA/hydrate) still open (≥4.9.17).
+- Product rename / ZT design-only — deferred.
+
 ## 1.4.26 — 2026-07-24 (Hardware-bound machine_id — clone split)
 
 - [`api/01-auth.md`](api/01-auth.md): `machine_id`/`hwid` = SHA-256 hardware

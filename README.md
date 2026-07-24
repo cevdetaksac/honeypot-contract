@@ -4,7 +4,7 @@
 
 | | |
 |--|--|
-| **VERSION** | [`VERSION`](VERSION) (**1.4.25**) |
+| **VERSION** | [`VERSION`](VERSION) (**1.4.27**) |
 | **Index** | [`INDEX.md`](INDEX.md) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Fleet matrix** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.9.0** |
@@ -32,7 +32,7 @@
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: cat VERSION   # currently 1.4.25
+# pin: cat VERSION   # currently 1.4.27
 ```
 
 Client workspace pointer: `cloud-client/contract/README.md` → this repo.

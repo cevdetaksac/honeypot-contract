@@ -160,13 +160,13 @@ via existing `POST /api/alerts/lifecycle`. Prefer **WS/HTTP presence first** (fa
 
 ---
 
-## Cloud behavior (already implemented)
+## Cloud behavior (shipped ≥ **1.4.27** — WS + HTTP + client_status fields)
 
 | Event | Debounce | Result |
 |-------|----------|--------|
 | `goodbye` / explicit offline | **0s** | offline immediately |
 | `presence` suspend | **0s** | suspend immediately |
-| Unexpected WS drop | **~12s** | offline (`reason=ws_lost`) if no reconnect |
+| Unexpected WS drop | **12s** (cloud `GONE_DEBOUNCE_SEC`) | offline (`reason=ws_lost`) if no reconnect |
 | No ping within idle | **~75s** | session dropped → gone path |
 | No signal + stale `last_seen` | **90 / 150s** | online → degraded → offline |
 
