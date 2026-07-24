@@ -4,7 +4,7 @@
 
 | | |
 |--|--|
-| **VERSION** | [`VERSION`](VERSION) (**1.4.27**) |
+| **VERSION** | [`VERSION`](VERSION) (**1.4.28**) |
 | **Index** | [`INDEX.md`](INDEX.md) |
 | **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) |
 | **Fleet matrix** | [`FLEET.md`](FLEET.md) — production floor client ≥ **4.9.0** |
@@ -26,13 +26,14 @@
 3. Client does not pull external threat feeds; only the cloud threat-intel bundle.
 4. Minimum client version is stated per MD (see `FLEET.md`).
 5. No cloud-only ops (PM2, nginx, dashboard HTML) in this repo.
+6. Promoted designs / legacy prompts live under [`docs/archive/`](docs/archive/) — not normative.
 
 ## Clone
 
 ```bash
 git clone https://github.com/cevdetaksac/honeypot-contract.git
 cd honeypot-contract
-# pin: cat VERSION   # currently 1.4.27
+# pin: cat VERSION   # currently 1.4.28
 ```
 
 Client workspace pointer: `cloud-client/contract/README.md` → this repo.
@@ -43,7 +44,8 @@ Client workspace pointer: `cloud-client/contract/README.md` → this repo.
 |------|---------|
 | `api/` | HTTP / WS wire contracts |
 | `agent/` | Client-side behavior |
-| `cloud/` | Dashboard / cloud must-do (C-* checklists) |
+| `cloud/` | Dashboard / cloud must-do (C-* checklists) + design-only ZT |
+| `docs/archive/` | Promoted designs / legacy prompt dumps |
 
 ## Cloud publish (operators)
 

@@ -1,5 +1,16 @@
 # Changelog — honeypot-contract
 
+## 1.4.28 — 2026-07-24 (Contract hygiene)
+
+Docs-only tidy — **no wire behavior change**.
+
+- Rebuilt [`INDEX.md`](INDEX.md): highlight table, full `cloud/` listing, optional lab notes (removed stale sprint checkbox noise).
+- [`FLEET.md`](FLEET.md): presence ship ≥**1.4.27**; dropped duplicate RD v2 footer row; shortened floor warning.
+- Archived promoted OOB design → [`docs/archive/offline-urgent-queue-design.md`](docs/archive/offline-urgent-queue-design.md); `cloud/` keeps stub pointer.
+- Split [`api/05-remote-desktop.md`](api/05-remote-desktop.md): ~770-line legacy prompt dump → [`docs/archive/05-remote-desktop-legacy.md`](docs/archive/05-remote-desktop-legacy.md); WebRTC smoothness section retitled **promoted**.
+- [`SECURITY_RESILIENCE_VNEXT.md`](SECURITY_RESILIENCE_VNEXT.md): OOB-501 marked promoted (was contradictory “not promoted”); planning stamp → living plan.
+- Unlink ship note → **1.4.27**; CHANGELOG double-blank cleanup.
+
 ## 1.4.27 — 2026-07-24 (Unlink live + realtime presence)
 
 ### Cloud
@@ -90,7 +101,6 @@
 - Target client **≥ 4.9.17**.
 
 ## 1.4.18 — 2026-07-23 (Defense Policy — cloud normative)
-
 
 - New [`cloud/DEFENSE_POLICY.md`](cloud/DEFENSE_POLICY.md): **cloud/dashboard**
   must-do for tiered response — `defense_policy` presets, rules matrix in
@@ -223,7 +233,6 @@
   PIN gate lifecycle events (`uninstall_requested` / `pin_failed` /
   `aborted` / `authorized`) + `windows_user` / dashboard filter.
 
-
 ## 1.4.8 — 2026-07-22 (Server Management — dashboard ↔ client)
 
 - New normative [`agent/server-management.md`](agent/server-management.md):
@@ -238,7 +247,6 @@
 - INDEX / FLEET / CLIENT / api/03 catalog cross-links updated.
 
 ## 1.4.7 — 2026-07-22 (OOB-501 promoted to api/)
-
 
 - Promoted offline urgent queue from design to normative
   [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md).

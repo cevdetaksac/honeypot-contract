@@ -1,25 +1,34 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.27** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + account unlink **1.4.25** / client **≥ 4.9.26**; Server Users **C-USER** **1.4.24**; Winlogon **1.4.21–1.4.23** / sibling pre_logon ≥ **4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.28** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> Fleet: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0**
 
+### Recent contract highlights
+
+| Contract | Konu | Client |
+|----------|------|--------|
+| **1.4.27** | Unlink API live + realtime presence wire | unlink ≥**4.9.26**; presence ≥**4.9.8** |
+| **1.4.26** | Hardware-bound `machine_id` (clone split) | ≥**4.9.28** |
+| **1.4.25** | Account unlink Spec (Settings) | ≥**4.9.26** |
+| **1.4.24** | Server Users C-USER | cloud; list ≥**4.9.4** |
+| **1.4.23** | Winlogon sibling pre_logon + C-WL | ≥**4.9.26** |
+| **1.4.20** | WebRTC smoothness | ≥**4.9.20** |
+| **1.4.19** | Defense Policy observe→balanced | ≥**4.9.17** |
+| Design-only | ZT envelope/keys — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md) | — |
+| Decision | Branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md) | — |
+
+---
 
 ## Shared delivery plans
 
 | Dosya | Konu | Statü |
 |-------|------|-------|
-| [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma, observe→balanced onboarding, P0–P3, anti-bait | Planning (living) |
-| [cloud/SERVER_USER_MANAGEMENT.md](cloud/SERVER_USER_MANAGEMENT.md) | Users sayfası — cloud C-USER-1…7 (`include_disabled`, toggle, cache, PROTECTED) | Normative (1.4.24) |
-| [cloud/REMOTE_DESKTOP_WINLOGON.md](cloud/REMOTE_DESKTOP_WINLOGON.md) | Winlogon / sibling pre_logon — cloud C-WL shipped; client ≥4.9.26 | Normative (1.4.23) |
-| [cloud/REMOTE_DESKTOP_SMOOTHNESS.md](cloud/REMOTE_DESKTOP_SMOOTHNESS.md) | WebRTC raw/HW encode + input fluidity — cloud/viewer must-do (C-RD-*) | Normative (1.4.20) |
-| [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Client + Cloud + Dashboard güvenlik/resilience ortak iş paketleri; §7A schemas now normative in api/agent (observe-only) | Plan + promoted observe schemas |
-| [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | OOB-501 history — **promoted** → [`api/10-offline-urgent-queue.md`](api/10-offline-urgent-queue.md) | Design archive |
-| [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT asymmetric envelope / keys: Design-only; cloud do/don’t | Decision (1.4.16) |
-| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered policy + observe default + auto-promote — cloud must-do (C-P0…C-P2) | Normative (1.4.19) |
-| [cloud/PRODUCT_BRANDING.md](cloud/PRODUCT_BRANDING.md) | HP-BLOCK / CloudHoneypot wire identity stays; no big-bang rename | Decision (1.4.16) |
-| [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 operator public key distribution | Design-only |
-| [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 asymmetric envelope + TPM PoP gate | Design-only |
+| [ROADMAP_TIERED_DEFENSE.md](ROADMAP_TIERED_DEFENSE.md) | Kademeli savunma, onboarding, anti-bait | Planning (living) |
+| [SECURITY_RESILIENCE_VNEXT.md](SECURITY_RESILIENCE_VNEXT.md) | Ortak güvenlik paketleri; §7A observe şemaları api/agent’ta | Plan + promoted observe |
+| [docs/archive/](docs/archive/) | Promoted design dumps / legacy prompts | Archive |
+
+---
 
 ## agent/
 
@@ -29,48 +38,57 @@
 | [agent/polling.md](agent/polling.md) | Cadence tablosu | — |
 | [agent/register-protection.md](agent/register-protection.md) | `protection.block_rules` | ≥ **4.5.66** |
 | [agent/ransomware-shield.md](agent/ransomware-shield.md) | Canary UX, quarantine, unlock | ≥ **4.5.65** |
-| [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian servisi, çapraz watchdog, tamper wire | ≥ **4.6.0** |
-| [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` (autologon break-glass) | ≥ **4.6.0** |
-| [agent/network-guard.md](agent/network-guard.md) | Offline fidye alarmı, golden ağ baseline, dashboard panel (IP/adaptör), `auto_restore_network`; soft surface inform; süreç contain onaylı | ≥ **4.7.3** (panel/auto network ≥ **4.9.12**; soft inform ≥ **4.9.15**) |
-| [agent/system-recovery.md](agent/system-recovery.md) | Saldırı yüzeyi (policy/service/firewall) snapshot, drift, onaylı restore — full registry yok | target ≥ **4.9.12** |
-| [agent/gui-control-center.md](agent/gui-control-center.md) | Dinamik GUI, güvenlik katmanları, koruma şeridi + Ayarlar sekmesi, sayaç/action + detay popup veri-kaynağı invariant'ları | ≥ **4.7.3** (şerit/Ayarlar ≥ **4.8.0**, popup kaynağı ≥ **4.8.1**) |
-| [agent/log-retention.md](agent/log-retention.md) | Günlük yerel loglar, 7 gün retention, updater uyumluluğu | ≥ **4.7.6** |
-| [agent/attacks-and-services.md](agent/attacks-and-services.md) | `/api/attack`, bait tunnels, open-ports, tunnel cmd expiry | — |
-| [agent/threat-engine.md](agent/threat-engine.md) | v4 urgent/batch/health/config/auto-block; bare success no HP-BLOCK + whitelist enforce | ≥ **4.9.7** (policy) |
-| [agent/defense-policy-client.md](agent/defense-policy-client.md) | defense_rules apply, observe default, onboarding CTA / promote backup | ≥ **4.9.17** |
-| [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + persistent session helper (frame `inputs[]` baseline ≥4.5.55) | ≥ **4.9.0** |
-| [agent/server-management.md](agent/server-management.md) | Dashboard Sunucu Yönetimi: users / processes / services inventory + mutates (`list_services` additive); cloud Users → [`cloud/SERVER_USER_MANAGEMENT.md`](cloud/SERVER_USER_MANAGEMENT.md) | target ≥ **4.9.4** |
+| [agent/persistence-and-tamper.md](agent/persistence-and-tamper.md) | Guardian, watchdog, tamper | ≥ **4.6.0** |
+| [agent/disaster-recovery.md](agent/disaster-recovery.md) | `create_user`, `remote_logon` | ≥ **4.6.0** |
+| [agent/network-guard.md](agent/network-guard.md) | Offline alarm, golden network, soft inform, contain | ≥ **4.7.3** (panel ≥**4.9.12**; soft ≥**4.9.15**) |
+| [agent/system-recovery.md](agent/system-recovery.md) | Surface snapshot / drift / restore | target ≥ **4.9.12** |
+| [agent/gui-control-center.md](agent/gui-control-center.md) | GUI katmanlar, şerit, Ayarlar, popup SoT | ≥ **4.7.3** (şerit ≥**4.8.0**) |
+| [agent/log-retention.md](agent/log-retention.md) | Yerel log 7 gün | ≥ **4.7.6** |
+| [agent/attacks-and-services.md](agent/attacks-and-services.md) | Attack, bait tunnels, ports | — |
+| [agent/threat-engine.md](agent/threat-engine.md) | Urgent/batch/health/config; whitelist enforce | ≥ **4.9.7** |
+| [agent/defense-policy-client.md](agent/defense-policy-client.md) | Matrix apply, observe default, CTA | ≥ **4.9.17** |
+| [agent/remote-input.md](agent/remote-input.md) | Input protocol 2 + session helper | ≥ **4.9.0** |
+| [agent/server-management.md](agent/server-management.md) | Users / processes / services | target ≥ **4.9.4** |
+
+---
 
 ## api/
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
-| [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, status | 4.4.33+ |
-| [api/02-account.md](api/02-account.md) | Account link / multi-server | — |
-| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komut kataloğu + HMAC + `threat_intel_updated` | 4.5.x / intel push ≥4.5.66 |
+| [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, `machine_id` | 4.4.33+ / hw-id ≥**4.9.28** |
+| [api/02-account.md](api/02-account.md) | Account link / unlink / multi-server | unlink ≥**4.9.26** |
+| [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komutlar + HMAC | 4.5.x |
 | [api/04-self-update.md](api/04-self-update.md) | Self-update ACK | 4.5.39+ |
-| [api/05-remote-desktop.md](api/05-remote-desktop.md) | Remote Desktop v2 (WS/JPEG + WebRTC signaling, prepare/stream) | prepare ≥4.5.48 / **v2 ≥4.9.0** |
+| [api/05-remote-desktop.md](api/05-remote-desktop.md) | RD v2 (WS/JPEG + WebRTC) | **≥4.9.0** (smooth ≥**4.9.20**) |
 | [api/06-firewall-blocks.md](api/06-firewall-blocks.md) | HP-BLOCK / sync / clear | 4.5.40+ |
 | [api/07-lifecycle-sessions.md](api/07-lifecycle-sessions.md) | Lifecycle / sessions / processes | — |
-| [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI IPC (`RS_*`) | ≥ **4.5.66** |
-| [api/09-threat-intel.md](api/09-threat-intel.md) | Intel bundle ETag/ACK/WS; normative `HP-INTEL-*` apply | ≥ **4.5.61** / push ≥4.5.66 / apply ≥ **4.9.7** |
-| [api/10-offline-urgent-queue.md](api/10-offline-urgent-queue.md) | OOB-501 urgent batch + idempotency ACK | cloud live; client flag default **off** |
-| [api/11-presence-realtime.md](api/11-presence-realtime.md) | Anlık presence: sleep/suspend/shutdown goodbye | cloud ≥ **1.4.12**; target client **≥ 4.9.8** |
+| [api/08-architecture.md](api/08-architecture.md) | Daemon vs GUI IPC | ≥ **4.5.66** |
+| [api/09-threat-intel.md](api/09-threat-intel.md) | Intel bundle ETag/ACK/WS | ≥ **4.5.61** / apply ≥**4.9.7** |
+| [api/10-offline-urgent-queue.md](api/10-offline-urgent-queue.md) | OOB-501 batch + idempotency | cloud live; client flag **off** |
+| [api/11-presence-realtime.md](api/11-presence-realtime.md) | Sleep/suspend/shutdown presence | cloud live ≥**1.4.27**; client ≥**4.9.8** |
+
+---
 
 ## cloud/
 
-| Dosya | Konu |
-|-------|------|
-| [cloud/overview.md](cloud/overview.md) | Mimari özet (agent-visible) |
-| [cloud/SERVER_USER_MANAGEMENT.md](cloud/SERVER_USER_MANAGEMENT.md) | Users C-USER-1…7 (1.4.24) |
-| [cloud/threat-intel-ingest.md](cloud/threat-intel-ingest.md) | Harici feed → bundle (agent çekmez) |
-| [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 v2 envelope + TPM/WebAuthn design gate (wire değil) |
+| Dosya | Konu | Statü |
+|-------|------|-------|
+| [cloud/overview.md](cloud/overview.md) | Mimari özet | Normative |
+| [cloud/DEFENSE_POLICY.md](cloud/DEFENSE_POLICY.md) | Tiered policy + auto-promote (C-P0…) | Normative (1.4.19) |
+| [cloud/SERVER_USER_MANAGEMENT.md](cloud/SERVER_USER_MANAGEMENT.md) | Users C-USER-1…7 | Normative (1.4.24) |
+| [cloud/REMOTE_DESKTOP_WINLOGON.md](cloud/REMOTE_DESKTOP_WINLOGON.md) | Winlogon / pre_logon C-WL | Normative (1.4.23) |
+| [cloud/REMOTE_DESKTOP_SMOOTHNESS.md](cloud/REMOTE_DESKTOP_SMOOTHNESS.md) | WebRTC smoothness C-RD | Normative (1.4.20) |
+| [cloud/threat-intel-ingest.md](cloud/threat-intel-ingest.md) | Harici feed → bundle | Normative |
+| [cloud/PRODUCT_BRANDING.md](cloud/PRODUCT_BRANDING.md) | Wire identity / no big-bang rename | Decision |
+| [cloud/ZERO_TRUST_STATUS.md](cloud/ZERO_TRUST_STATUS.md) | ZT do/don’t | Design-only |
+| [cloud/command-envelope-v2-design.md](cloud/command-envelope-v2-design.md) | ZT-601 envelope | Design-only |
+| [cloud/operator-keyset-design.md](cloud/operator-keyset-design.md) | ZT-602/603 keys | Design-only |
+| [cloud/offline-urgent-queue-design.md](cloud/offline-urgent-queue-design.md) | Pointer → archive + api/10 | Promoted stub |
 
-## Sprint checklist
+---
 
-- [x] Register body → `update_block_rules(protection.block_rules)` (client ≥4.5.66)
-- [x] WS `threat_intel_updated` handler (client ≥4.5.66)
-- [x] `agent/ransomware-shield.md` + architecture `RS_STATUS` / `RS_UNLOCK`
-- [x] `FLEET.md` version matrix
-- [ ] Cadence `polling.md` ile canlı host doğrulama (opsiyonel)
-- [ ] Live host: 3 fail → `HP-BLOCK-*` (unit covered)
+## Opsiyonel lab (zorunlu değil)
+
+- Cadence: `agent/polling.md` canlı host doğrulama  
+- Live host: 3 fail → `HP-BLOCK-*` smoke (`agent/register-protection.md`)

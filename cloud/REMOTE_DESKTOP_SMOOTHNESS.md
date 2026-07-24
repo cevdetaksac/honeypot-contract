@@ -67,4 +67,4 @@ Chrome Remote Desktop seviyesine yaklaşmak:
 - Input: higher move rate, shorter critical ACK, DC preferred  
 - Adaptive JPEG knobs **do not** thrash helper while WebRTC connected  
 
-Detay: [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md) § Client TODO (promoted).
+Detay: [`../api/05-remote-desktop.md`](../api/05-remote-desktop.md) § Client WebRTC smoothness (promoted).

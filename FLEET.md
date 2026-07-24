@@ -24,7 +24,7 @@
 | Uninstall PIN lifecycle (`uninstall_*` + `windows_user`) | `api/07-lifecycle-sessions.md` | cloud ≥ **1.4.9**; client with uninstall PIN gate |
 | Bare `successful_logon` score ≤70 + no auto-block (cloud reject shapes) | `agent/threat-engine.md` | cloud ≥ **1.4.11**; target client **≥4.9.7** |
 | Whitelist never stays blocked (reject + `unblock_ip` + pending-unblocks) | `api/06-firewall-blocks.md`, `agent/threat-engine.md` | cloud ≥ **1.4.11**; client must ACK `block-removed` |
-| Realtime presence (`presence`/`goodbye` + `POST /api/presence`) | `api/11-presence-realtime.md` | cloud ≥ **1.4.12**; target client **≥ 4.9.8** |
+| Realtime presence (`presence`/`goodbye` + `POST /api/presence`) | `api/11-presence-realtime.md` | cloud live ≥ **1.4.27**; target client **≥ 4.9.8** |
 | System Recovery (policy/service/firewall allowlist snapshot + drift + confirm restore) | `agent/system-recovery.md` | cloud ≥ **1.4.13**; target client **≥ 4.9.12** |
 | Network Guard dashboard panel (live IP/adapters + golden baseline + diff + restore) + `auto_restore_network` | `agent/network-guard.md` | cloud ≥ **1.4.14**; target client **≥ 4.9.12** |
 | Network Guard maintenance mode (pause → change VPN/IP → snapshot → resume) | `agent/network-guard.md` | cloud ≥ **1.4.15**; target client **≥ 4.9.12** |
@@ -56,16 +56,9 @@
 | Dashboard PIN set/reset (`set_gui_pin`/`clear_gui_pin`) + IP hızlı aksiyon butonları | `api/03-control-websocket.md`, `agent/gui-control-center.md` | **4.8.3** |
 | Whitelist cloud SoT (merge-only persist + tablo cloud okur) | `agent/gui-control-center.md` | **4.8.4** |
 | block-removed ACK ips(+ids); dashboard "Kaldırılıyor" takılma fix | `api/06-firewall-blocks.md` | **4.8.5** |
-| Remote Desktop v2 (WS/JPEG healthy path + input protocol 2 + persistent session helper + optional WebRTC signaling) | `api/05-remote-desktop.md`, `agent/remote-input.md` | **4.9.0** |
 
-**Önerilen production floor:** **4.9.0** (survival + disaster recovery +
-operator-approved Network Guard containment + GUI control center v2 + tutarlı
-detay popup'ları + cloud-yönetimli webhook + dashboard PIN yönetimi + whitelist
-cloud SoT + unblock ACK + **Remote Desktop v2**). 4.8.4'te dashboard unblock
-sonrası "Kaldırılıyor…" takılı kalabilir (ACK yalnız block_ids, cloud updated=0).
-4.7.0/4.7.1 production'da kullanılmamalı; 4.7.3'te STATUS timeout, 4.7.4'te
-update false-tamper vardır; 4.7.x GUI'de katman toggle'ları yanlış (hep KAPALI)
-render edilir. 4.8.0'da koruma detay popup'ı chip AKTİF iken OFF gösterir (4.8.1
-düzeltir).
+**Önerilen production floor:** **4.9.0** (RD v2 + recovery + NG containment + GUI control center + whitelist SoT + unblock ACK).
+
+Avoid in production: **4.7.0–4.7.2** (NG FP); prefer **≥4.7.3** containment, **≥4.8.1** popup SoT, **≥4.8.5** unblock ACK, **≥4.9.0** RD v2.
 
 Cloud publish: contract clone → `git pull` → `scripts/publish_contract.sh` (HTTPS mirror).
