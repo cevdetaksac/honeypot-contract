@@ -1,5 +1,22 @@
 # Changelog — honeypot-contract
 
+## 1.4.29 — 2026-07-24 (In-place token rotation)
+
+### Cloud (live)
+- **`POST /api/agent/rotate-token`**: body `old_token` + `new_token` (+ optional
+  `machine_id`, `reason`). Updates `clients.token` **in place** — same
+  `client_id`, AccountClient, attacks/alerts/blocks/alias preserved.
+- Idempotent on replay; `409 new_token_in_use`; `403 machine_id_mismatch`;
+  `404 old_token_not_found`. Stores `previous_token` / `token_rotations[]`.
+
+### Client (required ≥ **4.9.31**)
+- When regenerating `token.dat` (identity v2 / rekey / schema upgrade): call
+  rotate-token **before** writing the new token to disk. Do **not** bare
+  `/register` while the old token is still known (creates ghost servers).
+
+### Docs
+- [`api/01-auth.md`](api/01-auth.md) rotate section + inventory; INDEX / FLEET.
+
 ## 1.4.28 — 2026-07-24 (Contract hygiene)
 
 Docs-only tidy — **no wire behavior change**.

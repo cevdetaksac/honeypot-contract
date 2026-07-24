@@ -1,13 +1,14 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.28** · Repo: https://github.com/cevdetaksac/honeypot-contract  
+> **VERSION 1.4.29** · Repo: https://github.com/cevdetaksac/honeypot-contract  
 > Fleet: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0**
 
 ### Recent contract highlights
 
 | Contract | Konu | Client |
 |----------|------|--------|
+| **1.4.29** | In-place token rotate (`old→new`, same `client_id`) | ≥**4.9.31** |
 | **1.4.27** | Unlink API live + realtime presence wire | unlink ≥**4.9.26**; presence ≥**4.9.8** |
 | **1.4.26** | Hardware-bound `machine_id` (clone split) | ≥**4.9.28** |
 | **1.4.25** | Account unlink Spec (Settings) | ≥**4.9.26** |
@@ -56,7 +57,7 @@
 
 | Dosya | Konu | Min client |
 |-------|------|------------|
-| [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, `machine_id` | 4.4.33+ / hw-id ≥**4.9.28** |
+| [api/01-auth.md](api/01-auth.md) | Bearer, register, heartbeat, `machine_id`, **rotate-token** | 4.4.33+ / hw-id ≥**4.9.28** / rotate ≥**4.9.31** |
 | [api/02-account.md](api/02-account.md) | Account link / unlink / multi-server | unlink ≥**4.9.26** |
 | [api/03-control-websocket.md](api/03-control-websocket.md) | Control WS + komutlar + HMAC | 4.5.x |
 | [api/04-self-update.md](api/04-self-update.md) | Self-update ACK | 4.5.39+ |

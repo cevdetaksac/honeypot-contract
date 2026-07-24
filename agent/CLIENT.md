@@ -36,7 +36,12 @@ Bu dosya **özet + link**. Şema/detay için ilgili MD’ye git; buraya kopyalam
 
 ## Auth (tek satır)
 
-Bearer only. Token ProgramData, immutable. Query `?token=` gönderme.
+Bearer only. Token ProgramData. Query `?token=` gönderme.
+
+- **İlk kurulum:** `POST /api/register`  
+- **Token yeniden üretim (rekey / identity v2):** `POST /api/agent/rotate-token`
+  (`old_token`→`new_token`, aynı `client_id`) — **≥ 4.9.31** / contract **1.4.29**.
+  Bare register ile yeni satır açma.
 
 ---
 
