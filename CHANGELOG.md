@@ -1,5 +1,12 @@
 # Changelog — honeypot-contract
 
+## 1.4.25 — 2026-07-24 (Account unlink from agent Settings)
+
+- [`api/02-account.md`](api/02-account.md): `POST /api/agent/unlink-account`
+  (email+password+token) for in-app unlink; client Settings → Account link
+  (≥ **4.9.26**). Clarifies top-bar email = cloud `account-status`.
+- INDEX / FLEET / VERSION.
+
 ## 1.4.24 — 2026-07-24 (Server Users — cloud C-USER-1…7)
 
 - New [`cloud/SERVER_USER_MANAGEMENT.md`](cloud/SERVER_USER_MANAGEMENT.md):

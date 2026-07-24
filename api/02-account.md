@@ -17,6 +17,52 @@
 
 ---
 
+## P0b — In-app unlink (additive — contract **1.4.25**)
+
+### `POST /api/agent/unlink-account`
+
+Auth: **yok** (email/password body'de). Agent token body'de — link ile simetrik.
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secret",
+  "token": "<agent-client-token>"
+}
+```
+
+### Davranış
+
+1. Email+password Account authenticate.
+2. Token ile `Client` bul.
+3. Bu account ↔ client `AccountClient` satırını sil (yoksa idempotent ok).
+4. Başka account membership'ine dokunma.
+
+### 200 OK
+
+```json
+{
+  "ok": true,
+  "account_linked": false,
+  "account": null
+}
+```
+
+| Kod | detail |
+|-----|--------|
+| 401 | Invalid credentials |
+| 404 | Client not found |
+| 422 | missing fields |
+| 429 | rate limit |
+
+Client **≥4.9.26**: Ayarlar → **Hesap bağlantısı** → Bağlantıyı kes. Endpoint yoksa
+web `/servers` fallback (`unlink_api_unavailable`).
+
+> Üst bardaki e-posta cloud `account-status` kaynağıdır; client uydurmaz.
+> Yeni kurulumda Dashboard `?token=` + açık YesNext oturumu otomatik link üretebilir.
+
+---
+
 ## P0 — Tek JSON endpoint (onerilen)
 
 ### `POST /api/agent/link-account`

@@ -1,8 +1,8 @@
 # Contract INDEX
 
 > Oku: [`VERSION`](VERSION) → bu dosya → satırdaki MD.  
-> **VERSION 1.4.24** · Repo: https://github.com/cevdetaksac/honeypot-contract
-> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + Server Users **C-USER** **1.4.24**; Winlogon **1.4.21–1.4.23** / sibling pre_logon ≥ **4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
+> **VERSION 1.4.25** · Repo: https://github.com/cevdetaksac/honeypot-contract
+> Fleet matrix: [`FLEET.md`](FLEET.md) · Production floor: **client ≥ 4.9.0** (… + account unlink **1.4.25** / client **≥ 4.9.26**; Server Users **C-USER** **1.4.24**; Winlogon **1.4.21–1.4.23** / sibling pre_logon ≥ **4.9.26**; RD WebRTC smoothness **1.4.20** / **≥ 4.9.20**; Defense Policy **1.4.18–1.4.19** → **≥ 4.9.16/4.9.17**; soft inform **≥ 4.9.15**; ZT Design-only — [`cloud/ZERO_TRUST_STATUS.md`](cloud/ZERO_TRUST_STATUS.md); branding — [`cloud/PRODUCT_BRANDING.md`](cloud/PRODUCT_BRANDING.md))
 
 
 ## Shared delivery plans
